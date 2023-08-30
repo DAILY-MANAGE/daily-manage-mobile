@@ -22,8 +22,9 @@ export default function TabLayout() {
             <Tabs.Screen
                 name="index"
                 options={{
-                    headerTitle: "FORMULÁRIOS",
+                    headerTitle: "DAILY MANAGE",
                     tabBarLabel: "Formulários",
+                    headerTitleStyle: { fontStyle: "normal", fontWeight: "bold" },
                     tabBarLabelStyle: { fontWeight: "500" },
                     tabBarActiveTintColor: "black",
                     tabBarInactiveTintColor: "gray",
@@ -46,7 +47,7 @@ export default function TabLayout() {
                         </Link>,
                 }}
             />
-            <Tabs.Screen
+            {/* <Tabs.Screen
                 name="[form]"
                 options={{
                     href: {
@@ -78,7 +79,7 @@ export default function TabLayout() {
                             </Pressable>
                         </Link>
                 }}
-            />
+            /> */}
             <Tabs.Screen
                 name="profile"
                 options={{

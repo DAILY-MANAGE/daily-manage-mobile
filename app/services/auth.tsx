@@ -1,4 +1,4 @@
-import CookieManager from '@react-native-cookies/cookies';
+/* /* import CookieManager from '@react-native-cookies/cookies';
 
 import axios, { AxiosResponse } from 'axios';
 
@@ -14,8 +14,8 @@ const loginPath = `/auth/login`;
 const B64EncryptObject = B64Encrypt();
 let authenticatedToken = null;
 
-require("dotenv").config();
-
+/* require("dotenv").config();
+ 
 const instance = axios.create({
     baseURL: 'http://10.68.21.237:8080',//process.env.API_ENDPOINT,
 });
@@ -71,7 +71,7 @@ const useAuthHandler = () => {
         }
         /* CookieManager.set(loginCookieKey, encodedArray, {
             expires: 30,
-        }); */
+        }); *
     }
 
     const login = (loginData?: LoginData) => {
@@ -113,7 +113,7 @@ const useAuthHandler = () => {
                     return
                 }
 
-                const decodedCookie = B64EncryptObject.decodeText(/* tokenCookie */);
+                const decodedCookie = B64EncryptObject.decodeText(/* tokenCookie *);
                 if (!decodedCookie) {
                     return;
                 }
@@ -183,4 +183,4 @@ const useAuthHandler = () => {
     };
 };
 
-export default useAuthHandler;
+export default useAuthHandler; */

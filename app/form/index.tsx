@@ -12,8 +12,8 @@ import { View } from "react-native";
 
 export default function Form() {
     const [selectedIndex, setIndex] = React.useState(0);
-    const [expanded, setExpanded] = React.useState(false);
-
+/*     const [expanded, setExpanded] = React.useState(false); */
+ 
     return (
         <>
             <ListItem>
@@ -49,7 +49,7 @@ export default function Form() {
                 </ListItem.Content>
             </ListItem>
 
-            <ListItem.Accordion
+            {/* <ListItem.Accordion
                 content={
                     <>
                         <Icon name="place" size={30} />
@@ -75,7 +75,7 @@ export default function Form() {
                         <ListItem.Subtitle>a</ListItem.Subtitle>
                     </ListItem.Content>
                 </ListItem>
-            </ListItem.Accordion >
+            </ListItem.Accordion > */}
         </>
     );
 }

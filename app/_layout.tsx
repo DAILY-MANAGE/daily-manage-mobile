@@ -7,6 +7,7 @@ export default function AppLayout() {
             <Stack>
                 <Stack.Screen name="(tabs)" options={{ headerShown: false, headerLargeTitle: true }} />
                 <Stack.Screen name="criarFormulario" options={{ presentation: 'modal' }} />
+                <Stack.Screen name="form" options={{ presentation: "formSheet" }} />
             </Stack>
         </SafeAreaProvider>
     );
