@@ -1,28 +1,21 @@
 import React from "react";
 
-import {
-    ListItem,
-    Input,
-    Icon,
-    CheckBox,
-    Avatar
-} from '@rneui/themed';
+import { ListItem, Input, CheckBox } from "@rneui/themed";
 
 import { View } from "react-native";
 
 export default function Form() {
     const [selectedIndex, setIndex] = React.useState(0);
-/*     const [expanded, setExpanded] = React.useState(false); */
- 
+
     return (
         <>
             <ListItem>
                 <ListItem.Content>
                     <ListItem.Title>Há vazamento na turbina?</ListItem.Title>
                     <Input
-                        rightIcon={{ type: 'font-awesome', name: 'close' }}
-                        placeholder='ex: s / sim'
-                        onChangeText={value => this.value}
+                        rightIcon={{ type: "font-awesome", name: "close" }}
+                        placeholder="ex: s / sim"
+                        onChangeText={(value) => this.value}
                     />
                 </ListItem.Content>
             </ListItem>
@@ -30,7 +23,13 @@ export default function Form() {
             <ListItem>
                 <ListItem.Content>
                     <ListItem.Title>Há vazamento na turbina?</ListItem.Title>
-                    <View style={{ flexDirection: "row", alignItems: "center", gap: 70 }}>
+                    <View
+                        style={{
+                            flexDirection: "row",
+                            alignItems: "center",
+                            gap: 70,
+                        }}
+                    >
                         <CheckBox
                             checked={selectedIndex === 0}
                             onPress={() => setIndex(0)}
@@ -48,34 +47,6 @@ export default function Form() {
                     </View>
                 </ListItem.Content>
             </ListItem>
-
-            {/* <ListItem.Accordion
-                content={
-                    <>
-                        <Icon name="place" size={30} />
-                        <ListItem.Content>
-                            <ListItem.Title>a</ListItem.Title>
-                        </ListItem.Content>
-                    </>
-                }
-                isExpanded={expanded}
-                onPress={() => {
-                    setExpanded(!expanded);
-                }}
-            >
-                <ListItem>
-                    <Avatar
-                        rounded
-                        source={{
-                            uri: "https://randomuser.me/api/portraits/men/32.jpg",
-                        }}
-                    />
-                    <ListItem.Content>
-                        <ListItem.Title>a</ListItem.Title>
-                        <ListItem.Subtitle>a</ListItem.Subtitle>
-                    </ListItem.Content>
-                </ListItem>
-            </ListItem.Accordion > */}
         </>
     );
 }
