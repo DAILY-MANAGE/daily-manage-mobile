@@ -1,85 +1,46 @@
-import {
-    Tabs,
-    Link
-} from "expo-router";
+import { Tabs, Link } from "expo-router";
 
-import FontAwesome from '@expo/vector-icons/FontAwesome'
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 
 import { Pressable } from "react-native";
 
-function TabBarIcon(props: {
-    name: React.ComponentProps<typeof FontAwesome>['name'];
-    color: string;
-}) {
-    return <FontAwesome size={24} style={{ marginBottom: -3 }} {...props} />;
-}
+import TabBarIcon from "../components/TabBarIcon";
 
 export default function TabLayout() {
     return (
-        <Tabs screenOptions={{
-            headerShadowVisible: true,
-        }}>
+        <Tabs screenOptions={{ headerShadowVisible: true }}>
             <Tabs.Screen
                 name="index"
                 options={{
                     headerTitle: "DAILY MANAGE",
                     tabBarLabel: "Formulários",
-                    headerTitleStyle: { fontStyle: "normal", fontWeight: "bold" },
-                    tabBarLabelStyle: { fontWeight: "500" },
-                    tabBarActiveTintColor: "black",
-                    tabBarInactiveTintColor: "gray",
-                    tabBarIcon: ({ color }) =>
-                        <TabBarIcon
-                            name="list"
-                            color={color}
-                        />,
-                    headerRight: () =>
-                        <Link href="/modal" asChild>
-                            <Pressable>
-                                {({ pressed }) => (
-                                    <FontAwesome
-                                        name="bell"
-                                        size={20}
-                                        style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-                                    />
-                                )}
-                            </Pressable>
-                        </Link>,
-                }}
-            />
-            {/* <Tabs.Screen
-                name="[form]"
-                options={{
-                    href: {
-                        pathname: '/[form]',
-                        params: {
-                            user: 'form1',
-                        },
+                    headerTitleStyle: {
+                        fontWeight: "bold",
                     },
-                    headerTitle: "CHECKLIST",
-                    tabBarIconStyle: { color: "gray" },
                     tabBarLabelStyle: { fontWeight: "500" },
                     tabBarActiveTintColor: "black",
                     tabBarInactiveTintColor: "gray",
-                    tabBarIcon: ({ color }) =>
-                        <TabBarIcon
-                            name="check"
-                            color={color}
-                        />,
-                    headerRight: () =>
-                        <Link href="/modal" asChild>
+                    tabBarIcon: ({ color }) => (
+                        <TabBarIcon name="list" color={color} />
+                    ),
+                    headerRight: () => (
+                        <Link href="/notifications" asChild>
                             <Pressable>
                                 {({ pressed }) => (
                                     <FontAwesome
                                         name="bell"
                                         size={20}
-                                        style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
+                                        style={{
+                                            marginRight: 15,
+                                            opacity: pressed ? 0.5 : 1,
+                                        }}
                                     />
                                 )}
                             </Pressable>
                         </Link>
+                    ),
                 }}
-            /> */}
+            />
             <Tabs.Screen
                 name="profile"
                 options={{
@@ -88,11 +49,9 @@ export default function TabLayout() {
                     tabBarLabelStyle: { fontWeight: "500" },
                     tabBarActiveTintColor: "black",
                     tabBarInactiveTintColor: "gray",
-                    tabBarIcon: ({ color }) =>
-                        <TabBarIcon
-                            name="user"
-                            color={color}
-                        />,
+                    tabBarIcon: ({ color }) => (
+                        <TabBarIcon name="user" color={color} />
+                    ),
                 }}
             />
         </Tabs>
