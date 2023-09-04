@@ -6,7 +6,7 @@ export default function FabButton() {
 
     return (
         <SpeedDial
-            color="black"
+            color="#181515"
             isOpen={open}
             icon={{
                 name: "edit",
@@ -20,7 +20,7 @@ export default function FabButton() {
             onClose={() => setOpen(!open)}
         >
             <SpeedDial.Action
-                color="cyan"
+                color="#65D45D"
                 icon={{
                     name: "add",
                     color: "#fff",
@@ -29,7 +29,7 @@ export default function FabButton() {
                 onPress={() => console.log("criar formulario")}
             />
             <SpeedDial.Action
-                color="red"
+                color="#EB4B46"
                 icon={{
                     name: "delete",
                     color: "#fff",

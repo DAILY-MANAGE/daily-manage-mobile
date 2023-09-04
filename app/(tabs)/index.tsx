@@ -9,19 +9,11 @@ import FabButton from "../components/FabButton";
 import CustomSearchBar from "../components/SearchBar";
 
 export default function Home() {
-    return (
-        <>
-            <CustomSearchBar />
-
-            <Link href="/form" asChild>
-                <Pressable>
-                    <View>
-                        <FormItem />
-                    </View>
-                </Pressable>
-            </Link>
-
-            <FabButton />
-        </>
-    );
+  return (
+    <>
+      <CustomSearchBar />
+      <FormItem />
+      <FabButton />
+    </>
+  );
 }
