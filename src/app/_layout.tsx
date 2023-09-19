@@ -1,23 +1,10 @@
 import { Stack } from "expo-router";
-import { SafeAreaProvider } from "react-native-safe-area-context";
-import Login from "./login";
-import { useState } from "react";
-
 
 export default function AppLayout() {
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
-
   return (
-    <SafeAreaProvider>
-      <Login />
-      {isLoggedIn && (
-        <Stack>
-          <Stack.Screen
-            name="(tabs)"
-            options={{ headerShown: false, headerLargeTitle: true }}
-          />
-        </Stack>
-      )}
-    </SafeAreaProvider>
+    <Stack>
+        <Stack.Screen name="(login)" options={{ headerShown: false }}/>
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }}/>
+    </Stack>
   );
 }

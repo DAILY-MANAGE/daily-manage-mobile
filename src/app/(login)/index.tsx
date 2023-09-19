@@ -1,11 +1,44 @@
-import { View, StyleSheet, Image, Platform, Pressable } from "react-native";
+import { View, StyleSheet, Image, Pressable } from "react-native";
 import { Button, Input } from "@rneui/base";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { Text } from "@rneui/base";
-import { router } from "expo-router";
+import { useRouter } from "expo-router";
+import { useState } from "react";
 
 export default function Login() {
+  const router = useRouter();
+
+  const [user, setUser] = useState("");
+  const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState([]);
+
+  const validateFields = () => {
+    const errors = [];
+
+    if (user === "") {
+      errors.push("*");
+    } else return;
+
+    if (password === "") {
+      errors.push("*");
+    } else return;
+
+    return {
+      valid: errors.length === 0,
+      errors,
+    };
+  };
+
+  const handleSubmit = () => {
+    const validate = validateFields();
+
+    if (!validate.valid) {
+      setErrors(validate.errors);
+      return;
+    }
+  };
+
   return (
     <SafeAreaView>
       <StatusBar />
@@ -22,8 +55,18 @@ export default function Login() {
             <View style={s.form}>
               <View style={s.inputs}>
                 <View style={s.input}>
+                  <View style={s.label}>
+                    <Text>Senha</Text>
+                    {errors.length > 0 && (
+                      <View>
+                        <Text key="password" style={s.error}>
+                          {errors.find((error) => error.nome === "password")}
+                        </Text>
+                      </View>
+                    )}
+                  </View>
                   <Input
-                    placeholder="Usuário"
+                    placeholder={"Usuário"}
                     placeholderTextColor="#ccc"
                     textContentType="username"
                     allowFontScaling={true}
@@ -33,9 +76,21 @@ export default function Login() {
                     autoCorrect={false}
                     inputContainerStyle={s.inputContainerStyle}
                     containerStyle={s.containerStyle}
+                    value={user}
+                    onChangeText={setUser}
                   />
                 </View>
                 <View style={s.input}>
+                  <View style={s.label}>
+                    <Text>Senha</Text>
+                    {errors.length > 0 && (
+                      <View>
+                        <Text key="user" style={s.error}>
+                          {errors.find((error) => error.nome === "user")}
+                        </Text>
+                      </View>
+                    )}
+                  </View>
                   <Input
                     placeholder="Senha"
                     placeholderTextColor="#ccc"
@@ -48,20 +103,19 @@ export default function Login() {
                     inputContainerStyle={s.inputContainerStyle}
                     containerStyle={s.containerStyle}
                     secureTextEntry={true}
+                    value={password}
+                    onChangeText={setPassword}
                   />
                 </View>
               </View>
               <View style={s.sumbites}>
                 <Button
-                  onPressIn={() => router.replace("/(tabs)")}
+                  onPressIn={handleSubmit}
                   radius="md"
                   color="black"
                   size="lg"
                   title="Entrar"
                 ></Button>
-                <Pressable style={s.forgotPassword}>
-                  <Text>Esqueceu a senha?</Text>
-                </Pressable>
               </View>
             </View>
           </View>
@@ -89,6 +143,10 @@ export default function Login() {
 }
 
 const s = StyleSheet.create({
+  error: {
+    color: "red",
+    fontSize: 12,
+  },
   logoForm: {
     gap: 32,
     width: "100%",
@@ -103,13 +161,12 @@ const s = StyleSheet.create({
     gap: 16,
   },
   footer: {
-    height: "auto",
-    marginTop: "40%",
-    gap: 16,
-    flex: 1,
+    bottom: 0,
+    gap: 8,
     width: "100%",
     flexDirection: "column",
     alignItems: "center",
+    paddingBottom: 8,
   },
   register: {
     width: "100%",
@@ -120,14 +177,14 @@ const s = StyleSheet.create({
     flexDirection: "column",
   },
   label: {
-    fontSize: 20,
-    fontWeight: "bold",
+    flexDirection: "row",
   },
   logo: {
     width: 104,
     height: 104,
   },
   container: {
+    justifyContent: "space-between",
     alignItems: "center",
     height: "100%",
     paddingHorizontal: 32,
