@@ -1,8 +1,10 @@
 import { SpeedDial } from "@rneui/base";
+import { useRouter } from "expo-router";
 import { useState } from "react";
 
 export default function FabButton() {
     const [open, setOpen] = useState(false);
+    const router = useRouter();
 
     return (
         <SpeedDial
@@ -26,7 +28,7 @@ export default function FabButton() {
                     color: "#fff",
                 }}
                 title="Novo"
-                onPress={() => console.log("criar formulario")}
+                onPress={() => router.replace("createForm")}
             />
             <SpeedDial.Action
                 color="#EB4B46"

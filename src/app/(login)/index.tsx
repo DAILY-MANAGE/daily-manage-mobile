@@ -8,7 +8,6 @@ import { useState } from "react";
 
 export default function Login() {
   const router = useRouter();
-
   const [user, setUser] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState([]);
@@ -18,11 +17,11 @@ export default function Login() {
 
     if (user === "") {
       errors.push("*");
-    } else return;
+    }
 
     if (password === "") {
       errors.push("*");
-    } else return;
+    }
 
     return {
       valid: errors.length === 0,
@@ -32,11 +31,11 @@ export default function Login() {
 
   const handleSubmit = () => {
     const validate = validateFields();
-
     if (!validate.valid) {
       setErrors(validate.errors);
       return;
     }
+    router.replace("(tabs)");
   };
 
   return (
@@ -55,14 +54,10 @@ export default function Login() {
             <View style={s.form}>
               <View style={s.inputs}>
                 <View style={s.input}>
-                  <View style={s.label}>
-                    <Text>Senha</Text>
-                    {errors.length > 0 && (
-                      <View>
-                        <Text key="password" style={s.error}>
-                          {errors.find((error) => error.nome === "password")}
-                        </Text>
-                      </View>
+                  <View style={s.labelView}>
+                    <Text style={s.label}>Usuário</Text>
+                    {errors.length > 0 && user === "" && (
+                      <Text style={s.error}>{errors[0]}</Text>
                     )}
                   </View>
                   <Input
@@ -81,14 +76,10 @@ export default function Login() {
                   />
                 </View>
                 <View style={s.input}>
-                  <View style={s.label}>
-                    <Text>Senha</Text>
-                    {errors.length > 0 && (
-                      <View>
-                        <Text key="user" style={s.error}>
-                          {errors.find((error) => error.nome === "user")}
-                        </Text>
-                      </View>
+                  <View style={s.labelView}>
+                    <Text style={s.label}>Senha</Text>
+                    {errors.length > 0 && password === "" && (
+                      <Text style={s.error}>{errors[1]}</Text>
                     )}
                   </View>
                   <Input
@@ -143,9 +134,17 @@ export default function Login() {
 }
 
 const s = StyleSheet.create({
+  label: {
+    fontSize: 20,
+    fontWeight: "700",
+  },
+  labelView: {
+    flexDirection: "row",
+    gap: 8,
+  },
   error: {
     color: "red",
-    fontSize: 12,
+    fontSize: 16,
   },
   logoForm: {
     gap: 32,
@@ -175,9 +174,6 @@ const s = StyleSheet.create({
   form: {
     width: "100%",
     flexDirection: "column",
-  },
-  label: {
-    flexDirection: "row",
   },
   logo: {
     width: 104,
