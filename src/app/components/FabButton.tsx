@@ -3,28 +3,33 @@ import { View, Modal, Text, Alert, StyleSheet, Pressable } from 'react-native';
 import React, { useState } from 'react';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import axios from 'axios';
-import useAuthHandler from '../services/auth';
+import { router } from 'expo-router';
 
 export default function FabButton() {
-	const auth = useAuthHandler();
-
 	const [open, setOpen] = useState(false);
 	const [modalVisible, setModalVisible] = useState(false);
 	const [formName, setFormName] = useState('');
 
-	const handleChange = (e) => {
+	const handleSubmit = (e) => {
+		e.preventDefault();
 		setFormName(e.target.value);
+		router.push('/createForm');
 	};
 
-	const handleSave = () => {
+	/* const handleSubmit = (e) => {
+		e.preventDefault();
+
 		axios
 			.post('https://localhost:8080/forms', {
 				name: formName,
 			})
-			.then((res) => {
-				console.log(formName);
-			});
-	};
+			.then(res => {
+				console.log(res);
+				console.log(res.data);
+				router.push('form')
+			})
+			.catch(error => console.log(error));
+	}; */
 
 	return (
 		<>
@@ -58,12 +63,13 @@ export default function FabButton() {
 								autoCorrect={false}
 								inputContainerStyle={s.inputContainerStyle}
 								containerStyle={s.containerStyle}
-								value={''}
-								onChangeText={() => {}}
+								value={formName}
+								onChangeText={setFormName}
 							/>
 						</View>
 						<Pressable style={s.finishButton}>
 							<Button
+								onPressIn={handleSubmit}
 								radius='md'
 								color='black'
 								size='md'
@@ -71,9 +77,9 @@ export default function FabButton() {
 								titleStyle={{ color: 'white' }}></Button>
 						</Pressable>
 					</View>
+					<View><Text>{formName}</Text></View>
 				</View>
 			</Modal>
-
 			<SpeedDial
 				color='#181515'
 				isOpen={open}

@@ -1,7 +1,10 @@
 import { Input } from "@rneui/base";
+import { useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 
 export default function CreateForm() {
+  const[formName, setFormName] = useState("");
+
   return (
     <View style={s.container}>
       <Text style={s.title}>Criação de formulário</Text>
@@ -10,14 +13,12 @@ export default function CreateForm() {
           <Input
             placeholder="Nome do formulário"
             allowFontScaling={true}
-            clearTextOnFocus={true}
             autoCapitalize="none"
             style={s.customInput}
-            autoCorrect={false}
             inputContainerStyle={s.inputContainerStyle}
             containerStyle={s.containerStyle}
-            value={""}
-            onChangeText={() => {}}
+            value={formName}
+            onChangeText={setFormName}
           />
         </View>
       </View>
