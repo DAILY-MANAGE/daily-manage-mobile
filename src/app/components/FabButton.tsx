@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import axios from 'axios';
 import { router } from 'expo-router';
+import { FAB } from '@rneui/themed';
 
 export default function FabButton() {
 	const [open, setOpen] = useState(false);
@@ -80,7 +81,17 @@ export default function FabButton() {
 					<View><Text>{formName}</Text></View>
 				</View>
 			</Modal>
-			<SpeedDial
+			<FAB 
+				placement='right'
+				color='black'
+				upperCase={true}
+				icon={{ name: 'add', color: 'white' }}
+				onPress={() => {
+					setModalVisible(!modalVisible)
+				}}
+			/>
+
+			{/* <SpeedDial
 				color='#181515'
 				isOpen={open}
 				icon={{
@@ -114,7 +125,7 @@ export default function FabButton() {
 					title='Excluir'
 					onPress={() => console.log('deletar formulário')}
 				/>
-			</SpeedDial>
+			</SpeedDial> */}
 		</>
 	);
 }
