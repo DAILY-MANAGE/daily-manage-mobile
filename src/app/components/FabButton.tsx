@@ -1,36 +1,23 @@
-import { SpeedDial, Button, Input, color } from '@rneui/base';
-import { View, Modal, Text, Alert, StyleSheet, Pressable } from 'react-native';
-import React, { useState } from 'react';
+import { Button, Input } from '@rneui/base';
+import { View, Modal, Text, Alert, StyleSheet, Pressable, NativeSyntheticEvent, TextInputChangeEventData } from 'react-native';
+import React, { ChangeEvent, useState } from 'react';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import axios from 'axios';
 import { router } from 'expo-router';
 import { FAB } from '@rneui/themed';
+import { FormData } from '../interfaces/FormData';
 
 export default function FabButton() {
-	const [open, setOpen] = useState(false);
 	const [modalVisible, setModalVisible] = useState(false);
 	const [formName, setFormName] = useState('');
 
-	const handleSubmit = (e) => {
-		e.preventDefault();
-		setFormName(e.target.value);
+	const handleSubmit = (props: FormData) => {
+		props.nome = formName;
 		router.push('/createForm');
 	};
 
-	/* const handleSubmit = (e) => {
-		e.preventDefault();
-
-		axios
-			.post('https://localhost:8080/forms', {
-				name: formName,
-			})
-			.then(res => {
-				console.log(res);
-				console.log(res.data);
-				router.push('form')
-			})
-			.catch(error => console.log(error));
-	}; */
+	const handleChange = (text: string) => {
+		setFormName(text)
+	}
 
 	return (
 		<>
@@ -65,12 +52,12 @@ export default function FabButton() {
 								inputContainerStyle={s.inputContainerStyle}
 								containerStyle={s.containerStyle}
 								value={formName}
-								onChangeText={setFormName}
+								onChangeText={handleChange}
 							/>
 						</View>
 						<Pressable style={s.finishButton}>
 							<Button
-								onPressIn={handleSubmit}
+								onPressIn={() => handleSubmit}
 								radius='md'
 								color='black'
 								size='md'
@@ -81,7 +68,7 @@ export default function FabButton() {
 					<View><Text>{formName}</Text></View>
 				</View>
 			</Modal>
-			<FAB 
+			<FAB
 				placement='right'
 				color='black'
 				upperCase={true}
@@ -90,42 +77,6 @@ export default function FabButton() {
 					setModalVisible(!modalVisible)
 				}}
 			/>
-
-			{/* <SpeedDial
-				color='#181515'
-				isOpen={open}
-				icon={{
-					name: 'edit',
-					color: '#fff',
-				}}
-				openIcon={{
-					name: 'close',
-					color: '#fff',
-				}}
-				onOpen={() => setOpen(!open)}
-				onClose={() => setOpen(!open)}>
-				<SpeedDial.Action
-					color='#65D45D'
-					icon={{
-						name: 'add',
-						color: '#fff',
-					}}
-					title='Novo'
-					onPress={() => {
-						setModalVisible(!modalVisible);
-						setOpen(!open);
-					}}
-				/>
-				<SpeedDial.Action
-					color='#EB4B46'
-					icon={{
-						name: 'delete',
-						color: '#fff',
-					}}
-					title='Excluir'
-					onPress={() => console.log('deletar formulário')}
-				/>
-			</SpeedDial> */}
 		</>
 	);
 }
