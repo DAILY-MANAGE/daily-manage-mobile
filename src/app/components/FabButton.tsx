@@ -1,5 +1,5 @@
 import { Button, Input } from '@rneui/base';
-import { View, Modal, Text, Alert, StyleSheet, Pressable, NativeSyntheticEvent, TextInputChangeEventData } from 'react-native';
+import { View, Modal, Text, Alert, StyleSheet, Pressable, NativeSyntheticEvent, TextInputChangeEventData, ToastAndroid } from 'react-native';
 import React, { ChangeEvent, useState } from 'react';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { router } from 'expo-router';
@@ -10,9 +10,20 @@ export default function FabButton() {
 	const [modalVisible, setModalVisible] = useState(false);
 	const [formName, setFormName] = useState('');
 
-	const handleSubmit = (props: FormData) => {
-		props.nome = formName;
-		router.push('/createForm');
+	const showToast = async () => {
+		ToastAndroid.showWithGravityAndOffset(
+			`Criado ${formName}!`,
+			ToastAndroid.LONG,
+			ToastAndroid.BOTTOM,
+			10,
+			50
+		)
+	}
+
+	const handleSubmit = () => {
+		setFormName(formName);
+		router.replace('/createForm');
+		showToast();
 	};
 
 	const handleChange = (text: string) => {
@@ -57,7 +68,7 @@ export default function FabButton() {
 						</View>
 						<Pressable style={s.finishButton}>
 							<Button
-								onPressIn={() => handleSubmit}
+								onPress={handleSubmit}
 								radius='md'
 								color='black'
 								size='md'
@@ -65,7 +76,6 @@ export default function FabButton() {
 								titleStyle={{ color: 'white' }}></Button>
 						</Pressable>
 					</View>
-					<View><Text>{formName}</Text></View>
 				</View>
 			</Modal>
 			<FAB
