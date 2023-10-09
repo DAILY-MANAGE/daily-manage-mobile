@@ -1,10 +1,9 @@
 import { Button, Input } from '@rneui/base';
-import { View, Modal, Text, Alert, StyleSheet, Pressable, NativeSyntheticEvent, TextInputChangeEventData, ToastAndroid } from 'react-native';
-import React, { ChangeEvent, useState } from 'react';
+import { View, Modal, Text, Alert, StyleSheet, Pressable, ToastAndroid } from 'react-native';
+import React, { useState } from 'react';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { router } from 'expo-router';
 import { FAB } from '@rneui/themed';
-import { FormData } from '../interfaces/FormData';
 
 export default function FabButton() {
 	const [modalVisible, setModalVisible] = useState(false);

@@ -5,29 +5,26 @@ import { StyleSheet } from "react-native";
 interface InputProps {
   placeholder?: string;
   textContentType: any;
- }
+  value: string;
+  setValue: string | any;
+}
 
 export default function InputComponent({
   placeholder = "Usuário",
-  textContentType = {"username" : "password"}
+  textContentType = { username: "password" },
+  value,
+  setValue
 }: InputProps) {
-  const [user, setUser] = useState("");
   return (
-    <>
-      <Input
-        placeholder={placeholder}
-        placeholderTextColor="#ccc"
-        textContentType={textContentType}
-        allowFontScaling={true}
-        clearTextOnFocus={true}
-        style={styles.inputStyle}
-        autoCorrect={false}
-        inputContainerStyle={styles.inputContainerStyle}
-        containerStyle={styles.containerStyle}
-        value={user}
-        onChangeText={setUser}
-      />
-    </>
+    <Input
+      placeholder={placeholder}
+      textContentType={textContentType}
+      style={styles.inputStyle}
+      inputContainerStyle={styles.inputContainerStyle}
+      containerStyle={styles.containerStyle}
+      value={value}
+      onChangeText={setValue}
+    />
   );
 }
 

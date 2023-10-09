@@ -1,7 +1,6 @@
-import { useRouter } from "expo-router";
 import React from "react";
 import { Image, StyleSheet } from "react-native";
-import logo from "../../../../assets/icon.png";
+import logo from "../../../assets/icon.png";
 
 interface LogoProps {
   height?: number;
@@ -10,10 +9,7 @@ interface LogoProps {
 
 export default function Logo({ height = 104, width = 104 }: LogoProps) {
   return (
-    <>
-      {" "}
-      <Image style={styles.logo} source={logo} width={width} height={height} />;
-    </>
+    <Image style={styles.logo} source={logo} width={width} height={height} />
   );
 }
 

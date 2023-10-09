@@ -5,6 +5,8 @@ import { StatusBar } from "expo-status-bar";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import Logo from "../components/Logo";
+import InputComponent from "./components/Input";
+import ButtonComponent from "./components/Button";
 
 export default function Login() {
   const router = useRouter();
@@ -60,19 +62,11 @@ export default function Login() {
                       <Text style={s.error}>{errors[0]}</Text>
                     )}
                   </View>
-                  <Input
-                    placeholder={"Usuário"}
-                    placeholderTextColor="#ccc"
-                    textContentType="username"
-                    allowFontScaling={true}
-                    clearTextOnFocus={true}
-                    autoCapitalize="none"
-                    style={s.customInput}
-                    autoCorrect={false}
-                    inputContainerStyle={s.inputContainerStyle}
-                    containerStyle={s.containerStyle}
+                  <InputComponent
+                    placeholder='Usuário'
+                    textContentType='username'
                     value={user}
-                    onChangeText={setUser}
+                    setValue={setUser}
                   />
                 </View>
                 <View style={s.input}>
@@ -82,31 +76,22 @@ export default function Login() {
                       <Text style={s.error}>{errors[1]}</Text>
                     )}
                   </View>
-                  <Input
-                    placeholder="Senha"
-                    placeholderTextColor="#ccc"
-                    textContentType="password"
-                    allowFontScaling={true}
-                    clearTextOnFocus={true}
-                    autoCapitalize="none"
-                    style={s.customInput}
-                    autoCorrect={false}
-                    inputContainerStyle={s.inputContainerStyle}
-                    containerStyle={s.containerStyle}
-                    secureTextEntry={true}
+                  <InputComponent
+                    placeholder='Senha'
+                    textContentType='password'
                     value={password}
-                    onChangeText={setPassword}
+                    setValue={setPassword}
                   />
                 </View>
               </View>
               <View style={s.sumbites}>
-                <Button
-                  onPressIn={handleSubmit}
-                  radius="md"
-                  color="black"
-                  size="lg"
-                  title="Entrar"
-                ></Button>
+                <ButtonComponent
+                  onPress={handleSubmit}
+                  size='md'
+                  color='black'
+                  buttonStyle='solid'
+                  title="Continuar"
+                />
               </View>
             </View>
           </View>
@@ -114,16 +99,17 @@ export default function Login() {
         <View style={s.footer}>
           <Pressable style={s.register}>
             <Button
-              type="outline"
-              radius="md"
-              color="warn"
-              size="lg"
-              title="Registrar-se"
+              type='outline'
+              radius='md'
+              color='warn'
+              size='lg'
+              title='Registrar-se'
               titleStyle={{ color: "black" }}
               buttonStyle={{
                 borderColor: "black",
                 borderWidth: 1,
               }}
+              onPressIn={() => router.push("/register")}
             ></Button>
           </Pressable>
           <Text style={{ color: "#ccc", fontSize: 16 }}>Lutherik</Text>
@@ -195,20 +181,8 @@ const s = StyleSheet.create({
     flexDirection: "column",
     width: "100%",
   },
-  customInput: {
-    top: 12,
-    fontSize: 20,
-    paddingLeft: 8,
-  },
   input: {
     gap: 10,
-  },
-  inputContainerStyle: {
-    borderBottomWidth: 0,
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 0,
-    paddingBottom: 0,
   },
   containerStyle: {
     backgroundColor: "white",
