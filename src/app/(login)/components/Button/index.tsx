@@ -1,14 +1,14 @@
 import { Button } from "@rneui/base";
-import { StyleProp, StyleSheet, TextStyle, ViewStyle } from "react-native";
 
 interface ButtonProps {
   onPress: string | any;
   title: string;
   color: string;
-  buttonStyle: string | { borderWidth: number };
   type: "solid" | "outline";
   radius: "md" | "sm" | "lg";
   size: "md" | "sm" | "lg";
+  buttonStyle: any;
+  titleStyle: any;
 }
 
 ButtonComponent.defaultProps = {
@@ -16,16 +16,7 @@ ButtonComponent.defaultProps = {
   size: "lg",
   color: "black",
   type: "solid",
-};
-
-const buttonStyleConverter = (
-  buttonStyle: string | { borderWidth: number }
-): StyleProp<ViewStyle> => {
-  if (typeof buttonStyle === "string") {
-    return { borderWidth: parseInt(buttonStyle, 10)};
-  } else {
-    return { borderWidth: buttonStyle.borderWidth };
-  }
+  titleStyle: "",
 };
 
 export default function ButtonComponent({
@@ -36,8 +27,8 @@ export default function ButtonComponent({
   color,
   type,
   buttonStyle,
+  titleStyle,
 }: ButtonProps) {
-  const buttonStyleProp = buttonStyleConverter(buttonStyle);
   return (
     <Button
       onPressIn={onPress}
@@ -46,17 +37,8 @@ export default function ButtonComponent({
       size={size}
       title={title}
       type={type}
-      buttonStyle={buttonStyleProp}
+      buttonStyle={buttonStyle}
+      titleStyle={titleStyle}
     />
   );
 }
-
-const styles = StyleSheet.create({
-  solid: {
-    borderWidth: 0,
-  },
-  outline: {
-    borderWidth: 1,
-    borderColor: "black",
-  },
-});

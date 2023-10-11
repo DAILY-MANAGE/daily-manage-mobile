@@ -1,5 +1,5 @@
 import { View, StyleSheet, Image, Pressable } from "react-native";
-import { Button, Input, Text } from "@rneui/base";
+import { Text } from "@rneui/base";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { useRouter } from "expo-router";
@@ -43,23 +43,23 @@ export default function Login() {
   return (
     <SafeAreaView>
       <StatusBar />
-      <View style={s.container}>
-        <View style={s.logoForm}>
+      <View style={styles.container}>
+        <View style={styles.logoForm}>
           <Logo />
-          <View style={s.formContainer}>
-            <View style={s.text}>
+          <View style={styles.formContainer}>
+            <View style={styles.text}>
               <Text style={{ fontWeight: "bold", fontSize: 24 }}>
                 Bem-vindo de volta!
               </Text>
               <Text style={{ fontSize: 16 }}>Entre na sua conta</Text>
             </View>
-            <View style={s.form}>
-              <View style={s.inputs}>
-                <View style={s.input}>
-                  <View style={s.labelView}>
-                    <Text style={s.label}>Usuário</Text>
+            <View style={styles.form}>
+              <View style={styles.inputs}>
+                <View style={styles.input}>
+                  <View style={styles.labelView}>
+                    <Text style={styles.label}>Usuário</Text>
                     {errors.length > 0 && user === "" && (
-                      <Text style={s.error}>{errors[0]}</Text>
+                      <Text style={styles.error}>{errors[0]}</Text>
                     )}
                   </View>
                   <InputComponent
@@ -69,11 +69,11 @@ export default function Login() {
                     setValue={setUser}
                   />
                 </View>
-                <View style={s.input}>
-                  <View style={s.labelView}>
-                    <Text style={s.label}>Senha</Text>
+                <View style={styles.input}>
+                  <View style={styles.labelView}>
+                    <Text style={styles.label}>Senha</Text>
                     {errors.length > 0 && password === "" && (
-                      <Text style={s.error}>{errors[1]}</Text>
+                      <Text style={styles.error}>{errors[1]}</Text>
                     )}
                   </View>
                   <InputComponent
@@ -84,33 +84,28 @@ export default function Login() {
                   />
                 </View>
               </View>
-              <View style={s.sumbites}>
+              <View style={styles.sumbites}>
                 <ButtonComponent
                   onPress={handleSubmit}
-                  size='md'
-                  color='black'
-                  buttonStyle='solid'
-                  title="Continuar"
+                  title='Continuar'
+                  buttonStyle={{}}
                 />
               </View>
             </View>
           </View>
         </View>
-        <View style={s.footer}>
-          <Pressable style={s.register}>
-            <Button
+        <View style={styles.footer}>
+          <Pressable style={styles.registerButton}>
+            <ButtonComponent
+              onPress={() => router.push("/register")}
+              title='Cadastrar-se'
               type='outline'
-              radius='md'
-              color='warn'
-              size='lg'
-              title='Registrar-se'
               titleStyle={{ color: "black" }}
               buttonStyle={{
                 borderColor: "black",
                 borderWidth: 1,
               }}
-              onPressIn={() => router.push("/register")}
-            ></Button>
+            />
           </Pressable>
           <Text style={{ color: "#ccc", fontSize: 16 }}>Lutherik</Text>
         </View>
@@ -119,7 +114,7 @@ export default function Login() {
   );
 }
 
-const s = StyleSheet.create({
+const styles = StyleSheet.create({
   logo: {
     width: 104,
     height: 104,
@@ -157,7 +152,7 @@ const s = StyleSheet.create({
     alignItems: "center",
     paddingBottom: 8,
   },
-  register: {
+  registerButton: {
     width: "100%",
     height: "auto",
   },
@@ -165,7 +160,6 @@ const s = StyleSheet.create({
     width: "100%",
     flexDirection: "column",
   },
-
   container: {
     justifyContent: "space-between",
     alignItems: "center",
