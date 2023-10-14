@@ -3,12 +3,9 @@ import { Stack } from "expo-router";
 export default function AppLayout() {
   return (
     <Stack>
-      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      <Stack.Screen name="(login)" options={{ headerShown: false }} />
-      <Stack.Screen
-        name="createForm"
-        options={{ headerShown: false, presentation: "modal" }}
-      />
+      <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+      <Stack.Screen name="equipes" options={{ headerShown: false }} />
+      <Stack.Screen name="criarEquipe" options={{ headerShown: false }} />
     </Stack>
   );
 }
