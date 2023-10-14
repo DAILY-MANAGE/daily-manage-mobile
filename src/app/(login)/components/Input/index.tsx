@@ -1,52 +1,52 @@
-import React, { useState } from "react";
-import { Input } from "@rneui/base";
-import { StyleSheet } from "react-native";
-
+import { StyleSheet, View, Text } from "react-native";
+import InputField from "./field";
 interface InputProps {
   placeholder?: string;
-  textContentType: any;
+  textContentType?: any;
   value: string;
   setValue: string | any;
+  label?: string;
+  secureTextEntry?: boolean;
 }
 
 export default function InputComponent({
-  placeholder = "Usuário",
-  textContentType = { username: "password" },
+  placeholder = "Placeholder",
+  textContentType,
   value,
-  setValue
+  setValue,
+  label,
+  secureTextEntry,
 }: InputProps) {
   return (
-    <Input
-      placeholder={placeholder}
-      textContentType={textContentType}
-      style={styles.inputStyle}
-      inputContainerStyle={styles.inputContainerStyle}
-      containerStyle={styles.containerStyle}
-      value={value}
-      onChangeText={setValue}
-    />
+    <View style={styles.input}>
+      <View style={styles.labelView}>
+        <Text style={styles.label}>{label}</Text>
+      </View>
+      <InputField
+        placeholder={placeholder}
+        textContentType={textContentType}
+        value={value}
+        setValue={setValue}
+        secureTextEntry={secureTextEntry}
+      />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  inputStyle: {
-    top: 12,
+  input: {
+    gap: 10,
+  },
+  labelView: {
+    flexDirection: "row",
+    gap: 8,
+  },
+  label: {
     fontSize: 20,
-    paddingLeft: 8,
+    fontWeight: "700",
   },
-  inputContainerStyle: {
-    borderBottomWidth: 0,
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 0,
-    paddingBottom: 0,
-  },
-  containerStyle: {
-    backgroundColor: "white",
-    borderRadius: 12,
-    borderColor: "black",
-    borderWidth: 1,
-    shadowColor: "black",
-    elevation: 2,
+  error: {
+    color: "red",
+    fontSize: 16,
   },
 });

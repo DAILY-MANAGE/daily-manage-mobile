@@ -1,4 +1,4 @@
-import { View, StyleSheet, Image, Pressable } from "react-native";
+import { View, StyleSheet, Pressable } from "react-native";
 import { Text } from "@rneui/base";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
@@ -10,33 +10,10 @@ import ButtonComponent from "./components/Button";
 
 export default function Login() {
   const router = useRouter();
-  const [user, setUser] = useState("");
-  const [password, setPassword] = useState("");
-  const [errors, setErrors] = useState([]);
-
-  const validateFields = () => {
-    const errors = [];
-
-    if (user === "") {
-      errors.push("*");
-    }
-
-    if (password === "") {
-      errors.push("*");
-    }
-
-    return {
-      valid: errors.length === 0,
-      errors,
-    };
-  };
+  const [usuario, setUsuario] = useState("");
+  const [senha, setSenha] = useState("");
 
   const handleSubmit = () => {
-    const validate = validateFields();
-    if (!validate.valid) {
-      setErrors(validate.errors);
-      return;
-    }
     router.replace("(tabs)");
   };
 
@@ -45,7 +22,7 @@ export default function Login() {
       <StatusBar />
       <View style={styles.container}>
         <View style={styles.logoForm}>
-          <Logo />
+          <Logo style={styles.logo}/>
           <View style={styles.formContainer}>
             <View style={styles.text}>
               <Text style={{ fontWeight: "bold", fontSize: 24 }}>
@@ -55,40 +32,25 @@ export default function Login() {
             </View>
             <View style={styles.form}>
               <View style={styles.inputs}>
-                <View style={styles.input}>
-                  <View style={styles.labelView}>
-                    <Text style={styles.label}>Usuário</Text>
-                    {errors.length > 0 && user === "" && (
-                      <Text style={styles.error}>{errors[0]}</Text>
-                    )}
-                  </View>
-                  <InputComponent
-                    placeholder='Usuário'
-                    textContentType='username'
-                    value={user}
-                    setValue={setUser}
-                  />
-                </View>
-                <View style={styles.input}>
-                  <View style={styles.labelView}>
-                    <Text style={styles.label}>Senha</Text>
-                    {errors.length > 0 && password === "" && (
-                      <Text style={styles.error}>{errors[1]}</Text>
-                    )}
-                  </View>
-                  <InputComponent
-                    placeholder='Senha'
-                    textContentType='password'
-                    value={password}
-                    setValue={setPassword}
-                  />
-                </View>
+                <InputComponent
+                  placeholder='Usuário'
+                  label='Usuário'
+                  value={usuario}
+                  setValue={setUsuario}
+                  textContentType='username'
+                />
+                <InputComponent
+                  placeholder='Usuário'
+                  label='Senha'
+                  value={senha}
+                  setValue={setSenha}
+                  textContentType='password'
+                />
               </View>
               <View style={styles.sumbites}>
                 <ButtonComponent
                   onPress={handleSubmit}
                   title='Continuar'
-                  buttonStyle={{}}
                 />
               </View>
             </View>
@@ -115,6 +77,13 @@ export default function Login() {
 }
 
 const styles = StyleSheet.create({
+  inputs: {
+    gap: 16,
+    height: "auto",
+    paddingVertical: 16,
+    flexDirection: "column",
+    width: "100%",
+  },
   logo: {
     width: 104,
     height: 104,
@@ -127,15 +96,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 8,
   },
-  error: {
-    color: "red",
-    fontSize: 16,
-  },
   logoForm: {
     gap: 32,
     width: "100%",
     justifyContent: "center",
     alignItems: "center",
+    height: "auto"
   },
   formContainer: {
     width: "100%",
@@ -150,7 +116,6 @@ const styles = StyleSheet.create({
     width: "100%",
     flexDirection: "column",
     alignItems: "center",
-    paddingBottom: 8,
   },
   registerButton: {
     width: "100%",
@@ -159,21 +124,16 @@ const styles = StyleSheet.create({
   form: {
     width: "100%",
     flexDirection: "column",
+    height: "auto",
   },
   container: {
+    paddingBottom: 8,
     justifyContent: "space-between",
     alignItems: "center",
     height: "100%",
     paddingHorizontal: 32,
-    paddingTop: 64,
+    paddingTop: 32,
     flexDirection: "column",
-  },
-  inputs: {
-    gap: 16,
-    height: "auto",
-    paddingVertical: 16,
-    flexDirection: "column",
-    width: "100%",
   },
   input: {
     gap: 10,

@@ -4,7 +4,7 @@ export default function LoginLayout() {
  return( 
    <Stack>
      <Stack.Screen name="index" options={{ headerShown: false }}/>
-     <Stack.Screen name="register" options={{ title: 'Cadastro' }}/>
+     <Stack.Screen name="register" options={{ title: '', headerStyle: { backgroundColor: "#FAFAFA"}, headerShadowVisible: false }}/>
     </Stack>
  );
 }

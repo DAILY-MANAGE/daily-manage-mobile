@@ -3,12 +3,12 @@ import { Button } from "@rneui/base";
 interface ButtonProps {
   onPress: string | any;
   title: string;
-  color: string;
-  type: "solid" | "outline";
-  radius: "md" | "sm" | "lg";
-  size: "md" | "sm" | "lg";
-  buttonStyle: any;
-  titleStyle: any;
+  color?: string;
+  type?: "solid" | "outline";
+  radius?: "md" | "sm" | "lg";
+  size?: "md" | "sm" | "lg";
+  buttonStyle?: any;
+  titleStyle?: any;
 }
 
 ButtonComponent.defaultProps = {
@@ -17,6 +17,7 @@ ButtonComponent.defaultProps = {
   color: "black",
   type: "solid",
   titleStyle: "",
+  buttonStyle: "",
 };
 
 export default function ButtonComponent({
