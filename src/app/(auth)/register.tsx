@@ -1,4 +1,4 @@
-import { View, StyleSheet, Pressable, Text } from "react-native";
+import { View, StyleSheet, Pressable, Text, ScrollView } from "react-native";
 import InputComponent from "./components/Input";
 import { useState } from "react";
 import ButtonComponent from "../components/Button";
@@ -8,16 +8,17 @@ import { CheckBox } from "@rneui/themed";
 import axios from "axios";
 import { baseURL } from "../../utils/baseURL";
 
-interface DadosRegistro {
+export interface DadosRegistro {
   nome: string;
   email: string;
   usuario: string;
   senha: string;
-  confirmarSenha: string;
+  confirmarSenha?: string;
 }
 
 const axiosInstance = axios.create({
   baseURL: baseURL,
+  method: "POST",
   headers: { "Content-Type": "application/json" },
 });
 
@@ -40,19 +41,17 @@ export default function Register({
 
   const toggleCheckbox = () => {
     setChecked(!checked);
-    /*     setConfirmPassword()
-     */
   };
 
   const handleRegister = async () => {
-    setIsLoading(true);
     try {
       const response = await axiosInstance.post(`${baseURL}/auth/register`, {
-        name: nome,
-        mail: email,
-        user: usuario,
-        password: senha,
+        usuario: user,
+        senha: password,
+        nome: name,  
+        email: mail, 
       });
+      console.log(response)
       if (response.status === 201) {
         console.log(`Registro realizado: ${JSON.stringify(response.data)}`);
         setIsLoading(false);
@@ -62,7 +61,6 @@ export default function Register({
           `Erro ao registrar-se: ${JSON.stringify(response.data)}`
         );
       }
-      setIsLoading(false);
     } catch (error) {
       console.log(error);
       setIsLoading(false);
@@ -73,8 +71,8 @@ export default function Register({
     <View style={styles.container}>
       <View style={styles.container__logo}>
         <View style={styles.logo__container}>
-          {/*           <Logo style={styles.logo} />
-          <Text style={styles.logo__title}>Cadastre-se</Text> */}
+          {/* <Logo style={styles.logo} />
+            <Text style={styles.logo__title}>Cadastre-se</Text> */}
         </View>
         <View style={styles.inputs}>
           <InputComponent

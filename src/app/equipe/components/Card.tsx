@@ -6,33 +6,29 @@ interface CardProps {
  title: string,
 }
 
-export default function CardComponent({ content, title }: CardProps) {
+export default function CardComponent({ title }: CardProps) {
   return (
     <Card containerStyle={styles.containerStyle}>
       <Card.Title style={styles.title}>{title}</Card.Title>
       <Card.Divider />
-      <View style={styles.content}>
-        <Text>{content}</Text>
-      </View>
     </Card>
   );
 }
 
 const styles = StyleSheet.create({
  containerStyle: {
+  flex: 1,
   margin: 0, 
   width: "100%",
+  height: "auto",
   borderRadius: 8,
   borderColor: "black",
   borderWidth: 1.5,
-  backgroundColor: "#FAFAFA"
+  backgroundColor: "#FAFAFA"  
  },
  title: {
   alignSelf: "flex-start",
   fontSize: 20,
   color: "black"
  },
- content: {
-
- }
 });

@@ -13,7 +13,11 @@ import { baseURL } from "../../utils/baseURL";
 
 const axiosInstance = axios.create({
   baseURL: baseURL,
-  headers: { "Content-Type": "application/json" },
+  headers: {
+    "Content-Type": "application/json",
+    Authorization:
+      "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJkYWlseS1tYW5hZ2UiLCJzdWIiOiJhZG1pbiIsImV4cCI6MTY5NzUwOTI5NX0.ZkmzEdzBdFKHBpXQN0TFw2VLpHx3qlrvRgXMXh9vEa0",
+  },
 });
 
 interface DadosLogin {
@@ -36,14 +40,12 @@ export default function Login({
   const [checked, setChecked] = useState(false);
 
   const handleLogin = async () => {
-    setIsLoading(true);
     try {
-      const response = await axiosInstance.post(`${URL}/auth/login`, {
-        user: usuario,
-        password: senha,
-        rememberPassword: lembrarSenha,
+      const response = await axiosInstance.post(`${baseURL}/auth/login`, {
+        usuario: user,
+        senha: password,
       });
-      if (response.status === 201) {
+      if (response.status === 200) {
         console.log(`Login realizado: ${JSON.stringify(response.data)}`);
         setIsLoading(false);
         router.push("equipe");
@@ -51,7 +53,7 @@ export default function Login({
         throw new Error(`Erro ao logar-se: ${JSON.stringify(response.data)}`);
       }
     } catch (error) {
-      alert("Ocorreu um erro inesperado!");
+      console.log(error);
       setIsLoading(false);
     }
   };

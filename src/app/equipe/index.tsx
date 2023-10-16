@@ -1,36 +1,37 @@
 import { View, StyleSheet } from "react-native";
 import { Link } from "expo-router";
-import CardComponent from "./components/Card";
 import OverlayComponent from "./components/Overlay";
 import { useState } from "react";
 import axios from "axios";
 import { baseURL } from "../../utils/baseURL";
+import CardEquipes from "./components/Equipes";
 
-interface EquipeData {
+export interface EquipeData {
   id: number;
   nome: string;
 }
 
 const axiosInstance = axios.create({
   baseURL: baseURL,
-  headers: { "Content-Type": "application/json" },
+  headers: {
+    "Content-Type": "application/json",
+    Authorization:
+      "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJkYWlseS1tYW5hZ2UiLCJzdWIiOiJhZG1pbiIsImV4cCI6MTY5NzUwOTI5NX0.ZkmzEdzBdFKHBpXQN0TFw2VLpHx3qlrvRgXMXh9vEa0",
+  },
 });
 
 export default function Equipes({ id, nome }: EquipeData) {
-  const [equipe, setEquipe] = useState<EquipeData[]>([]);
   const [nomeEquipe, setNomeEquipe] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const criarEquipe = async () => {
     setIsLoading(true);
     try {
-      const response = await axiosInstance.post(`${URL}/equipe/create`, {
-        id: id,
-        nomeEquipe: nome,
+      const response = await axiosInstance.post(`${baseURL}/equipe/create`, {
+        nome: nomeEquipe,
       });
       if (response.status === 201) {
         console.log(`Equipe criada: ${JSON.stringify(response.data)}`);
-        setEquipe(response.data);
         setIsLoading(false);
       } else {
         throw new Error(
@@ -38,7 +39,7 @@ export default function Equipes({ id, nome }: EquipeData) {
         );
       }
     } catch (error) {
-      alert("Ocorreu um erro inesperado!");
+      console.log(error);
       setIsLoading(false);
     }
   };
@@ -51,17 +52,9 @@ export default function Equipes({ id, nome }: EquipeData) {
         onPress={criarEquipe}
         editable={!isLoading}
       />
-      <Link
-        style={styles.cards}
-        href={{
-          pathname: "http://localhost:8080/equipe/[id]/",
-          params: { id: id },
-        }}
-      >
-        {equipe.map((equipe) => (
-          <CardComponent key={equipe.id} title={equipe.nome} />
-        ))}
-      </Link>
+      <View style={styles.cards}>
+        <CardEquipes />
+      </View>
     </View>
   );
 }
@@ -69,6 +62,8 @@ export default function Equipes({ id, nome }: EquipeData) {
 const styles = StyleSheet.create({
   cards: {
     gap: 16,
+    width: "100%",
+    height: "auto",
   },
   container: {
     height: "100%",
