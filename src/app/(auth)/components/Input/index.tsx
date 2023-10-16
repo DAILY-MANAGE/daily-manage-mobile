@@ -7,6 +7,7 @@ interface InputProps {
   setValue: string | any;
   label?: string;
   secureTextEntry?: boolean;
+  editable?: boolean;
 }
 
 export default function InputComponent({
@@ -16,6 +17,7 @@ export default function InputComponent({
   setValue,
   label,
   secureTextEntry,
+  editable,
 }: InputProps) {
   return (
     <View style={styles.input}>
@@ -28,6 +30,7 @@ export default function InputComponent({
         value={value}
         setValue={setValue}
         secureTextEntry={secureTextEntry}
+        editable={editable}
       />
     </View>
   );
