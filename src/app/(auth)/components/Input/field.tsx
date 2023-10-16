@@ -8,6 +8,7 @@ interface InputProps {
   value: string;
   setValue: string | any;
   secureTextEntry?: boolean;
+  editable?: boolean;
 }
 
 export default function InputField({
@@ -15,7 +16,8 @@ export default function InputField({
   textContentType,
   value,
   setValue,
-  secureTextEntry
+  secureTextEntry,
+  editable
 }: InputProps) {
   return (
     <Input
@@ -27,6 +29,7 @@ export default function InputField({
       value={value}
       onChangeText={setValue}
       secureTextEntry={secureTextEntry}
+      editable={editable}
     />
   );
 }
