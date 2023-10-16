@@ -9,9 +9,10 @@ import InputComponent from "./components/Input";
 import ButtonComponent from "../components/Button";
 import axios from "axios";
 import { CheckBox } from "@rneui/themed";
+import { baseURL } from "../../utils/baseURL";
 
 const axiosInstance = axios.create({
-  baseURL: "http://localhost:8080/",
+  baseURL: baseURL,
   headers: { "Content-Type": "application/json" },
 });
 
@@ -27,7 +28,7 @@ export default function Login({
   lembrarSenha,
 }: DadosLogin) {
   const router = useRouter();
-  const [loading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [user, setUser] = useState("");
   const [password, setPassword] = useState("");
   const [rememberPassword, setRememberPassword] =
@@ -45,7 +46,7 @@ export default function Login({
       if (response.status === 201) {
         console.log(`Login realizado: ${JSON.stringify(response.data)}`);
         setIsLoading(false);
-        router.push('equipe')
+        router.push("equipe");
       } else {
         throw new Error(`Erro ao logar-se: ${JSON.stringify(response.data)}`);
       }
@@ -90,14 +91,14 @@ export default function Login({
                   textContentType='password'
                 />
                 <CheckBox
-                  containerStyle={styles.containerStyle}
+                  containerStyle={{ backgroundColor: "white", padding: 0 }}
                   checked={checked}
                   onPress={toggleCheckbox}
                   iconType='material-community'
                   checkedIcon='checkbox-marked'
                   uncheckedIcon='checkbox-blank-outline'
                   checkedColor='black'
-                  title='Li e aceito os Termos de Uso'
+                  title='Lembrar senha'
                   textStyle={{ fontWeight: "normal" }}
                 />
               </View>
@@ -185,17 +186,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32,
     paddingTop: 32,
     flexDirection: "column",
+    backgroundColor: "white",
   },
   input: {
     gap: 10,
-  },
-  containerStyle: {
-    backgroundColor: "white",
-    borderRadius: 12,
-    borderColor: "black",
-    borderWidth: 1,
-    shadowColor: "black",
-    elevation: 2,
   },
   text: {
     justifyContent: "flex-start",

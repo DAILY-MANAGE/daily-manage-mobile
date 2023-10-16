@@ -5,61 +5,113 @@ import ButtonComponent from "../components/Button";
 import { useRouter } from "expo-router";
 import Logo from "../components/Logo";
 import { CheckBox } from "@rneui/themed";
+import axios from "axios";
+import { baseURL } from "../../utils/baseURL";
 
-export default function Register() {
-  const [usuario, setUsuario] = useState("");
-  const [email, setEmail] = useState("");
-  const [senha, setSenha] = useState("");
-  const [nome, setNome] = useState("");
-  const [confirmarSenha, setConfirmarSenha] = useState("");
+interface DadosRegistro {
+  nome: string;
+  email: string;
+  usuario: string;
+  senha: string;
+  confirmarSenha: string;
+}
+
+const axiosInstance = axios.create({
+  baseURL: baseURL,
+  headers: { "Content-Type": "application/json" },
+});
+
+export default function Register({
+  nome = "",
+  email = "",
+  usuario = "",
+  senha = "",
+  confirmarSenha = "",
+}: DadosRegistro) {
   const [checked, setChecked] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [name, setName] = useState("");
+  const [mail, setMail] = useState("");
+  const [user, setUser] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   const router = useRouter();
-  const toggleCheckbox = () => setChecked(!checked);
+
+  const toggleCheckbox = () => {
+    setChecked(!checked);
+    /*     setConfirmPassword()
+     */
+  };
+
+  const handleRegister = async () => {
+    setIsLoading(true);
+    try {
+      const response = await axiosInstance.post(`${baseURL}/auth/register`, {
+        name: nome,
+        mail: email,
+        user: usuario,
+        password: senha,
+      });
+      if (response.status === 201) {
+        console.log(`Registro realizado: ${JSON.stringify(response.data)}`);
+        setIsLoading(false);
+        router.push("(auth)");
+      } else {
+        throw new Error(
+          `Erro ao registrar-se: ${JSON.stringify(response.data)}`
+        );
+      }
+      setIsLoading(false);
+    } catch (error) {
+      console.log(error);
+      setIsLoading(false);
+    }
+  };
 
   return (
     <View style={styles.container}>
       <View style={styles.container__logo}>
         <View style={styles.logo__container}>
-          <Logo style={styles.logo} />
-          <Text style={styles.logo__title}>Cadastre-se</Text>
+          {/*           <Logo style={styles.logo} />
+          <Text style={styles.logo__title}>Cadastre-se</Text> */}
         </View>
         <View style={styles.inputs}>
           <InputComponent
             label='Nome Completo'
             placeholder='Nome Completo'
             textContentType='name'
-            value={nome}
-            setValue={setNome}
+            value={name}
+            setValue={setName}
           />
           <InputComponent
             label='Usuário'
             placeholder='Usuário'
             textContentType='username'
-            value={usuario}
-            setValue={setUsuario}
+            value={user}
+            setValue={setUser}
           />
           <InputComponent
             label='E-mail'
             placeholder='E-mail'
             textContentType='emailAddress'
-            value={email}
-            setValue={setEmail}
+            value={mail}
+            setValue={setMail}
           />
           <InputComponent
             label='Senha'
             placeholder='Senha'
             textContentType='password'
-            value={senha}
-            setValue={setSenha}
+            value={password}
+            setValue={setPassword}
             secureTextEntry={true}
           />
           <InputComponent
             label='Confirmar Senha'
             placeholder='Confirmar Senha'
             textContentType='password'
-            value={confirmarSenha}
-            setValue={setConfirmarSenha}
+            value={confirmPassword}
+            setValue={setConfirmPassword}
             secureTextEntry={true}
           />
         </View>
@@ -76,7 +128,7 @@ export default function Register() {
         textStyle={{ fontWeight: "normal" }}
       />
       <Pressable style={styles.button}>
-        <ButtonComponent onPress={() => router.back()} title='Salvar' />
+        <ButtonComponent onPress={handleRegister} title='Salvar' />
       </Pressable>
     </View>
   );
