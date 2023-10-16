@@ -7,14 +7,57 @@ import React, { useState } from "react";
 import Logo from "../components/Logo";
 import InputComponent from "./components/Input";
 import ButtonComponent from "../components/Button";
+import axios from "axios";
+import { CheckBox } from "@rneui/themed";
 
-export default function Login() {
+const axiosInstance = axios.create({
+  baseURL: "http://localhost:8080/",
+  headers: { "Content-Type": "application/json" },
+});
+
+interface DadosLogin {
+  usuario: string;
+  senha: string;
+  lembrarSenha?: boolean;
+}
+
+export default function Login({
+  usuario = "",
+  senha = "",
+  lembrarSenha,
+}: DadosLogin) {
   const router = useRouter();
-  const [usuario, setUsuario] = useState("");
-  const [senha, setSenha] = useState("");
+  const [loading, setIsLoading] = useState(false);
+  const [user, setUser] = useState("");
+  const [password, setPassword] = useState("");
+  const [rememberPassword, setRememberPassword] =
+    useState<React.SetStateAction<boolean>>(false);
+  const [checked, setChecked] = useState(false);
 
-  const handleSubmit = () => {
-    router.replace("equipes");
+  const handleLogin = async () => {
+    setIsLoading(true);
+    try {
+      const response = await axiosInstance.post(`${URL}/auth/login`, {
+        user: usuario,
+        password: senha,
+        rememberPassword: lembrarSenha,
+      });
+      if (response.status === 201) {
+        console.log(`Login realizado: ${JSON.stringify(response.data)}`);
+        setIsLoading(false);
+        router.push('equipe')
+      } else {
+        throw new Error(`Erro ao logar-se: ${JSON.stringify(response.data)}`);
+      }
+    } catch (error) {
+      alert("Ocorreu um erro inesperado!");
+      setIsLoading(false);
+    }
+  };
+
+  const toggleCheckbox = () => {
+    setChecked(!checked);
+    setRememberPassword(checked);
   };
 
   return (
@@ -22,7 +65,7 @@ export default function Login() {
       <StatusBar />
       <View style={styles.container}>
         <View style={styles.logoForm}>
-          <Logo style={styles.logo}/>
+          <Logo style={styles.logo} />
           <View style={styles.formContainer}>
             <View style={styles.text}>
               <Text style={{ fontWeight: "bold", fontSize: 24 }}>
@@ -33,25 +76,33 @@ export default function Login() {
             <View style={styles.form}>
               <View style={styles.inputs}>
                 <InputComponent
-                  placeholder='Usuário'
+                  placeholder='Digite seu nome de usuário'
                   label='Usuário'
-                  value={usuario}
-                  setValue={setUsuario}
+                  value={user}
+                  setValue={setUser}
                   textContentType='username'
                 />
                 <InputComponent
-                  placeholder='Usuário'
+                  placeholder='Digite sua senha'
                   label='Senha'
-                  value={senha}
-                  setValue={setSenha}
+                  value={password}
+                  setValue={setPassword}
                   textContentType='password'
+                />
+                <CheckBox
+                  containerStyle={styles.containerStyle}
+                  checked={checked}
+                  onPress={toggleCheckbox}
+                  iconType='material-community'
+                  checkedIcon='checkbox-marked'
+                  uncheckedIcon='checkbox-blank-outline'
+                  checkedColor='black'
+                  title='Li e aceito os Termos de Uso'
+                  textStyle={{ fontWeight: "normal" }}
                 />
               </View>
               <View style={styles.sumbites}>
-                <ButtonComponent
-                  onPress={handleSubmit}
-                  title='Continuar'
-                />
+                <ButtonComponent onPress={handleLogin} title='Continuar' />
               </View>
             </View>
           </View>
@@ -101,7 +152,7 @@ const styles = StyleSheet.create({
     width: "100%",
     justifyContent: "center",
     alignItems: "center",
-    height: "auto"
+    height: "auto",
   },
   formContainer: {
     width: "100%",
