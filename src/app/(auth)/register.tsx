@@ -15,11 +15,6 @@ export default function Register() {
   const [checked, setChecked] = useState(false);
 
   const router = useRouter();
-
-  const handleSubmit = () => {
-    router.canGoBack();
-  };
-
   const toggleCheckbox = () => setChecked(!checked);
 
   return (
@@ -81,7 +76,7 @@ export default function Register() {
         textStyle={{ fontWeight: "normal" }}
       />
       <Pressable style={styles.button}>
-        <ButtonComponent onPress={handleSubmit} title='Salvar' />
+        <ButtonComponent onPress={() => router.back()} title='Salvar' />
       </Pressable>
     </View>
   );
