@@ -7,30 +7,18 @@ import React, { useState } from "react";
 import Logo from "../components/Logo";
 import InputComponent from "./components/Input";
 import ButtonComponent from "../components/Button";
-import axios from "axios";
 import { CheckBox } from "@rneui/themed";
 import { baseURL } from "../../utils/baseURL";
+import useAxios from "../../utils/useAxios";
 
-const axiosInstance = axios.create({
-  baseURL: baseURL,
-  headers: {
-    "Content-Type": "application/json",
-    Authorization:
-      "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJkYWlseS1tYW5hZ2UiLCJzdWIiOiJhZG1pbiIsImV4cCI6MTY5NzUwOTI5NX0.ZkmzEdzBdFKHBpXQN0TFw2VLpHx3qlrvRgXMXh9vEa0",
-  },
-});
-
+const axiosInstance = useAxios();
 interface DadosLogin {
   usuario: string;
   senha: string;
   lembrarSenha?: boolean;
 }
 
-export default function Login({
-  usuario = "",
-  senha = "",
-  lembrarSenha,
-}: DadosLogin) {
+export default function Login() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [user, setUser] = useState("");
@@ -38,8 +26,10 @@ export default function Login({
   const [rememberPassword, setRememberPassword] =
     useState<React.SetStateAction<boolean>>(false);
   const [checked, setChecked] = useState(false);
+  const [token, setToken] = useState("");
 
   const handleLogin = async () => {
+    setIsLoading(true);
     try {
       const response = await axiosInstance.post(`${baseURL}/auth/login`, {
         usuario: user,
@@ -48,6 +38,7 @@ export default function Login({
       if (response.status === 200) {
         console.log(`Login realizado: ${JSON.stringify(response.data)}`);
         setIsLoading(false);
+        setToken(response.data.token);
         router.push("equipe");
       } else {
         throw new Error(`Erro ao logar-se: ${JSON.stringify(response.data)}`);

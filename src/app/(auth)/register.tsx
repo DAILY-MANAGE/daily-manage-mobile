@@ -5,8 +5,8 @@ import ButtonComponent from "../components/Button";
 import { useRouter } from "expo-router";
 import Logo from "../components/Logo";
 import { CheckBox } from "@rneui/themed";
-import axios from "axios";
 import { baseURL } from "../../utils/baseURL";
+import useAxios from "../../utils/useAxios";
 
 export interface DadosRegistro {
   nome: string;
@@ -16,19 +16,9 @@ export interface DadosRegistro {
   confirmarSenha?: string;
 }
 
-const axiosInstance = axios.create({
-  baseURL: baseURL,
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-});
+const axiosInstance = useAxios();
 
-export default function Register({
-  nome = "",
-  email = "",
-  usuario = "",
-  senha = "",
-  confirmarSenha = "",
-}: DadosRegistro) {
+export default function Register() {
   const [checked, setChecked] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [name, setName] = useState("");
@@ -44,6 +34,7 @@ export default function Register({
   };
 
   const handleRegister = async () => {
+    setIsLoading(true);
     try {
       const response = await axiosInstance.post(`${baseURL}/auth/register`, {
         usuario: user,
@@ -71,8 +62,8 @@ export default function Register({
     <View style={styles.container}>
       <View style={styles.container__logo}>
         <View style={styles.logo__container}>
-          {/* <Logo style={styles.logo} />
-            <Text style={styles.logo__title}>Cadastre-se</Text> */}
+          <Logo style={styles.logo} />
+          <Text style={styles.logo__title}>Cadastre-se</Text>
         </View>
         <View style={styles.inputs}>
           <InputComponent
