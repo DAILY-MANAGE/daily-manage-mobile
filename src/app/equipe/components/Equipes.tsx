@@ -1,39 +1,38 @@
 import axios from "axios";
 import { baseURL } from "../../../utils/baseURL";
-import { EquipeData } from "..";
 import CardComponent from "./Card";
 import { View, StyleSheet } from "react-native";
 import { useEffect, useState } from "react";
+import { getToken } from "../../(auth)";
+import { DadosEquipe } from "..";
 
 const axiosInstance = axios.create({
   baseURL: baseURL,
-  headers: {
-    "Content-Type": "application/json",
-    Authorization:
-      "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJkYWlseS1tYW5hZ2UiLCJzdWIiOiJhZG1pbiIsImV4cCI6MTY5NzUwOTI5NX0.ZkmzEdzBdFKHBpXQN0TFw2VLpHx3qlrvRgXMXh9vEa0",
-  },
-  data: {},
 });
 
 export default function CardEquipes() {
-  const [data, setData] = useState([]);
+  const [data, setData] = useState<DadosEquipe[]>([])
 
   useEffect(() => {
     (async () => {
       try {
-        const response = await axiosInstance.get(`/equipe/todos/criadas`);
+        const response = await axiosInstance.get(`/equipe/todas/criadas`, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${await getToken()}`
+          },
+        },);
         setData(response.data);
-      } catch (error) {}
+      } catch (error) { }
     })();
   }, []);
 
   return (
-    <View style={styles.container}>
-      {data &&
-        data.map((data: EquipeData) => (
-          <CardComponent key={data.id} title={data.nome} />
-        ))}
-    </View>
+  <>
+    {data.map((data: DadosEquipe) => (
+      <CardComponent key={data.id} title={data.nome} />
+    ))}
+  </>
   );
 }
 
@@ -42,6 +41,6 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     height: "auto",
     width: "100%",
-    gap: 16,
+    gap: 4,
   },
 });
