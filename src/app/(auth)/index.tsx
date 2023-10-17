@@ -10,13 +10,23 @@ import ButtonComponent from "../components/Button";
 import { CheckBox } from "@rneui/themed";
 import { baseURL } from "../../utils/baseURL";
 import useAxios from "../../utils/useAxios";
+import axios from "axios";
 
-const axiosInstance = useAxios();
+// const axiosInstance = useAxios();
 interface DadosLogin {
   usuario: string;
   senha: string;
   lembrarSenha?: boolean;
 }
+
+const axiosInstance = axios.create({
+  baseURL: baseURL,
+  headers: {
+    "Content-Type": "application/json",
+    Authorization:
+      "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJkYWlseS1tYW5hZ2UiLCJzdWIiOiJhZG1pbiIsImV4cCI6MTY5NzUwOTI5NX0.ZkmzEdzBdFKHBpXQN0TFw2VLpHx3qlrvRgXMXh9vEa0",
+  },
+});
 
 export default function Login() {
   const router = useRouter();

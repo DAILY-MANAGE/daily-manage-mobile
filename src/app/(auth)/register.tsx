@@ -7,6 +7,7 @@ import Logo from "../components/Logo";
 import { CheckBox } from "@rneui/themed";
 import { baseURL } from "../../utils/baseURL";
 import useAxios from "../../utils/useAxios";
+import axios from "axios";
 
 export interface DadosRegistro {
   nome: string;
@@ -16,9 +17,27 @@ export interface DadosRegistro {
   confirmarSenha?: string;
 }
 
-const axiosInstance = useAxios();
+//const axiosInstance = useAxios();
 
-export default function Register() {
+const token = () => {
+  return localStorage.getItem("token");
+};
+
+const axiosInstance = axios.create({
+  baseURL: baseURL,
+  headers: {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  },
+});
+
+export default function Register({
+  nome = "",
+  email = "",
+  usuario = "",
+  senha = "",
+  confirmarSenha = "",
+}) {
   const [checked, setChecked] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [name, setName] = useState("");
@@ -26,6 +45,7 @@ export default function Register() {
   const [user, setUser] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [token, setToken] = useState(null);
 
   const router = useRouter();
 
@@ -39,13 +59,13 @@ export default function Register() {
       const response = await axiosInstance.post(`${baseURL}/auth/register`, {
         usuario: user,
         senha: password,
-        nome: name,  
-        email: mail, 
+        nome: name,
+        email: mail,
       });
-      console.log(response)
       if (response.status === 201) {
-        console.log(`Registro realizado: ${JSON.stringify(response.data)}`);
         setIsLoading(false);
+        console.log(`Registro realizado: ${JSON.stringify(response.data)}`);
+        setToken(response.data.token);
         router.push("(auth)");
       } else {
         throw new Error(
@@ -59,7 +79,7 @@ export default function Register() {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.container__logo}>
         <View style={styles.logo__container}>
           <Logo style={styles.logo} />
@@ -93,7 +113,6 @@ export default function Register() {
             textContentType='password'
             value={password}
             setValue={setPassword}
-            secureTextEntry={true}
           />
           <InputComponent
             label='Confirmar Senha'
@@ -101,7 +120,6 @@ export default function Register() {
             textContentType='password'
             value={confirmPassword}
             setValue={setConfirmPassword}
-            secureTextEntry={true}
           />
         </View>
       </View>
@@ -119,7 +137,7 @@ export default function Register() {
       <Pressable style={styles.button}>
         <ButtonComponent onPress={handleRegister} title='Salvar' />
       </Pressable>
-    </View>
+    </ScrollView>
   );
 }
 
