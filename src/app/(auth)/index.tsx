@@ -11,15 +11,6 @@ import { CheckBox } from "@rneui/themed";
 import { baseURL } from "../../utils/baseURL";
 import axios from "axios";
 import { storage } from "../../utils/storage";
-import { getToken } from "../equipe";
-
-interface DadosLogin {
-  usuario: string;
-  senha: string;
-  lembrarSenha?: boolean;
-}
-
-export const tokenKey = "token"
 
 const axiosInstance = axios.create({
   baseURL: baseURL,
@@ -36,7 +27,6 @@ export default function Login() {
   const [rememberPassword, setRememberPassword] =
     useState<React.SetStateAction<boolean>>(false);
   const [checked, setChecked] = useState(false);
-  const [token, refreshToken] = useState();
 
   const handleLogin = async () => {
     setIsLoading(true);
@@ -49,15 +39,13 @@ export default function Login() {
         console.log(`Login realizado: ${JSON.stringify(response.data)}`);
         setIsLoading(false);
         storage.save({
-          key: tokenKey,
+          key: 'token',
           data: {
             token: response.data.token,
             refreshToken: response.data.refreshToken
           }
         })
-        console.log(await getToken())
         router.push("equipe");
-        console.log(storage)
       } else {
         throw new Error(`Erro ao logar-se: ${JSON.stringify(response.data)}`);
       }

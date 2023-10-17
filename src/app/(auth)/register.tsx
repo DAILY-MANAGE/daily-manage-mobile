@@ -3,19 +3,9 @@ import InputComponent from "./components/Input";
 import { useState } from "react";
 import ButtonComponent from "../components/Button";
 import { useRouter } from "expo-router";
-import Logo from "../components/Logo";
 import { CheckBox } from "@rneui/themed";
 import { baseURL } from "../../utils/baseURL";
-import useAxios from "../../utils/useAxios";
 import axios from "axios";
-
-export interface DadosRegistro {
-  nome: string;
-  email: string;
-  usuario: string;
-  senha: string;
-  confirmarSenha?: string;
-}
 
 const axiosInstance = axios.create({
   baseURL: baseURL,

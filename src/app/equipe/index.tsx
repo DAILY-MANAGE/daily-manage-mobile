@@ -1,24 +1,16 @@
 import { View, StyleSheet } from "react-native";
-import { Link } from "expo-router";
 import OverlayComponent from "./components/Overlay";
 import { useState } from "react";
 import axios from "axios";
 import { baseURL } from "../../utils/baseURL";
 import CardEquipes from "./components/Equipes";
 import { storage } from "../../utils/storage";
-import { tokenKey } from "../(auth)";
-interface EquipeData {
-  id: number;
-  nome: string;
-}
 
 export const getToken = async () => {
-  return await storage.load({ key: tokenKey }).then(res => res.token).catch(error => {
-    console.warn(error)
-  })
+  storage.getAllDataForKey('token').then(token => {
+    return token;
+  });
 }
-
-console.log(getToken())
 
 const axiosInstance = axios.create({
   baseURL: baseURL,
@@ -30,15 +22,14 @@ export default function Equipes() {
 
   const criarEquipe = async () => {
     setIsLoading(true);
-    console.log(await getToken())
     try {
       const response = await axiosInstance.post(`${baseURL}/equipe/create`, {
         nome: nomeEquipe,
-        token: getToken(),
+        token: await getToken(),
       }, {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${getToken()}`
+          Authorization: `Bearer ${await getToken()}`
         },
       }
       );
