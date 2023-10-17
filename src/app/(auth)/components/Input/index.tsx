@@ -21,9 +21,9 @@ export default function InputComponent({
 }: InputProps) {
   return (
     <View style={styles.input}>
-      <View style={styles.labelView}>
+      {/* <View style={styles.labelView}>
         <Text style={styles.label}>{label}</Text>
-      </View>
+      </View> */}
       <InputField
         placeholder={placeholder}
         textContentType={textContentType}

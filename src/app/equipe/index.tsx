@@ -11,16 +11,20 @@ export interface EquipeData {
   nome: string;
 }
 
+const token = () => {
+  return localStorage.getItem("token");
+};
+
 const axiosInstance = axios.create({
   baseURL: baseURL,
   headers: {
     "Content-Type": "application/json",
     Authorization:
-      "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJkYWlseS1tYW5hZ2UiLCJzdWIiOiJhZG1pbiIsImV4cCI6MTY5NzUwOTI5NX0.ZkmzEdzBdFKHBpXQN0TFw2VLpHx3qlrvRgXMXh9vEa0",
+      `Bearer ${token}`,
   },
 });
 
-export default function Equipes({ id, nome }: EquipeData) {
+export default function Equipes() {
   const [nomeEquipe, setNomeEquipe] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 

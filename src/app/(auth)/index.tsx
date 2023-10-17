@@ -9,10 +9,8 @@ import InputComponent from "./components/Input";
 import ButtonComponent from "../components/Button";
 import { CheckBox } from "@rneui/themed";
 import { baseURL } from "../../utils/baseURL";
-import useAxios from "../../utils/useAxios";
 import axios from "axios";
 
-// const axiosInstance = useAxios();
 interface DadosLogin {
   usuario: string;
   senha: string;
@@ -23,8 +21,6 @@ const axiosInstance = axios.create({
   baseURL: baseURL,
   headers: {
     "Content-Type": "application/json",
-    Authorization:
-      "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJkYWlseS1tYW5hZ2UiLCJzdWIiOiJhZG1pbiIsImV4cCI6MTY5NzUwOTI5NX0.ZkmzEdzBdFKHBpXQN0TFw2VLpHx3qlrvRgXMXh9vEa0",
   },
 });
 
@@ -36,7 +32,7 @@ export default function Login() {
   const [rememberPassword, setRememberPassword] =
     useState<React.SetStateAction<boolean>>(false);
   const [checked, setChecked] = useState(false);
-  const [token, setToken] = useState("");
+  const [token, setToken] = useState(null)
 
   const handleLogin = async () => {
     setIsLoading(true);
@@ -48,7 +44,7 @@ export default function Login() {
       if (response.status === 200) {
         console.log(`Login realizado: ${JSON.stringify(response.data)}`);
         setIsLoading(false);
-        setToken(response.data.token);
+        setToken(response.data.token)
         router.push("equipe");
       } else {
         throw new Error(`Erro ao logar-se: ${JSON.stringify(response.data)}`);

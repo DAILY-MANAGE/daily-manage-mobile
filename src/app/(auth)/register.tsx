@@ -17,27 +17,14 @@ export interface DadosRegistro {
   confirmarSenha?: string;
 }
 
-//const axiosInstance = useAxios();
-
-const token = () => {
-  return localStorage.getItem("token");
-};
-
 const axiosInstance = axios.create({
   baseURL: baseURL,
   headers: {
     "Content-Type": "application/json",
-    Authorization: `Bearer ${token}`,
   },
 });
 
-export default function Register({
-  nome = "",
-  email = "",
-  usuario = "",
-  senha = "",
-  confirmarSenha = "",
-}) {
+export default function Register() {
   const [checked, setChecked] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [name, setName] = useState("");
@@ -45,7 +32,6 @@ export default function Register({
   const [user, setUser] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [token, setToken] = useState(null);
 
   const router = useRouter();
 
@@ -65,7 +51,6 @@ export default function Register({
       if (response.status === 201) {
         setIsLoading(false);
         console.log(`Registro realizado: ${JSON.stringify(response.data)}`);
-        setToken(response.data.token);
         router.push("(auth)");
       } else {
         throw new Error(
@@ -81,49 +66,43 @@ export default function Register({
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.container__logo}>
-        <View style={styles.logo__container}>
+        {/* <View style={styles.logo__container}>
           <Logo style={styles.logo} />
           <Text style={styles.logo__title}>Cadastre-se</Text>
-        </View>
+        </View> */}
         <View style={styles.inputs}>
           <InputComponent
-            label='Nome Completo'
             placeholder='Nome Completo'
             textContentType='name'
             value={name}
             setValue={setName}
           />
           <InputComponent
-            label='Usuário'
             placeholder='Usuário'
             textContentType='username'
             value={user}
             setValue={setUser}
           />
           <InputComponent
-            label='E-mail'
             placeholder='E-mail'
             textContentType='emailAddress'
             value={mail}
             setValue={setMail}
           />
           <InputComponent
-            label='Senha'
             placeholder='Senha'
             textContentType='password'
             value={password}
             setValue={setPassword}
           />
           <InputComponent
-            label='Confirmar Senha'
             placeholder='Confirmar Senha'
             textContentType='password'
             value={confirmPassword}
             setValue={setConfirmPassword}
           />
         </View>
-      </View>
-      <CheckBox
+        <CheckBox
         containerStyle={styles.containerStyle}
         checked={checked}
         onPress={toggleCheckbox}
@@ -134,6 +113,7 @@ export default function Register({
         title='Li e aceito os Termos de Uso'
         textStyle={{ fontWeight: "normal" }}
       />
+      </View>
       <Pressable style={styles.button}>
         <ButtonComponent onPress={handleRegister} title='Salvar' />
       </Pressable>
@@ -145,6 +125,7 @@ const styles = StyleSheet.create({
   containerStyle: {
     margin: 0,
     padding: 0,
+    backgroundColor: "#FAFAFA"
   },
   logo__title: {
     fontSize: 24,
