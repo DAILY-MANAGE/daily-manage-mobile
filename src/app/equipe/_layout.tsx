@@ -9,6 +9,7 @@ export default function EquipeLayout() {
       <Stack.Screen
         name="index"
         options={{
+          headerBackButtonMenuEnabled: false,
           headerTitle: "Equipe",
           headerTitleStyle: {
             fontWeight: "900",
