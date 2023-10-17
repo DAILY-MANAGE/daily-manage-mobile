@@ -10,7 +10,7 @@ import ButtonComponent from "../components/Button";
 import { CheckBox } from "@rneui/themed";
 import { baseURL } from "../../utils/baseURL";
 import axios from "axios";
-import { storage } from "../../utils/storage";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const axiosInstance = axios.create({
   baseURL: baseURL,
@@ -18,6 +18,23 @@ const axiosInstance = axios.create({
     "Content-Type": "application/json",
   },
 });
+
+export const getToken = async () => {
+  try {
+    const token = await AsyncStorage.getItem('token');
+    if (token !== null) {
+      const parsedToken = JSON.parse(token)
+      return parsedToken.rawData.token
+    }
+  } catch (e) {
+    console.log(e)
+  }
+};
+
+export const setIsLoggedIn = () => {
+  const isLoggedIn = false;
+  return !isLoggedIn
+}
 
 export default function Login() {
   const router = useRouter();
@@ -38,14 +55,10 @@ export default function Login() {
       if (response.status === 200) {
         console.log(`Login realizado: ${JSON.stringify(response.data)}`);
         setIsLoading(false);
-        storage.save({
-          key: 'token',
-          data: {
-            token: response.data.token,
-            refreshToken: response.data.refreshToken
-          }
-        })
-        router.push("equipe");
+        getToken()
+        router.replace("equipe");
+        setIsLoggedIn()
+        console.log(setIsLoggedIn())
       } else {
         throw new Error(`Erro ao logar-se: ${JSON.stringify(response.data)}`);
       }
