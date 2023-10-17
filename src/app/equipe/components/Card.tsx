@@ -1,23 +1,22 @@
 import { Card } from "@rneui/themed";
-import { View, Text, StyleSheet } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 
 interface CardProps {
- content?: any,
  title: string,
 }
 
 export default function CardComponent({ title }: CardProps) {
   return (
-    <Card containerStyle={styles.containerStyle}>
-      <Card.Title style={styles.title}>{title}</Card.Title>
-      <Card.Divider />
-    </Card>
+    <View style={styles.containerStyle}>
+      <Text style={styles.title}>{title}</Text>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
  containerStyle: {
   flex: 1,
+  padding: 16,
   margin: 0, 
   width: "100%",
   height: "auto",
@@ -29,6 +28,7 @@ const styles = StyleSheet.create({
  title: {
   alignSelf: "flex-start",
   fontSize: 20,
-  color: "black"
+  color: "black",
+  fontWeight: "500"
  },
 });
