@@ -5,23 +5,23 @@ import { useState } from "react";
 import axios from "axios";
 import { baseURL } from "../../utils/baseURL";
 import CardEquipes from "./components/Equipes";
-
-export interface EquipeData {
+import { storage } from "../../utils/storage";
+import { tokenKey } from "../(auth)";
+interface EquipeData {
   id: number;
   nome: string;
 }
 
-const token = () => {
-  return localStorage.getItem("token");
-};
+export const getToken = async () => {
+  return await storage.load({ key: tokenKey }).then(res => res.token).catch(error => {
+    console.warn(error)
+  })
+}
+
+console.log(getToken())
 
 const axiosInstance = axios.create({
   baseURL: baseURL,
-  headers: {
-    "Content-Type": "application/json",
-    Authorization:
-      `Bearer ${token}`,
-  },
 });
 
 export default function Equipes() {
@@ -30,10 +30,19 @@ export default function Equipes() {
 
   const criarEquipe = async () => {
     setIsLoading(true);
+    console.log(await getToken())
     try {
       const response = await axiosInstance.post(`${baseURL}/equipe/create`, {
         nome: nomeEquipe,
-      });
+        token: getToken(),
+      }, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${getToken()}`
+        },
+      }
+      );
+
       if (response.status === 201) {
         console.log(`Equipe criada: ${JSON.stringify(response.data)}`);
         setIsLoading(false);
