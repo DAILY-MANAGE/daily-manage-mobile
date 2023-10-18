@@ -24,6 +24,10 @@ export default function Equipes() {
 
   const router = useRouter();
 
+  const refresh = async () => {
+    return router.replace('equipe')
+  }
+
   const criarEquipe = async () => {
     setIsLoading(true);
     try {
@@ -45,33 +49,8 @@ export default function Equipes() {
         setIsLoading(false);
         setData(response.data);
         setId(response.data.id);
+        await refresh();
         setNomeEquipe("")
-      } else {
-        throw new Error(`${JSON.stringify(response.data)}`);
-      }
-    } catch (error) {
-      console.log(error);
-      setIsLoading(false);
-    }
-  };
-
-  const salvarEquipe = async () => {
-    setIsLoading(true);
-    try {
-      const response = await axiosInstance.get(
-        `${baseURL}/equipe/todas/criadas`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${await getToken()}`,
-          },
-          data: {},
-        }
-      );
-      if (response.status === 200) {
-        console.log(`${JSON.stringify(response.data)}`);
-        setIsLoading(false);
-        setData(response.data);
       } else {
         throw new Error(`${JSON.stringify(response.data)}`);
       }
@@ -88,7 +67,7 @@ export default function Equipes() {
           value={nomeEquipe}
           setValue={setNomeEquipe}
           onPress={() => {
-            criarEquipe(), salvarEquipe;
+            criarEquipe()
           }}
           editable={!isLoading}
         />
