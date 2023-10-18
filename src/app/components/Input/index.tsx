@@ -9,6 +9,7 @@ interface InputProps {
   secureTextEntry?: boolean;
   editable?: boolean;
   autoComplete: any;
+  rightIcon?: any;
 }
 
 export default function InputComponent({
@@ -19,7 +20,8 @@ export default function InputComponent({
   label,
   secureTextEntry,
   editable,
-  autoComplete
+  autoComplete,
+  rightIcon,
 }: InputProps) {
   return (
     <View style={styles.input}>
@@ -34,6 +36,7 @@ export default function InputComponent({
         secureTextEntry={secureTextEntry}
         editable={editable}
         autoComplete={autoComplete}
+        rightIcon={rightIcon}
       />
     </View>
   );

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Input } from "@rneui/base";
 import { StyleSheet } from "react-native";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 
 interface InputProps {
   placeholder?: string;
@@ -10,6 +11,7 @@ interface InputProps {
   secureTextEntry?: boolean;
   editable?: boolean;
   autoComplete: any;
+  rightIcon?: any;
 }
 
 export default function InputField({
@@ -19,7 +21,8 @@ export default function InputField({
   setValue,
   secureTextEntry,
   editable,
-  autoComplete
+  autoComplete,
+  rightIcon
 }: InputProps) {
   return (
     <Input
@@ -33,6 +36,7 @@ export default function InputField({
       secureTextEntry={secureTextEntry}
       editable={editable}
       autoComplete={autoComplete}
+      rightIcon={rightIcon}
     />
   );
 }

@@ -23,11 +23,16 @@ export default function Cadastro() {
   const [user, setUser] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [isEyeOpen, setIsEyeOpen] = useState(false);
 
   const router = useRouter();
 
   const toggleCheckbox = () => {
     setChecked(!checked);
+  };
+
+  const toggleEye = () => {
+    setIsEyeOpen(!isEyeOpen);
   };
 
   const handleRegister = async () => {
@@ -89,6 +94,22 @@ export default function Cadastro() {
             value={password}
             setValue={setPassword}
             autoComplete="password"
+            secureTextEntry={true}
+            rightIcon={{
+              type: "font-awesome",
+              name: "eye-slash",
+              color: "#ccc",
+              size: 24,
+              iconStyle: { bottom: 0, alignSelf: "flex-end" },
+              containerStyle: {
+                flexDirection: "column",
+                alignContent: "flex-end",
+                alignItems: "flex-end",
+                justifyContent: "flex-end",
+                height: "100%",
+                width: "100%",
+              },
+            }}
           />
           <InputComponent
             placeholder="Confirmar Senha"
@@ -96,6 +117,22 @@ export default function Cadastro() {
             value={confirmPassword}
             setValue={setConfirmPassword}
             autoComplete="password"
+            secureTextEntry={true}
+            rightIcon={{
+              type: "font-awesome",
+              name: "eye-slash",
+              color: "#ccc",
+              size: 24,
+              iconStyle: { bottom: 0, alignSelf: "flex-end" },
+              containerStyle: {
+                flexDirection: "column",
+                alignContent: "flex-end",
+                alignItems: "flex-end",
+                justifyContent: "flex-end",
+                height: "100%",
+                width: "100%",
+              },
+            }}
           />
           <CheckBox
             containerStyle={styles.containerStyle}

@@ -10,7 +10,7 @@ import ButtonComponent from "../components/Button";
 import { CheckBox } from "@rneui/themed";
 import { baseURL } from "../../utils/baseURL";
 import axios from "axios";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const axiosInstance = axios.create({
   baseURL: baseURL,
@@ -21,26 +21,26 @@ const axiosInstance = axios.create({
 
 export const getToken = async () => {
   try {
-    const token = await AsyncStorage.getItem('token');
+    const token = await AsyncStorage.getItem("token");
     if (token !== null) {
-      return token
+      return token;
     }
   } catch (e) {
-    console.log(e)
+    console.log(e);
   }
 };
 
-const isLoggedIn = false
+const isLoggedIn = false;
 
 export const setIsLoggedIn = () => {
-  return !isLoggedIn
-}
+  return !isLoggedIn;
+};
 
 export const setToken = async (token: string) => {
   try {
-    await AsyncStorage.setItem('token', token);
+    await AsyncStorage.setItem("token", token);
   } catch (e) {
-    console.log(e)
+    console.log(e);
   }
 };
 
@@ -63,7 +63,7 @@ export default function Login() {
       if (response.status === 200) {
         console.log(`Login realizado: ${JSON.stringify(response.data)}`);
         setIsLoading(false);
-        setToken(response.data.token)
+        setToken(response.data.token);
         setIsLoggedIn;
         router.replace("equipe");
       } else {
@@ -96,36 +96,51 @@ export default function Login() {
             <View style={styles.form}>
               <View style={styles.inputs}>
                 <InputComponent
-                  placeholder='Digite seu nome de usuário'
-                  label='Usuário'
+                  placeholder="Digite seu nome de usuário"
+                  label="Usuário"
                   value={user}
                   setValue={setUser}
-                  textContentType='username'
-                  autoComplete='username'
+                  textContentType="username"
+                  autoComplete="username"
                 />
                 <InputComponent
-                  placeholder='Digite sua senha'
-                  label='Senha'
+                  placeholder="Digite sua senha"
+                  label="Senha"
                   value={password}
                   setValue={setPassword}
-                  textContentType='password'
-                  autoComplete='password'
+                  textContentType="password"
+                  autoComplete="password"
                   secureTextEntry={true}
+                  rightIcon={{
+                    type: "font-awesome",
+                    name: "eye-slash",
+                    color: "#ccc",
+                    size: 24,
+                    iconStyle: { bottom: 0, alignSelf: "flex-end" },
+                    containerStyle: {
+                      flexDirection: "column",
+                      alignContent: "flex-end",
+                      alignItems: "flex-end",
+                      justifyContent: "flex-end",
+                      height: "100%",
+                      width: "100%",
+                    },
+                  }}
                 />
                 <CheckBox
                   containerStyle={{ backgroundColor: "white", padding: 0 }}
                   checked={checked}
                   onPress={toggleCheckbox}
-                  iconType='material-community'
-                  checkedIcon='checkbox-marked'
-                  uncheckedIcon='checkbox-blank-outline'
-                  checkedColor='black'
-                  title='Lembrar senha'
+                  iconType="material-community"
+                  checkedIcon="checkbox-marked"
+                  uncheckedIcon="checkbox-blank-outline"
+                  checkedColor="black"
+                  title="Lembrar senha"
                   textStyle={{ fontWeight: "normal" }}
                 />
               </View>
               <View style={styles.sumbites}>
-                <ButtonComponent onPress={handleLogin} title='Continuar' />
+                <ButtonComponent onPress={handleLogin} title="Continuar" />
               </View>
             </View>
           </View>
@@ -134,8 +149,8 @@ export default function Login() {
           <Pressable style={styles.registerButton}>
             <ButtonComponent
               onPress={() => router.push("/cadastro")}
-              title='Cadastrar-se'
-              type='outline'
+              title="Cadastrar-se"
+              type="outline"
               titleStyle={{ color: "black" }}
               buttonStyle={{
                 borderColor: "black",
