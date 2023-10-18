@@ -33,13 +33,12 @@ export default function Cadastro() {
   const handleRegister = async () => {
     setIsLoading(true);
     try {
-      const response = await axiosInstance.post(`${baseURL}/auth/register`,
-        {
-          usuario: user,
-          senha: password,
-          nome: name,
-          email: mail,
-        });
+      const response = await axiosInstance.post(`${baseURL}/auth/register`, {
+        usuario: user,
+        senha: password,
+        nome: name,
+        email: mail,
+      });
       if (response.status === 201) {
         setIsLoading(false);
         console.log(`Registro realizado: ${JSON.stringify(response.data)}`);
@@ -64,55 +63,55 @@ export default function Cadastro() {
         </View>
         <View style={styles.inputs}>
           <InputComponent
-            placeholder='Nome Completo'
-            textContentType='name'
+            placeholder="Nome Completo"
+            textContentType="name"
             value={name}
             setValue={setName}
-            autoComplete='name'
+            autoComplete="name"
           />
           <InputComponent
-            placeholder='Usuário'
-            textContentType='username'
+            placeholder="Usuário"
+            textContentType="username"
             value={user}
             setValue={setUser}
-            autoComplete='username'
+            autoComplete="username"
           />
           <InputComponent
-            placeholder='E-mail'
-            textContentType='emailAddress'
+            placeholder="E-mail"
+            textContentType="emailAddress"
             value={mail}
             setValue={setMail}
-            autoComplete='email'
+            autoComplete="email"
           />
           <InputComponent
-            placeholder='Senha'
-            textContentType='password'
+            placeholder="Senha"
+            textContentType="password"
             value={password}
             setValue={setPassword}
-            autoComplete='password'
+            autoComplete="password"
           />
           <InputComponent
-            placeholder='Confirmar Senha'
-            textContentType='password'
+            placeholder="Confirmar Senha"
+            textContentType="password"
             value={confirmPassword}
             setValue={setConfirmPassword}
-            autoComplete='password'
+            autoComplete="password"
+          />
+          <CheckBox
+            containerStyle={styles.containerStyle}
+            checked={checked}
+            onPress={toggleCheckbox}
+            iconType="material-community"
+            checkedIcon="checkbox-marked"
+            uncheckedIcon="checkbox-blank-outline"
+            checkedColor="black"
+            title="Li e aceito os Termos de Uso"
+            textStyle={{ fontWeight: "normal" }}
           />
         </View>
-        <CheckBox
-          containerStyle={styles.containerStyle}
-          checked={checked}
-          onPress={toggleCheckbox}
-          iconType='material-community'
-          checkedIcon='checkbox-marked'
-          uncheckedIcon='checkbox-blank-outline'
-          checkedColor='black'
-          title='Li e aceito os Termos de Uso'
-          textStyle={{ fontWeight: "normal" }}
-        />
       </View>
       <Pressable style={styles.button}>
-        <ButtonComponent onPress={handleRegister} title='Salvar' />
+        <ButtonComponent onPress={handleRegister} title="Salvar" />
       </Pressable>
     </ScrollView>
   );
@@ -122,7 +121,7 @@ const styles = StyleSheet.create({
   containerStyle: {
     margin: 0,
     padding: 0,
-    backgroundColor: "#FAFAFA"
+    backgroundColor: "#FAFAFA",
   },
   logo__title: {
     fontSize: 24,
@@ -140,7 +139,8 @@ const styles = StyleSheet.create({
   container__logo: {
     width: "100%",
     height: "auto",
-    gap: 16,
+    gap: 4,
+    paddingTop: 0,
   },
   button: {
     width: "100%",

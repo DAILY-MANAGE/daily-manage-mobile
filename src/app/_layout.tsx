@@ -5,6 +5,7 @@ export default function AppLayout() {
     <Stack>
       <Stack.Screen name="(auth)" options={{ headerShown: false }}/>
       <Stack.Screen name="equipe" options={{ headerShown: false }}/>
+      <Stack.Screen name="notificacoes" options={{ headerShown: false }}/>
     </Stack>
   );
 }

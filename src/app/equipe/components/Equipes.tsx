@@ -3,7 +3,7 @@ import { baseURL } from "../../../utils/baseURL";
 import CardComponent from "./Card";
 import { View, StyleSheet, Text } from "react-native";
 import { useEffect, useState } from "react";
-import { getToken } from "../../auth";
+import { getToken } from "../../(auth)";
 import { DadosEquipe } from "..";
 
 const axiosInstance = axios.create({
@@ -21,7 +21,7 @@ export default function CardEquipes() {
         const response = await axiosInstance.get(`${baseURL}/equipe/todas/criadas`, {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJkYWlseS1tYW5hZ2UiLCJzdWIiOiJtYXN0ZXIiLCJleHAiOjE2OTc2MjU5OTh9.gz9kVRm-_GfuPQzroy-VLoe9PCI95FZIrUjMUCV4ZMk`
+            Authorization: `Bearer ${await getToken()}`
           },
           data: {}
         })
@@ -42,8 +42,26 @@ export default function CardEquipes() {
   return (
     <>
       {data.map((data: DadosEquipe) => (
-        <CardComponent key={data.id} nome={data.nome}/>
+        <View style={styles.equipe}>
+          <Text style={styles.text} key={data.id}>{data.nome}</Text>  
+        </View>
       ))}
     </>
   );
 }
+
+const styles = StyleSheet.create({
+  text: {
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  equipe: {
+    height: "auto",
+    width: "100%",
+    padding: 24,
+    backgroundColor: "white",
+    borderWidth: 2,
+    borderRadius: 4,
+    borderColor: "black",
+  },
+});

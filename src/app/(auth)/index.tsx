@@ -110,6 +110,7 @@ export default function Login() {
                   setValue={setPassword}
                   textContentType='password'
                   autoComplete='password'
+                  secureTextEntry={true}
                 />
                 <CheckBox
                   containerStyle={{ backgroundColor: "white", padding: 0 }}
@@ -132,7 +133,7 @@ export default function Login() {
         <View style={styles.footer}>
           <Pressable style={styles.registerButton}>
             <ButtonComponent
-              onPress={() => router.push("/register")}
+              onPress={() => router.push("/cadastro")}
               title='Cadastrar-se'
               type='outline'
               titleStyle={{ color: "black" }}
