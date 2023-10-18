@@ -1,11 +1,11 @@
-import { View, StyleSheet, ScrollView, Pressable } from "react-native";
+import { StyleSheet, ScrollView, Pressable } from "react-native";
 import OverlayComponent from "./components/Overlay";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import { baseURL } from "../../utils/baseURL";
 import { CardEquipes } from "./components/Equipes";
 import { getToken } from "../(auth)";
-import { Link, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 
 const axiosInstance = axios.create({
   baseURL: baseURL,
@@ -23,8 +23,6 @@ export default function Equipes() {
   const [id, setId] = useState(null);
 
   const router = useRouter();
-
-  const ref = useRef(null);
 
   const refresh = async () => {
     return router.replace("equipe");
@@ -64,7 +62,7 @@ export default function Equipes() {
 
   return (
     <>
-      <ScrollView style={styles.container} ref={ref}>
+      <ScrollView style={styles.container}>
         <OverlayComponent
           value={nomeEquipe}
           setValue={setNomeEquipe}
@@ -96,11 +94,6 @@ const styles = StyleSheet.create({
     width: "100%",
     gap: 8,
   },
-  scrollView: {
-    width: "100%",
-    margin: 0,
-    padding: 0,
-  },
   container: {
     gap: 8,
     height: "100%",
@@ -108,8 +101,5 @@ const styles = StyleSheet.create({
     padding: 16,
     flexDirection: "column",
     margin: 0,
-  },
-  equipes: {
-    gap: 8,
   },
 });
