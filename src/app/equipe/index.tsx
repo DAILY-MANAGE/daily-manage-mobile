@@ -4,7 +4,7 @@ import { useState } from "react";
 import axios from "axios";
 import { baseURL } from "../../utils/baseURL";
 import CardEquipes from "./components/Equipes";
-import { getToken } from "../auth/login";
+import { getToken } from "../auth";
 
 const axiosInstance = axios.create({
   baseURL: baseURL,

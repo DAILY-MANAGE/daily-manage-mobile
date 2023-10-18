@@ -1,12 +1,12 @@
 import { View, StyleSheet, Pressable, Text, ScrollView } from "react-native";
-import InputComponent from "../../components/Input";
+import InputComponent from "../components/Input";
 import { useState } from "react";
-import ButtonComponent from "../../components/Button";
+import ButtonComponent from "../components/Button";
 import { useRouter } from "expo-router";
 import { CheckBox } from "@rneui/themed";
-import { baseURL } from "../../../utils/baseURL";
+import { baseURL } from "../../utils/baseURL";
 import axios from "axios";
-import Logo from "../../components/Logo";
+import Logo from "../components/Logo";
 
 const axiosInstance = axios.create({
   baseURL: baseURL,

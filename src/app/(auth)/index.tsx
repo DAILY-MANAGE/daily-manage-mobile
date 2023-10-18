@@ -4,11 +4,11 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
-import Logo from "../../components/Logo";
-import InputComponent from "../../components/Input";
-import ButtonComponent from "../../components/Button";
+import Logo from "../components/Logo";
+import InputComponent from "../components/Input";
+import ButtonComponent from "../components/Button";
 import { CheckBox } from "@rneui/themed";
-import { baseURL } from "../../../utils/baseURL";
+import { baseURL } from "../../utils/baseURL";
 import axios from "axios";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
