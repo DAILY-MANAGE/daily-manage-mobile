@@ -1,7 +1,7 @@
 import { Link, Tabs, useRouter } from "expo-router";
 import React, { useState } from "react";
 import { Pressable } from "react-native";
-import FontAwesome from '@expo/vector-icons/FontAwesome';
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { BottomSheet, ListItem } from "@rneui/themed";
 
 export default function PaginaEquipeLayout() {
@@ -25,8 +25,8 @@ export default function PaginaEquipeLayout() {
         <Tabs.Screen
           name="[id]"
           options={{
-            headerTitle: 'Equipe',
-            headerTitleStyle: { fontWeight: '900' },
+            headerTitle: "Equipe",
+            headerTitleStyle: { fontWeight: "900" },
             headerLeft: () => (
               <>
                 <Pressable onPress={() => router.back()}>
@@ -60,13 +60,18 @@ export default function PaginaEquipeLayout() {
                 </Pressable>
               </>
             ),
+            tabBarIcon: () => {
+              return <FontAwesome name="list" size={24} color={"black"} />;
+            },
             tabBarLabel: "Formulários",
-            tabBarLabelStyle: { color: "black", paddingBottom: 4 }
-          }} />
-        <Tabs.Screen name="usuarios"
+            tabBarLabelStyle: { color: "black", paddingBottom: 4 },
+          }}
+        />
+        <Tabs.Screen
+          name="usuarios"
           options={{
-            headerTitle: 'Usuários',
-            headerTitleStyle: { fontWeight: '900' },
+            headerTitle: "Usuários",
+            headerTitleStyle: { fontWeight: "900" },
             headerLeft: () => (
               <>
                 <Pressable onPress={() => router.back()}>
@@ -84,18 +89,34 @@ export default function PaginaEquipeLayout() {
                 </Pressable>
               </>
             ),
+            headerRight: () => (
+              <>
+                <Pressable onPress={() => setIsVisible(!isVisible)}>
+                  {({ pressed }) => (
+                    <FontAwesome
+                      name="cog"
+                      size={24}
+                      style={{
+                        marginRight: 15,
+                        opacity: pressed ? 0.5 : 1,
+                      }}
+                    />
+                  )}
+                </Pressable>
+              </>
+            ),
             tabBarIcon: () => {
-              return <FontAwesome name="user" size={24} color={"black"} />
+              return <FontAwesome name="user" size={24} color={"black"} />;
             },
             tabBarLabel: "Usuários",
-            tabBarLabelStyle: { color: "black", paddingBottom: 4 }
+            tabBarLabelStyle: { color: "black", paddingBottom: 4 },
           }}
         />
         <Tabs.Screen
           name="configuracoes"
           options={{
-            headerTitle: 'Configurações',
-            headerTitleStyle: { fontWeight: '900' },
+            headerTitle: "Configurações",
+            headerTitleStyle: { fontWeight: "900" },
             headerLeft: () => (
               <>
                 <Pressable onPress={() => router.back()}>
@@ -113,12 +134,29 @@ export default function PaginaEquipeLayout() {
                 </Pressable>
               </>
             ),
+            headerRight: () => (
+              <>
+                <Pressable onPress={() => setIsVisible(!isVisible)}>
+                  {({ pressed }) => (
+                    <FontAwesome
+                      name="cog"
+                      size={24}
+                      style={{
+                        marginRight: 15,
+                        opacity: pressed ? 0.5 : 1,
+                      }}
+                    />
+                  )}
+                </Pressable>
+              </>
+            ),
             tabBarIcon: () => {
-              return <FontAwesome name="group" size={24} color={"black"} />
+              return <FontAwesome name="group" size={24} color={"black"} />;
             },
             tabBarLabel: "Equipe",
-            tabBarLabelStyle: { color: "black", paddingBottom: 4 }
-          }} />
+            tabBarLabelStyle: { color: "black", paddingBottom: 4 },
+          }}
+        />
       </Tabs>
       <BottomSheet modalProps={{}} isVisible={isVisible}>
         {options.map((l, i) => (
