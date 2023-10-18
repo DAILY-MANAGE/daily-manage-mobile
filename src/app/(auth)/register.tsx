@@ -6,6 +6,8 @@ import { useRouter } from "expo-router";
 import { CheckBox } from "@rneui/themed";
 import { baseURL } from "../../utils/baseURL";
 import axios from "axios";
+import { getToken } from ".";
+import Logo from "../components/Logo";
 
 const axiosInstance = axios.create({
   baseURL: baseURL,
@@ -32,12 +34,13 @@ export default function Register() {
   const handleRegister = async () => {
     setIsLoading(true);
     try {
-      const response = await axiosInstance.post(`${baseURL}/auth/register`, {
-        usuario: user,
-        senha: password,
-        nome: name,
-        email: mail,
-      });
+      const response = await axiosInstance.post(`${baseURL}/auth/register`,
+        {
+          usuario: user,
+          senha: password,
+          nome: name,
+          email: mail,
+        });
       if (response.status === 201) {
         setIsLoading(false);
         console.log(`Registro realizado: ${JSON.stringify(response.data)}`);
@@ -56,53 +59,58 @@ export default function Register() {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.container__logo}>
-        {/* <View style={styles.logo__container}>
+        <View style={styles.logo__container}>
           <Logo style={styles.logo} />
           <Text style={styles.logo__title}>Cadastre-se</Text>
-        </View> */}
+        </View>
         <View style={styles.inputs}>
           <InputComponent
             placeholder='Nome Completo'
             textContentType='name'
             value={name}
             setValue={setName}
+            autoComplete='name'
           />
           <InputComponent
             placeholder='Usuário'
             textContentType='username'
             value={user}
             setValue={setUser}
+            autoComplete='username'
           />
           <InputComponent
             placeholder='E-mail'
             textContentType='emailAddress'
             value={mail}
             setValue={setMail}
+            autoComplete='email'
           />
           <InputComponent
             placeholder='Senha'
             textContentType='password'
             value={password}
             setValue={setPassword}
+            autoComplete='password'
           />
           <InputComponent
             placeholder='Confirmar Senha'
             textContentType='password'
             value={confirmPassword}
             setValue={setConfirmPassword}
+            autoComplete='password'
           />
         </View>
         <CheckBox
-        containerStyle={styles.containerStyle}
-        checked={checked}
-        onPress={toggleCheckbox}
-        iconType='material-community'
-        checkedIcon='checkbox-marked'
-        uncheckedIcon='checkbox-blank-outline'
-        checkedColor='black'
-        title='Li e aceito os Termos de Uso'
-        textStyle={{ fontWeight: "normal" }}
-      />
+          containerStyle={styles.containerStyle}
+          checked={checked}
+          onPress={toggleCheckbox}
+          iconType='material-community'
+          checkedIcon='checkbox-marked'
+          uncheckedIcon='checkbox-blank-outline'
+          checkedColor='black'
+          title='Li e aceito os Termos de Uso'
+          textStyle={{ fontWeight: "normal" }}
+        />
       </View>
       <Pressable style={styles.button}>
         <ButtonComponent onPress={handleRegister} title='Salvar' />

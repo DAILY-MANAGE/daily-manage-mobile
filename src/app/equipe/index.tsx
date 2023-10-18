@@ -11,18 +11,17 @@ const axiosInstance = axios.create({
 });
 
 export interface DadosEquipe {
-  id?: number
-  nome?: string
+  id: number
+  nome: string
 }
 
-export default function Equipes({ id, nome = '' }: DadosEquipe) {
+export default function Equipes({ id, nome }: DadosEquipe) {
   const [nomeEquipe, setNomeEquipe] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [equipe, setEquipe] = useState<DadosEquipe[]>([])
+  const [data, setData] = useState<DadosEquipe[]>([])
 
   const criarEquipe = async () => {
     setIsLoading(true);
-    console.log(await getToken())
     try {
       const response = await axiosInstance.post(`${baseURL}/equipe/criar`, {
         nome: nomeEquipe,
@@ -37,7 +36,7 @@ export default function Equipes({ id, nome = '' }: DadosEquipe) {
       if (response.status === 201) {
         console.log(`Equipe criada: ${JSON.stringify(response.data)}`);
         setIsLoading(false);
-        setEquipe(response.data)
+        setData(response.data)
       } else {
         throw new Error(
           `Erro ao criar a equipe: ${JSON.stringify(response.data)}`
@@ -50,7 +49,7 @@ export default function Equipes({ id, nome = '' }: DadosEquipe) {
   };
 
   return (
-    <ScrollView style={styles.scrollView}>
+    <>
       <View style={styles.container}>
         <OverlayComponent
           value={nomeEquipe}
@@ -58,18 +57,16 @@ export default function Equipes({ id, nome = '' }: DadosEquipe) {
           onPress={criarEquipe}
           editable={!isLoading}
         />
-        <View style={styles.equipes}>
-          <CardEquipes />
-        </View>
-      </View>
-    </ScrollView>
+        <CardEquipes />
+      </View> 
+    </>
   );
 }
 
 const styles = StyleSheet.create({
   scrollView: {
     width: "100%",
-    margin: 0, 
+    margin: 0,
     padding: 0,
   },
   container: {

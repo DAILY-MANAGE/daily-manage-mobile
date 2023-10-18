@@ -38,6 +38,7 @@ export default function OverlayComponent({
           setValue={setValue}
           label='Nome da Equipe'
           editable={editable}
+          autoComplete='name'
         />
         <ButtonComponent onPress={onPress} title='Salvar' />
       </Overlay>

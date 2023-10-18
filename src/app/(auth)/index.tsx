@@ -23,18 +23,20 @@ export const getToken = async () => {
   try {
     const token = await AsyncStorage.getItem('token');
     if (token !== null) {
-      const parsedToken = JSON.parse(token)
-      return parsedToken.rawData.token
+      return token
     }
   } catch (e) {
     console.log(e)
   }
 };
 
-export const setIsLoggedIn = () => {
-  const isLoggedIn = false;
-  return !isLoggedIn
-}
+export const setToken = async (token: string) => {
+  try {
+    await AsyncStorage.setItem('token', token);
+  } catch (e) {
+    console.log(e)
+  }
+};
 
 export default function Login() {
   const router = useRouter();
@@ -55,10 +57,8 @@ export default function Login() {
       if (response.status === 200) {
         console.log(`Login realizado: ${JSON.stringify(response.data)}`);
         setIsLoading(false);
-        getToken()
+        setToken(response.data.token)
         router.replace("equipe");
-        setIsLoggedIn()
-        console.log(setIsLoggedIn())
       } else {
         throw new Error(`Erro ao logar-se: ${JSON.stringify(response.data)}`);
       }
@@ -94,6 +94,7 @@ export default function Login() {
                   value={user}
                   setValue={setUser}
                   textContentType='username'
+                  autoComplete='username'
                 />
                 <InputComponent
                   placeholder='Digite sua senha'
@@ -101,6 +102,7 @@ export default function Login() {
                   value={password}
                   setValue={setPassword}
                   textContentType='password'
+                  autoComplete='password'
                 />
                 <CheckBox
                   containerStyle={{ backgroundColor: "white", padding: 0 }}

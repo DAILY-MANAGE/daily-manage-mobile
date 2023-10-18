@@ -9,6 +9,7 @@ interface InputProps {
   setValue: string | any;
   secureTextEntry?: boolean;
   editable?: boolean;
+  autoComplete: any;
 }
 
 export default function InputField({
@@ -17,7 +18,8 @@ export default function InputField({
   value,
   setValue,
   secureTextEntry,
-  editable
+  editable,
+  autoComplete
 }: InputProps) {
   return (
     <Input
@@ -30,6 +32,7 @@ export default function InputField({
       onChangeText={setValue}
       secureTextEntry={secureTextEntry}
       editable={editable}
+      autoComplete={autoComplete}
     />
   );
 }
