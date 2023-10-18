@@ -1,10 +1,11 @@
-import { View, StyleSheet, ScrollView } from "react-native";
+import { View, StyleSheet, ScrollView, Pressable } from "react-native";
 import OverlayComponent from "./components/Overlay";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { baseURL } from "../../utils/baseURL";
-import CardEquipes from "./components/Equipes";
+import { CardEquipes } from "./components/Equipes";
 import { getToken } from "../(auth)";
+import { Link, useRouter } from "expo-router";
 
 const axiosInstance = axios.create({
   baseURL: baseURL,
@@ -15,10 +16,13 @@ export interface DadosEquipe {
   nome?: string;
 }
 
-export default function Equipes({ id, nome }: DadosEquipe) {
+export default function Equipes() {
   const [nomeEquipe, setNomeEquipe] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState<DadosEquipe[]>([]);
+  const [id, setId] = useState(null);
+
+  const router = useRouter();
 
   const criarEquipe = async () => {
     setIsLoading(true);
@@ -40,7 +44,8 @@ export default function Equipes({ id, nome }: DadosEquipe) {
         console.log(`${JSON.stringify(response.data)}`);
         setIsLoading(false);
         setData(response.data);
-        setNomeEquipe("");
+        setId(response.data.id);
+        setNomeEquipe("")
       } else {
         throw new Error(`${JSON.stringify(response.data)}`);
       }
@@ -83,14 +88,16 @@ export default function Equipes({ id, nome }: DadosEquipe) {
           value={nomeEquipe}
           setValue={setNomeEquipe}
           onPress={() => {
-            criarEquipe(),
-            salvarEquipe
+            criarEquipe(), salvarEquipe;
           }}
           editable={!isLoading}
         />
-        <View style={styles.equipeContainer}>
+        <Pressable onPress={() => router.push({
+          pathname: `/paginaEquipe/[${id}]`,
+          params: { id: `${id}` }
+        })} style={styles.equipeContainer}>
           <CardEquipes />
-        </View>
+        </Pressable>
       </View>
     </>
   );

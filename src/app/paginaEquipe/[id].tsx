@@ -3,10 +3,9 @@ import React from 'react';
 import { Text, View, StyleSheet } from 'react-native';
 
 export default function Equipe() {
- const { id } = useLocalSearchParams();
  return(
   <View style={styles.container}>
-   <Text>Equipe {id}</Text>
+   <Text>Em progresso...</Text>
   </View>
  );
 }
