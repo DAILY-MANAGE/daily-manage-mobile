@@ -1,11 +1,9 @@
 import axios from "axios";
 import { baseURL } from "../../../utils/baseURL";
-import CardComponent from "./Card";
 import { View, StyleSheet, Text } from "react-native";
-import React, { ReactNode, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { getToken } from "../../(auth)";
 import { DadosEquipe } from "..";
-import { Link } from "expo-router";
 
 const axiosInstance = axios.create({
   baseURL: baseURL,
@@ -42,12 +40,13 @@ export function CardEquipes() {
       }
     })();
   }, []);
-  
+
   return (
     <>
       {data.map((data: DadosEquipe) => (
         <View key={data.id} style={styles.equipe}>
           <Text style={styles.text}>{data.nome}</Text>
+          <Text style={styles.textIdentificação}>Identificação: {data.id}</Text>
         </View>
       ))}
     </>
@@ -56,16 +55,21 @@ export function CardEquipes() {
 
 const styles = StyleSheet.create({
   text: {
-    fontSize: 16,
-    fontWeight: "600",
+    fontSize: 20,
+    fontWeight: "900",
   },
   equipe: {
     height: "auto",
     width: "100%",
-    padding: 24,
+    padding: 16,
     backgroundColor: "white",
-    borderWidth: 2,
-    borderRadius: 4,
+    borderWidth: 1,
+    borderRadius: 8,
     borderColor: "black",
   },
+  textIdentificação: {
+    fontSize: 14,
+    fontWeight: "normal",
+    color: "#666564",
+  }
 });

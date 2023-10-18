@@ -1,6 +1,6 @@
 import { View, StyleSheet, ScrollView, Pressable } from "react-native";
 import OverlayComponent from "./components/Overlay";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { baseURL } from "../../utils/baseURL";
 import { CardEquipes } from "./components/Equipes";
@@ -24,9 +24,11 @@ export default function Equipes() {
 
   const router = useRouter();
 
+  const ref = useRef(null);
+
   const refresh = async () => {
-    return router.replace('equipe')
-  }
+    return router.replace("equipe");
+  };
 
   const criarEquipe = async () => {
     setIsLoading(true);
@@ -50,7 +52,7 @@ export default function Equipes() {
         setData(response.data);
         setId(response.data.id);
         await refresh();
-        setNomeEquipe("")
+        setNomeEquipe("");
       } else {
         throw new Error(`${JSON.stringify(response.data)}`);
       }
@@ -62,28 +64,34 @@ export default function Equipes() {
 
   return (
     <>
-      <View style={styles.container}>
+      <ScrollView style={styles.container} ref={ref}>
         <OverlayComponent
           value={nomeEquipe}
           setValue={setNomeEquipe}
           onPress={() => {
-            criarEquipe()
+            criarEquipe();
           }}
           editable={!isLoading}
         />
-        <Pressable onPress={() => router.push({
-          pathname: `/paginaEquipe/[${id}]`,
-          params: { id: `${id}` }
-        })} style={styles.equipeContainer}>
+        <Pressable
+          onPress={() =>
+            router.push({
+              pathname: `/paginaEquipe/[${id}]`,
+              params: { id: `${id}` },
+            })
+          }
+          style={styles.equipeContainer}
+        >
           <CardEquipes />
         </Pressable>
-      </View>
+      </ScrollView>
     </>
   );
 }
 
 const styles = StyleSheet.create({
   equipeContainer: {
+    paddingTop: 8,
     height: "auto",
     width: "100%",
     gap: 8,

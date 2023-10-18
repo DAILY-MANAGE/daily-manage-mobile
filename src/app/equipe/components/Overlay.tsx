@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { useState } from "react";
 import { Overlay } from "@rneui/themed";
 import { View, Text, StyleSheet } from "react-native";
 import ButtonComponent from "../../components/Button";
