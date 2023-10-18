@@ -1,4 +1,5 @@
 import { SearchBar } from "@rneui/themed";
+import React from "react";
 import { useState } from "react";
 
 export default function CustomSearchBar() {
