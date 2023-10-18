@@ -4,15 +4,15 @@ import { useState } from "react";
 import axios from "axios";
 import { baseURL } from "../../utils/baseURL";
 import CardEquipes from "./components/Equipes";
-import { getToken } from "../(auth)";
+import { getToken } from "../auth/login";
 
 const axiosInstance = axios.create({
   baseURL: baseURL,
 });
 
 export interface DadosEquipe {
-  id: number
-  nome: string
+  id?: number
+  nome?: string
 }
 
 export default function Equipes({ id, nome }: DadosEquipe) {

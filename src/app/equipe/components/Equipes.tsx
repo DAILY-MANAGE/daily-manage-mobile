@@ -3,7 +3,7 @@ import { baseURL } from "../../../utils/baseURL";
 import CardComponent from "./Card";
 import { View, StyleSheet, Text } from "react-native";
 import { useEffect, useState } from "react";
-import { getToken } from "../../(auth)";
+import { getToken } from "../../auth/login";
 import { DadosEquipe } from "..";
 
 const axiosInstance = axios.create({

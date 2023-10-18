@@ -2,7 +2,7 @@ import React, { Dispatch, SetStateAction, useState } from "react";
 import { Overlay } from "@rneui/themed";
 import { View, Text, StyleSheet } from "react-native";
 import ButtonComponent from "../../components/Button";
-import InputComponent from "../../(auth)/components/Input";
+import InputComponent from "../../components/Input";
 
 interface OverlayComponentProps {
   value: string | null;
