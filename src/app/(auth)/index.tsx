@@ -61,13 +61,13 @@ export default function Login() {
         senha: password,
       });
       if (response.status === 200) {
-        console.log(`Login realizado: ${JSON.stringify(response.data)}`);
+        console.log(`${JSON.stringify(response.data)}`);
         setIsLoading(false);
         setToken(response.data.token);
         setIsLoggedIn;
         router.replace("equipe");
       } else {
-        throw new Error(`Erro ao logar-se: ${JSON.stringify(response.data)}`);
+        throw new Error(`${JSON.stringify(response.data)}`);
       }
     } catch (error) {
       console.log(error);
