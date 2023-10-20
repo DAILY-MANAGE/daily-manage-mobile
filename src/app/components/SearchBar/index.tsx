@@ -1,6 +1,6 @@
+import React, { useState } from "react";
 import { SearchBar } from "@rneui/themed";
-import React from "react";
-import { useState } from "react";
+import { StyleSheet } from "react-native";
 
 export default function CustomSearchBar() {
     const [search, setSearch] = useState("");
@@ -11,24 +11,31 @@ export default function CustomSearchBar() {
 
     return (
         <SearchBar
-            ref={(search) => (this.search = search)}
-            style={{
-                padding: 8,
-            }}
-            placeholder="Pesquisar formulários..."
+            ref={(search: any) => (this.search = search)}
+            placeholder="Pesquisar equipe..."
             onChangeText={updateSearch}
             value={search}
             lightTheme={true}
-            inputStyle={{
-                backgroundColor: "white",
-            }}
-            inputContainerStyle={{
-                backgroundColor: "white",
-            }}
-            containerStyle={{
-                backgroundColor: "#f1f1f1",
-                borderRadius: 8,
-            }}
+            style={styles.searchBar}
+            inputStyle={styles.inputStyle}
+            containerStyle={styles.containerStyle}
+            inputContainerStyle={styles.inputContainerStyle}
         />
     );
 }
+
+const styles = StyleSheet.create({
+    searchBar: {
+        padding: 8,
+    },
+    inputStyle: {
+        backgroundColor: "white",
+    },
+    containerStyle: {
+        backgroundColor: "#f1f1f1",
+        borderRadius: 8
+    },
+    inputContainerStyle: {
+        backgroundColor: "white",
+    }
+});

@@ -1,24 +1,24 @@
-import axios from "axios";
-import { baseURL } from "../../../utils/baseURL";
-import { View, StyleSheet, Text } from "react-native";
 import React, { useEffect, useState } from "react";
-import { getToken } from "../../(auth)";
-import { DadosEquipe } from "..";
+import { View, StyleSheet, Text } from "react-native";
+import { baseURL, getEquipesTodas } from "../../../../utils/endpoints";
+import { DadosEquipe } from "../../../../interfaces/DadosEquipe";
+import { getToken } from "../../../../hooks/token";
+import axios from "axios";
 
-const axiosInstance = axios.create({
-  baseURL: baseURL,
-});
-
-export function CardEquipes() {
-  const [isLoading, setIsLoading] = useState(false);
+export function CardEquipe() {
   const [data, setData] = useState<DadosEquipe[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const axiosInstance = axios.create({
+    baseURL: baseURL,
+  });
 
   useEffect(() => {
     (async () => {
       setIsLoading(true);
       try {
         const response = await axiosInstance.get(
-          `${baseURL}/equipe/todas/criadas`,
+          `${baseURL}/${getEquipesTodas}`,
           {
             headers: {
               "Content-Type": "application/json",
@@ -32,7 +32,7 @@ export function CardEquipes() {
           setData(response.data.content);
           setIsLoading(false);
         } else {
-          throw new Error(`Erro ao buscar ${JSON.stringify(response.data)}`);
+          throw new Error(`${JSON.stringify(response.data)}`);
         }
       } catch (error) {
         console.log(error);
@@ -44,9 +44,9 @@ export function CardEquipes() {
   return (
     <>
       {data.map((data: DadosEquipe) => (
-        <View key={data.id} style={styles.equipe}>
-          <Text style={styles.text}>{data.nome}</Text>
-          <Text style={styles.textIdentificação}>Identificação: {data.id}</Text>
+        <View key={data.id} style={styles.container}>
+          <Text style={styles.title}>{data.nome}</Text>
+          <Text style={styles.subitle}>Identificação: {data.id}</Text>
         </View>
       ))}
     </>
@@ -54,11 +54,7 @@ export function CardEquipes() {
 }
 
 const styles = StyleSheet.create({
-  text: {
-    fontSize: 20,
-    fontWeight: "900",
-  },
-  equipe: {
+  container: {
     height: "auto",
     width: "100%",
     padding: 16,
@@ -67,7 +63,11 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderColor: "black",
   },
-  textIdentificação: {
+  title: {
+    fontSize: 20,
+    fontWeight: "900",
+  },
+  subitle: {
     fontSize: 14,
     fontWeight: "normal",
     color: "#666564",

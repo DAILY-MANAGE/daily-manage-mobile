@@ -1,38 +1,47 @@
-import { StyleSheet, View, Text } from "react-native";
-import InputField from "./field";
-interface InputProps {
-  placeholder?: string;
-  textContentType?: any;
-  value: string;
-  setValue: string | any;
-  label?: string;
-  secureTextEntry?: boolean;
-  editable?: boolean;
-  autoComplete: any;
-  rightIcon?: any;
+import React from "react";
+import { Input } from "@rneui/themed";
+import {
+  StyleSheet,
+  View,
+  Text
+} from "react-native";
+
+interface CustomInputProps {
+  placeholder?: string,
+  textContentType?: any,
+  value?: any,
+  setValue?: any,
+  secureTextEntry?: boolean,
+  editable?: boolean,
+  autoComplete?: any,
+  rightIcon?: any,
+  label?: string
 }
 
-export default function InputComponent({
-  placeholder = "Placeholder",
+export default function CustomInput({
+  placeholder,
   textContentType,
   value,
   setValue,
-  label,
   secureTextEntry,
   editable,
   autoComplete,
   rightIcon,
-}: InputProps) {
+  label
+}: CustomInputProps) {
   return (
     <View style={styles.input}>
-      {/* <View style={styles.labelView}>
+      <View style={styles.labelView}>
         <Text style={styles.label}>{label}</Text>
-      </View> */}
-      <InputField
+      </View>
+      <Input
         placeholder={placeholder}
         textContentType={textContentType}
+        style={styles.inputStyle}
+        inputContainerStyle={styles.inputContainerStyle}
+        containerStyle={styles.containerStyle}
         value={value}
-        setValue={setValue}
+        onChangeText={setValue}
         secureTextEntry={secureTextEntry}
         editable={editable}
         autoComplete={autoComplete}
@@ -43,6 +52,26 @@ export default function InputComponent({
 }
 
 const styles = StyleSheet.create({
+  inputStyle: {
+    top: 12,
+    fontSize: 16,
+    paddingLeft: 8,
+  },
+  inputContainerStyle: {
+    borderBottomWidth: 0,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 0,
+    paddingBottom: 0,
+  },
+  containerStyle: {
+    backgroundColor: "white",
+    borderRadius: 12,
+    borderColor: "black",
+    borderWidth: 1,
+    shadowColor: "black",
+    elevation: 2,
+  },
   input: {
     gap: 10,
   },
@@ -51,8 +80,8 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   label: {
-    fontSize: 20,
-    fontWeight: "700",
+    fontSize: 16,
+    fontWeight: "900",
   },
   error: {
     color: "red",

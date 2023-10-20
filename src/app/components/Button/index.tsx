@@ -1,45 +1,45 @@
 import { Button } from "@rneui/base";
 
-interface ButtonProps {
-  onPress: string | any;
+interface CustomButtonProps {
+  size?: "md" | "sm" | "lg";
+  type?: "solid" | "outline";
   title: string;
   color?: string;
-  type?: "solid" | "outline";
   radius?: "md" | "sm" | "lg";
-  size?: "md" | "sm" | "lg";
-  buttonStyle?: any;
+  onPress: string | any;
   titleStyle?: any;
+  buttonStyle?: any;
 }
 
-ButtonComponent.defaultProps = {
-  radius: "md",
+CustomButton.defaultProps = {
   size: "lg",
-  color: "black",
   type: "solid",
+  color: "black",
+  radius: "md",
   titleStyle: "",
   buttonStyle: "",
 };
 
-export default function ButtonComponent({
-  onPress,
-  radius,
+export default function CustomButton({
   size,
+  type,
   title,
   color,
-  type,
-  buttonStyle,
+  radius,
+  onPress,
   titleStyle,
-}: ButtonProps) {
+  buttonStyle,
+}: CustomButtonProps) {
   return (
     <Button
-      onPressIn={onPress}
-      radius={radius}
-      color={color}
       size={size}
-      title={title}
       type={type}
-      buttonStyle={buttonStyle}
+      color={color}
+      title={title}
+      radius={radius}
+      onPressIn={onPress}
       titleStyle={titleStyle}
+      buttonStyle={buttonStyle}
     />
   );
 }

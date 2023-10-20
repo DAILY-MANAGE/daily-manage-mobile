@@ -4,7 +4,7 @@ import { Pressable } from "react-native";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { BottomSheet, ListItem } from "@rneui/themed";
 
-export default function EquipeLayout() {
+export default function EquipesLayout() {
   const [isVisible, setIsVisible] = useState(false);
 
   const router = useRouter();
@@ -16,7 +16,7 @@ export default function EquipeLayout() {
       title: "Sair",
       containerStyle: { backgroundColor: "red" },
       titleStyle: { color: "white" },
-      onPress: () => (setIsVisible(false), router.replace("(auth)")),
+      onPress: () => (setIsVisible(!isVisible), router.replace("(auth)")),
     },
   ];
 
@@ -26,7 +26,6 @@ export default function EquipeLayout() {
         <Stack.Screen
           name="index"
           options={{
-            headerBackButtonMenuEnabled: false,
             headerTitle: "Equipes",
             headerTitleStyle: {
               fontWeight: "900",
@@ -64,15 +63,19 @@ export default function EquipeLayout() {
           }}
         />
       </Stack>
-      <BottomSheet modalProps={{}} isVisible={isVisible}>
-        {options.map((l, i) => (
+      <BottomSheet
+        isVisible={isVisible}
+        onBackdropPress={
+          () => setIsVisible(!isVisible)
+        }>
+        {options.map((a, index) => (
           <ListItem
-            key={i}
-            containerStyle={l.containerStyle}
-            onPress={l.onPress}
+            key={index}
+            containerStyle={a.containerStyle}
+            onPress={a.onPress}
           >
             <ListItem.Content>
-              <ListItem.Title style={l.titleStyle}>{l.title}</ListItem.Title>
+              <ListItem.Title style={a.titleStyle}>{a.title}</ListItem.Title>
             </ListItem.Content>
           </ListItem>
         ))}

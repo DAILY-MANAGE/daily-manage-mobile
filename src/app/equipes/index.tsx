@@ -1,38 +1,39 @@
-import { StyleSheet, ScrollView, Pressable } from "react-native";
-import OverlayComponent from "./components/Overlay";
+import {
+  StyleSheet,
+  ScrollView,
+  Pressable
+} from "react-native";
 import React, { useState } from "react";
-import axios from "axios";
-import { baseURL } from "../../utils/baseURL";
-import { CardEquipes } from "./components/Equipes";
-import { getToken } from "../(auth)";
 import { useRouter } from "expo-router";
-
-const axiosInstance = axios.create({
-  baseURL: baseURL,
-});
-
-export interface DadosEquipe {
-  id?: number;
-  nome?: string;
-}
+import axios from "axios";
+import { baseURL, postEquipe } from "../../utils/endpoints";
+import { CardEquipe } from "./components/Card";
+import { getToken } from "../../hooks/token";
+import { DadosEquipe } from "../../interfaces/DadosEquipe";
+import OverlayEquipe from "./components/Overlay";
+import * as Updates from 'expo-updates';
 
 export default function Equipes() {
   const [nomeEquipe, setNomeEquipe] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState<DadosEquipe[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const [id, setId] = useState(null);
 
   const router = useRouter();
 
   const refresh = async () => {
-    return router.replace("equipe");
+    return Updates.reloadAsync()
   };
+
+  const axiosInstance = axios.create({
+    baseURL: baseURL,
+  });
 
   const criarEquipe = async () => {
     setIsLoading(true);
     try {
       const response = await axiosInstance.post(
-        `${baseURL}/equipe/criar`,
+        `${baseURL}/${postEquipe}`,
         {
           nome: nomeEquipe,
         },
@@ -46,10 +47,10 @@ export default function Equipes() {
       );
       if (response.status === 201) {
         console.log(`${JSON.stringify(response.data)}`);
-        setIsLoading(false);
-        setData(response.data);
         setId(response.data.id);
-        await refresh();
+        setData(response.data);
+        setIsLoading(false);
+        console.log(id)
         setNomeEquipe("");
       } else {
         throw new Error(`${JSON.stringify(response.data)}`);
@@ -61,39 +62,29 @@ export default function Equipes() {
   };
 
   return (
-    <>
       <ScrollView style={styles.container}>
-        <OverlayComponent
+        <OverlayEquipe
           value={nomeEquipe}
           setValue={setNomeEquipe}
-          onPress={() => {
-            criarEquipe();
-          }}
+          onPress={criarEquipe}
           editable={!isLoading}
         />
         <Pressable
           onPress={() =>
             router.push({
-              pathname: `/paginaEquipe/[${id}]`,
+              pathname: `/equipe/(tabs)/${id}`,
               params: { id: `${id}` },
             })
           }
           style={styles.equipeContainer}
         >
-          <CardEquipes />
+          <CardEquipe />
         </Pressable>
       </ScrollView>
-    </>
   );
 }
 
 const styles = StyleSheet.create({
-  equipeContainer: {
-    paddingTop: 8,
-    height: "auto",
-    width: "100%",
-    gap: 8,
-  },
   container: {
     gap: 8,
     height: "100%",
@@ -101,5 +92,11 @@ const styles = StyleSheet.create({
     padding: 16,
     flexDirection: "column",
     margin: 0,
+  },
+  equipeContainer: {
+    paddingTop: 8,
+    height: "auto",
+    width: "100%",
+    gap: 8,
   },
 });

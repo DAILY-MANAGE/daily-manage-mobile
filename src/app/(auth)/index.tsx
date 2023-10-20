@@ -1,57 +1,39 @@
-import { View, StyleSheet, Pressable } from "react-native";
-import { Text } from "@rneui/base";
+import React, { useState } from "react";
+import axios from "axios";
+import {
+  View,
+  StyleSheet,
+  Pressable,
+  Text
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { useRouter } from "expo-router";
-import React, { useState } from "react";
-import Logo from "../components/Logo";
-import InputComponent from "../components/Input";
-import ButtonComponent from "../components/Button";
 import { CheckBox } from "@rneui/themed";
-import { baseURL } from "../../utils/baseURL";
-import axios from "axios";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { setToken } from "../../hooks/token";
+import { baseURL } from "../../utils/endpoints";
+import ButtonComponent from "../components/Button";
+import InputComponent from "../components/Input";
+import Logo from "../components/Logo";
 
-const axiosInstance = axios.create({
-  baseURL: baseURL,
-  headers: {
-    "Content-Type": "application/json",
-  },
-});
-
-export const getToken = async () => {
-  try {
-    const token = await AsyncStorage.getItem("token");
-    if (token !== null) {
-      return token;
-    }
-  } catch (e) {
-    console.log(e);
-  }
-};
-
-const isLoggedIn = false;
-
-export const setIsLoggedIn = () => {
-  return !isLoggedIn;
-};
-
-export const setToken = async (token: string) => {
-  try {
-    await AsyncStorage.setItem("token", token);
-  } catch (e) {
-    console.log(e);
-  }
-};
 
 export default function Login() {
-  const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
   const [user, setUser] = useState("");
   const [password, setPassword] = useState("");
-  const [rememberPassword, setRememberPassword] =
-    useState<React.SetStateAction<boolean>>(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [checked, setChecked] = useState(false);
+  const [rememberPassword, setRememberPassword] = useState<React.SetStateAction<boolean>>(false);
+
+  const router = useRouter();
+
+  const toggleCheckbox = () => {
+    setChecked(!checked);
+    setRememberPassword(checked);
+  };
+
+  const axiosInstance = axios.create({
+    baseURL: baseURL,
+  });
 
   const handleLogin = async () => {
     setIsLoading(true);
@@ -59,13 +41,16 @@ export default function Login() {
       const response = await axiosInstance.post(`${baseURL}/auth/login`, {
         usuario: user,
         senha: password,
+      }, {
+        headers: {
+          "Content-Type": "application/json",
+        },
       });
       if (response.status === 200) {
         console.log(`${JSON.stringify(response.data)}`);
-        setIsLoading(false);
         setToken(response.data.token);
-        setIsLoggedIn;
-        router.replace("equipe");
+        setIsLoading(false);
+        router.replace("equipes");
       } else {
         throw new Error(`${JSON.stringify(response.data)}`);
       }
@@ -75,29 +60,24 @@ export default function Login() {
     }
   };
 
-  const toggleCheckbox = () => {
-    setChecked(!checked);
-    setRememberPassword(checked);
-  };
-
   return (
     <SafeAreaView>
       <StatusBar />
       <View style={styles.container}>
-        <View style={styles.logoForm}>
+        <View style={styles.container__logo}>
           <Logo style={styles.logo} />
-          <View style={styles.formContainer}>
-            <View style={styles.text}>
-              <Text style={{ fontWeight: "bold", fontSize: 24 }}>
+          <View style={styles.container__form}>
+            <View style={styles.header}>
+              <Text style={styles.title}>
                 Bem-vindo ao Daily Manage!
               </Text>
-              <Text style={{ fontSize: 16 }}>Entre na sua conta</Text>
+              <Text style={styles.subtitle}>Entre na sua conta</Text>
             </View>
             <View style={styles.form}>
               <View style={styles.inputs}>
                 <InputComponent
                   placeholder="Digite seu nome de usuário"
-                  label="Usuário"
+                  label="Usuário:"
                   value={user}
                   setValue={setUser}
                   textContentType="username"
@@ -105,60 +85,31 @@ export default function Login() {
                 />
                 <InputComponent
                   placeholder="Digite sua senha"
-                  label="Senha"
+                  label="Senha:"
                   value={password}
                   setValue={setPassword}
                   textContentType="password"
                   autoComplete="password"
                   secureTextEntry={true}
-                  rightIcon={{
-                    type: "font-awesome",
-                    name: "eye-slash",
-                    color: "#ccc",
-                    size: 24,
-                    iconStyle: { bottom: 0, alignSelf: "flex-end" },
-                    containerStyle: {
-                      flexDirection: "column",
-                      alignContent: "flex-end",
-                      alignItems: "flex-end",
-                      justifyContent: "flex-end",
-                      height: "100%",
-                      width: "100%",
-                    },
-                  }}
-                />
-                <CheckBox
-                  containerStyle={{ backgroundColor: "white", padding: 0 }}
-                  checked={checked}
-                  onPress={toggleCheckbox}
-                  iconType="material-community"
-                  checkedIcon="checkbox-marked"
-                  uncheckedIcon="checkbox-blank-outline"
-                  checkedColor="black"
-                  title="Lembrar senha"
-                  textStyle={{ fontWeight: "normal" }}
                 />
               </View>
-              <View style={styles.sumbites}>
+              <View style={styles.sumbite}>
                 <ButtonComponent onPress={handleLogin} title="Continuar" />
               </View>
             </View>
           </View>
         </View>
         <View style={styles.footer}>
-          <Pressable style={styles.registerButton}>
+          <Pressable style={styles.button_register}>
             <ButtonComponent
-              onPress={() => router.push("/cadastro")}
               title="Cadastrar-se"
               type="outline"
-              titleStyle={{ color: "black" }}
-              buttonStyle={{
-                borderColor: "black",
-                borderWidth: 1,
-              }}
+              onPress={() => router.push("/cadastro")}
+              titleStyle={styles.buttonTitleStyle}
+              buttonStyle={styles.buttonStyle}
             />
           </Pressable>
-          <Text style={{ color: "#ccc", fontSize: 16 }}>Lutherik</Text>
+          <Text style={styles.lutherik}>Lutherik</Text>
         </View>
       </View>
     </SafeAreaView>
@@ -166,55 +117,6 @@ export default function Login() {
 }
 
 const styles = StyleSheet.create({
-  inputs: {
-    gap: 16,
-    height: "auto",
-    paddingVertical: 16,
-    flexDirection: "column",
-    width: "100%",
-  },
-  logo: {
-    width: 104,
-    height: 104,
-  },
-  label: {
-    fontSize: 20,
-    fontWeight: "700",
-  },
-  labelView: {
-    flexDirection: "row",
-    gap: 8,
-  },
-  logoForm: {
-    gap: 32,
-    width: "100%",
-    justifyContent: "center",
-    alignItems: "center",
-    height: "auto",
-  },
-  formContainer: {
-    width: "100%",
-  },
-  sumbites: {
-    flexDirection: "column",
-    gap: 16,
-  },
-  footer: {
-    bottom: 0,
-    gap: 8,
-    width: "100%",
-    flexDirection: "column",
-    alignItems: "center",
-  },
-  registerButton: {
-    width: "100%",
-    height: "auto",
-  },
-  form: {
-    width: "100%",
-    flexDirection: "column",
-    height: "auto",
-  },
   container: {
     paddingBottom: 8,
     justifyContent: "space-between",
@@ -225,16 +127,74 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     backgroundColor: "white",
   },
-  input: {
-    gap: 10,
+  container__logo: {
+    gap: 32,
+    width: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+    height: "auto",
   },
-  text: {
+  logo: {
+    width: 104,
+    height: 104,
+  },
+  container__form: {
+    width: "100%",
+  },
+  header: {
     justifyContent: "flex-start",
     width: "100%",
   },
-  forgotPassword: {
+  title: {
+    fontWeight: "bold",
+    fontSize: 24
+  },
+  subtitle: {
+    color: "#585655"
+  },
+  form: {
     width: "100%",
-    alignSelf: "center",
+    flexDirection: "column",
+    height: "auto",
+  },
+  inputs: {
+    gap: 16,
+    height: "auto",
+    paddingVertical: 16,
+    flexDirection: "column",
+    width: "100%",
+  },
+  checkboxContainerStyle: {
+    backgroundColor: "white",
+    padding: 0
+  },
+  checkboxTextStyle: {
+    fontWeight: "normal",
+  },
+  sumbite: {
+    flexDirection: "column",
+    gap: 16,
+  },
+  footer: {
+    bottom: 0,
+    gap: 8,
+    width: "100%",
+    flexDirection: "column",
     alignItems: "center",
+  },
+  button_register: {
+    width: "100%",
+    height: "auto",
+  },
+  buttonTitleStyle: {
+    color: "black"
+  },
+  buttonStyle: {
+    borderColor: "black",
+    borderWidth: 1
+  },
+  lutherik: {
+    color: "#ccc",
+    fontSize: 16
   },
 });

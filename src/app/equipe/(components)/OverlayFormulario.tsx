@@ -1,22 +1,22 @@
 import React, { useState } from "react";
-import { Overlay } from "@rneui/themed";
 import { View, Text, StyleSheet } from "react-native";
+import { Overlay } from "@rneui/themed";
 import ButtonComponent from "../../components/Button";
 import InputComponent from "../../components/Input";
 
-interface OverlayComponentProps {
+interface OverlayFormularioProps {
   value: string | null;
   setValue: React.Dispatch<React.SetStateAction<string | null>>;
   onPress: () => any;
   editable: boolean;
 }
 
-export default function OverlayComponent({
+export default function OverlayFormulario({
   value,
   setValue,
   onPress,
   editable,
-}: OverlayComponentProps) {
+}: OverlayFormularioProps) {
   const [visible, setVisible] = useState(false);
 
   const toggleOverlay = () => {
@@ -25,18 +25,18 @@ export default function OverlayComponent({
 
   return (
     <View>
-      <ButtonComponent onPress={toggleOverlay} title='Nova Equipe +' />
+      <ButtonComponent onPress={toggleOverlay} title='Novo Formulário +' />
       <Overlay
         overlayStyle={styles.overlayStyle}
         isVisible={visible}
         onBackdropPress={toggleOverlay}
       >
-        <Text style={styles.textPrimary}>Nova Equipe</Text>
+        <Text style={styles.title}>Novo Formulário</Text>
         <InputComponent
-          placeholder='Digite o nome da Equipe'
+          placeholder='Digite o nome do Formulário'
           value={value}
           setValue={setValue}
-          label='Nome da Equipe'
+          label='Nome do Formulário'
           editable={editable}
           autoComplete='name'
         />
@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
     margin: 0,
     gap: 16,
   },
-  textPrimary: {
+  title: {
     paddingTop: 8,
     textAlign: "center",
     fontSize: 20,
