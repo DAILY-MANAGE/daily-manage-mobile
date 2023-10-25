@@ -1,49 +1,82 @@
 import React, { useEffect, useState } from "react";
 import { View, StyleSheet, Text } from "react-native";
-import { useGlobalSearchParams, useLocalSearchParams } from "expo-router";
-import { baseURL, getFormulariosTodos } from "../../../utils/endpoints";
+import { ENDPOINT, VER_FORMULARIOS_DA_EQUIPE } from "../../../utils/endpoints";
 import { DadosFormulario } from "../../../interfaces/DadosFormulario";
 import { getToken } from "../../../hooks/token";
 import axios from "axios";
+import { getEquipeData } from "../../equipes";
 
 export function CardFormulario() {
   const [data, setData] = useState<DadosFormulario[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-
-  const param = useGlobalSearchParams();
+  const [equipeData, setEquipeData] = useState(null);
 
   const axiosInstance = axios.create({
-    baseURL: baseURL,
+    baseURL: ENDPOINT,
   });
 
-  useEffect(() => {
+  /* useEffect(() => {
     (async () => {
       setIsLoading(true);
-      console.log(param.id)
       try {
+        const equipeData = await getEquipeData()
+        const token = await getToken()
         const response = await axiosInstance.get(
-          `${baseURL}/${getFormulariosTodos}?equipeid=${param.id}`,
+          `${ENDPOINT}${VER_FORMULARIOS_DA_EQUIPE}`,
           {
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${await getToken()}`,
+              Authorization: `Bearer ${token}`,
+              Equipe: equipeData as number,
             },
             data: {},
           }
         );
         if (response.status === 200) {
-          console.log(`${JSON.stringify(response.data.content)}`);
           setData(response.data.content);
           setIsLoading(false);
         } else {
           throw new Error(`${JSON.stringify(response.data)}`);
         }
       } catch (error) {
+        console.log(`Formulários criados: ${data}`)
         console.log(error);
         setIsLoading(false);
       }
     })();
-  }, []);
+  }, []); */
+
+  async function fetchData() {
+    setIsLoading(true);
+    try {
+      const token = await getToken();
+      const response = await axiosInstance.get(
+        `${ENDPOINT}${VER_FORMULARIOS_DA_EQUIPE}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+            Equipe: equipeData as number,
+          },
+          data: {},
+        }
+      );
+      if (response.status === 200) {
+        setData(response.data.content);
+        setIsLoading(false);
+      } else {
+        throw new Error(`${JSON.stringify(response.data)}`);
+      }
+    } catch (error) {
+      console.log(`Formulários criados: ${data}`);
+      console.log(error);
+      setIsLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    fetchData();
+  }, [equipeData]);
 
   return (
     <>

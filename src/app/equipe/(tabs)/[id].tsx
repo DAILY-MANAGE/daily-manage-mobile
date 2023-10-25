@@ -8,42 +8,43 @@ import {
   useLocalSearchParams,
   useRouter
 } from 'expo-router';
-import { baseURL, postFormulario } from '../../../utils/endpoints';
+import { ENDPOINT, CRIAR_FORMULARIO } from '../../../utils/endpoints';
 import OverlayFormulario from '../(components)/OverlayFormulario';
 import { CardFormulario } from '../(components)/CardFormulario';
 import { DadosFormulario } from '../../../interfaces/DadosFormulario';
 import { getToken } from '../../../hooks/token';
+import { IdStorage } from '../../../hooks/useId';
+import { getEquipeData } from '../../equipes';
 import axios from 'axios';
+
+export const formularioid = IdStorage.getId();
 
 export default function Formularios() {
   const [nomeFormulario, setNomeFormulario] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState<DadosFormulario[]>([]);
-  const [id, setId] = useState(null);
-  const param = useLocalSearchParams();
   const router = useRouter();
 
-  const refresh = async () => {
-    return router.replace("(tabs)");
-  };
-
   const axiosInstance = axios.create({
-    baseURL: baseURL,
+    baseURL: ENDPOINT,
   });
 
   const criarFormulario = async () => {
     setIsLoading(true);
     try {
+      const equipeData = await getEquipeData()
+      const token = await getToken()
+      console.log(equipeData as number, token)
       const response = await axiosInstance.post(
-        `${baseURL}/${postFormulario}?equipeid=${param.id}`,
+        `${ENDPOINT}${CRIAR_FORMULARIO}`,
         {
           nome: nomeFormulario,
         },
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${await getToken()}`,
-            Equipe: id
+            Authorization: `Bearer ${token}`,
+            Equipe: equipeData as number,
           },
           data: {},
         }
@@ -51,15 +52,14 @@ export default function Formularios() {
       if (response.status === 201) {
         console.log(`${JSON.stringify(response.data)}`);
         setData(response.data);
-        setId(response.data.id);
+        IdStorage.setId(response.data.id);
         setNomeFormulario("");
         setIsLoading(false);
-        await refresh();
       } else {
         throw new Error(`${JSON.stringify(response.data)}`);
       }
     } catch (error) {
-      console.log(error);
+      console.log(error)
       setIsLoading(false);
     }
   };
@@ -73,10 +73,10 @@ export default function Formularios() {
         editable={!isLoading}
       />
       <Pressable
-        onPress={() =>
+        onPress={async() =>
           router.push({
-            pathname: `/formulario/[${id}]`,
-            params: { id: `${id}` },
+            pathname: `/formulario/[${formularioid}]`,
+            params: { id: `${formularioid}` },
           })
         }
         style={styles.formularioContainer}

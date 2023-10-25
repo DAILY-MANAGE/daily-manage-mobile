@@ -7,7 +7,7 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import { CheckBox } from "@rneui/themed";
-import { baseURL } from "../../utils/endpoints";
+import { ENDPOINT, REGISTRO } from "../../utils/endpoints";
 import InputComponent from "../components/Input";
 import ButtonComponent from "../components/Button";
 
@@ -34,13 +34,13 @@ export default function Cadastro() {
   };
 
   const axiosInstance = axios.create({
-    baseURL: baseURL,
+    baseURL: ENDPOINT,
   });
 
   const handleRegister = async () => {
     setIsLoading(true);
     try {
-      const response = await axiosInstance.post(`${baseURL}/auth/register`, {
+      const response = await axiosInstance.post(`${ENDPOINT}${REGISTRO}`, {
         usuario: user,
         senha: password,
         nome: name,

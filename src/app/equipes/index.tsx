@@ -6,51 +6,50 @@ import {
 import React, { useState } from "react";
 import { useRouter } from "expo-router";
 import axios from "axios";
-import { baseURL, postEquipe } from "../../utils/endpoints";
+import { ENDPOINT, CRIAR_EQUIPE } from "../../utils/endpoints";
 import { CardEquipe } from "./components/Card";
 import { getToken } from "../../hooks/token";
 import { DadosEquipe } from "../../interfaces/DadosEquipe";
 import OverlayEquipe from "./components/Overlay";
-import * as Updates from 'expo-updates';
+import { IdStorage } from "../../hooks/useId";
+
+export const getEquipeData = async () => {
+  return await IdStorage.getId()
+};
 
 export default function Equipes() {
   const [nomeEquipe, setNomeEquipe] = useState<string | null>(null);
   const [data, setData] = useState<DadosEquipe[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [id, setId] = useState(null);
 
   const router = useRouter();
 
-  const refresh = async () => {
-    return Updates.reloadAsync()
-  };
-
   const axiosInstance = axios.create({
-    baseURL: baseURL,
+    baseURL: ENDPOINT,
   });
 
   const criarEquipe = async () => {
+    const token = await getToken();
     setIsLoading(true);
     try {
       const response = await axiosInstance.post(
-        `${baseURL}/${postEquipe}`,
+        `${ENDPOINT}${CRIAR_EQUIPE}`,
         {
           nome: nomeEquipe,
         },
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${await getToken()}`,
+            Authorization: `Bearer ${token}`,
           },
           data: {},
         }
       );
       if (response.status === 201) {
         console.log(`${JSON.stringify(response.data)}`);
-        setId(response.data.id);
         setData(response.data);
+        IdStorage.setId(response.data.id);
         setIsLoading(false);
-        console.log(id)
         setNomeEquipe("");
       } else {
         throw new Error(`${JSON.stringify(response.data)}`);
@@ -61,6 +60,10 @@ export default function Equipes() {
     }
   };
 
+  const getInnerEquipeId = async () => {
+    return await getEquipeData()
+  }
+
   return (
       <ScrollView style={styles.container}>
         <OverlayEquipe
@@ -70,10 +73,10 @@ export default function Equipes() {
           editable={!isLoading}
         />
         <Pressable
-          onPress={() =>
+          onPress={async () =>
             router.push({
-              pathname: `/equipe/(tabs)/${id}`,
-              params: { id: `${id}` },
+              pathname: `/equipe/(tabs)/${(await getInnerEquipeId()).id}}`,
+              params: { id: `${(await getInnerEquipeId()).id}` },
             })
           }
           style={styles.equipeContainer}

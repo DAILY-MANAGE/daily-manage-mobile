@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { View, StyleSheet, Text } from "react-native";
-import { baseURL, getEquipesTodas } from "../../../../utils/endpoints";
+import { ENDPOINT, VER_EQUIPES_CRIADAS } from "../../../../utils/endpoints";
 import { DadosEquipe } from "../../../../interfaces/DadosEquipe";
 import { getToken } from "../../../../hooks/token";
 import axios from "axios";
@@ -10,35 +10,37 @@ export function CardEquipe() {
   const [isLoading, setIsLoading] = useState(false);
 
   const axiosInstance = axios.create({
-    baseURL: baseURL,
+    baseURL: ENDPOINT,
   });
 
-  useEffect(() => {
-    (async () => {
-      setIsLoading(true);
-      try {
-        const response = await axiosInstance.get(
-          `${baseURL}/${getEquipesTodas}`,
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${await getToken()}`,
-            },
-            data: {},
-          }
-        );
-        if (response.status === 200) {
-          console.log(`${JSON.stringify(response.data.content)}`);
-          setData(response.data.content);
-          setIsLoading(false);
-        } else {
-          throw new Error(`${JSON.stringify(response.data)}`);
+  async function fetchData() {
+    const token = await getToken();
+    setIsLoading(true);
+    try {
+      const response = await axiosInstance.get(
+        `${ENDPOINT}${VER_EQUIPES_CRIADAS}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          data: {},
         }
-      } catch (error) {
-        console.log(error);
+      );
+      if (response.status === 200) {
+        setData(response.data.content);
         setIsLoading(false);
+      } else {
+        throw new Error(`${JSON.stringify(response.data)}`);
       }
-    })();
+    } catch (error) {
+      console.log(error);
+      setIsLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    fetchData();
   }, []);
 
   return (

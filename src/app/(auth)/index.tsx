@@ -11,7 +11,7 @@ import { StatusBar } from "expo-status-bar";
 import { useRouter } from "expo-router";
 import { CheckBox } from "@rneui/themed";
 import { setToken } from "../../hooks/token";
-import { baseURL } from "../../utils/endpoints";
+import { ENDPOINT, LOGIN } from "../../utils/endpoints";
 import ButtonComponent from "../components/Button";
 import InputComponent from "../components/Input";
 import Logo from "../components/Logo";
@@ -32,13 +32,13 @@ export default function Login() {
   };
 
   const axiosInstance = axios.create({
-    baseURL: baseURL,
+    baseURL: ENDPOINT,
   });
 
   const handleLogin = async () => {
     setIsLoading(true);
     try {
-      const response = await axiosInstance.post(`${baseURL}/auth/login`, {
+      const response = await axiosInstance.post(`${ENDPOINT}${LOGIN}`, {
         usuario: user,
         senha: password,
       }, {
