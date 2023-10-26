@@ -7,6 +7,7 @@ export default function AppLayout() {
       <Stack.Screen name="equipes" options={{ headerShown: false }}/>
       <Stack.Screen name="notificacoes" options={{ headerShown: false }}/>
       <Stack.Screen name="equipe/(tabs)" options={{ headerShown: false }}/>
+      <Stack.Screen name="criarFormulario" options={{ headerShown: false, presentation: 'fullScreenModal' }}/>
     </Stack>
   );
 }

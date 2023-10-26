@@ -3,19 +3,17 @@ import {
   ScrollView,
   Pressable,
   RefreshControl,
-  ToastAndroid,
-  View,
+  ToastAndroid
 } from "react-native";
 import React, { useState } from "react";
 import { useRouter } from "expo-router";
 import axios from "axios";
-import { ENDPOINT, CRIAR_EQUIPE, EXCLUIR_EQUIPE } from "../../utils/endpoints";
+import { ENDPOINT, CRIAR_EQUIPE } from "../../utils/endpoints";
 import { CardEquipe } from "./components/Card";
 import { getToken } from "../../hooks/token";
 import { DadosEquipe } from "../../interfaces/DadosEquipe";
 import OverlayEquipe from "./components/Overlay";
 import { IdStorage } from "../../hooks/useId";
-import CustomButton from "../components/Button/index";
 
 export const getEquipeData = async () => {
   return await IdStorage.getId();
@@ -40,33 +38,6 @@ export default function Equipes() {
   const axiosInstance = axios.create({
     baseURL: ENDPOINT,
   });
-
-  const deletarEquipe = async () => {
-    const token = await getToken();
-    setIsLoading(true);
-    try {
-      const response = await axiosInstance.delete(
-        `${ENDPOINT}${EXCLUIR_EQUIPE}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      if (response.status === 200) {
-        console.log(`${JSON.stringify(response.data)}`);
-        setIsLoading(false);
-        ToastAndroid.show(`Equipe ${nomeEquipe} deletada!`, ToastAndroid.SHORT);
-        setNomeEquipe("");
-      } else {
-        throw new Error(`${JSON.stringify(response.data)}`);
-      }
-    } catch (error) {
-      console.log(error);
-      setIsLoading(false);
-    }
-  };
 
   const criarEquipe = async () => {
     const token = await getToken();
@@ -129,14 +100,6 @@ export default function Equipes() {
       >
         <CardEquipe />
       </Pressable>
-        <View style={styles.footer}>
-          <CustomButton
-            onPress={() => {
-              deletarEquipe();
-            }}
-            title="Deletar equipe"
-          />
-        </View>
     </ScrollView>
   );
 }

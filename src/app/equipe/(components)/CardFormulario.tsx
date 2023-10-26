@@ -4,7 +4,6 @@ import { ENDPOINT, VER_FORMULARIOS_DA_EQUIPE } from "../../../utils/endpoints";
 import { DadosFormulario } from "../../../interfaces/DadosFormulario";
 import { getToken } from "../../../hooks/token";
 import axios from "axios";
-import { getEquipeData } from "../../equipes";
 
 export function CardFormulario() {
   const [data, setData] = useState<DadosFormulario[]>([]);
