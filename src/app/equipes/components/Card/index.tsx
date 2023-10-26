@@ -1,13 +1,24 @@
 import React, { useEffect, useState } from "react";
-import { View, StyleSheet, Text } from "react-native";
+import { View, StyleSheet, Text, Pressable } from "react-native";
 import { ENDPOINT, VER_EQUIPES_CRIADAS } from "../../../../utils/endpoints";
 import { DadosEquipe } from "../../../../interfaces/DadosEquipe";
 import { getToken } from "../../../../hooks/token";
 import axios from "axios";
 
-export function CardEquipe() {
+interface CardEquipeProps {
+  style?: any;
+  onPress?: any;
+}
+
+interface CardEquipeItemProps {
+  data: DadosEquipe;
+  onLongPress: () => void;
+}
+
+export function CardEquipe({ style, onPress }: CardEquipeProps) {
   const [data, setData] = useState<DadosEquipe[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<DadosEquipe | null>(null);
 
   const axiosInstance = axios.create({
     baseURL: ENDPOINT,
@@ -43,13 +54,32 @@ export function CardEquipe() {
     fetchData();
   }, []);
 
+  function handleSelectItem(item: DadosEquipe) {
+    setSelectedItem(item);
+  }
+
+  function CardEquipeItem({ data, onLongPress }: CardEquipeItemProps) {
+    return (
+      <Pressable onLongPress={onLongPress}>
+        <Text style={styles.title}>{data.nome}</Text>
+        <Text style={styles.subitle}>Identificação: {data.id}</Text>
+      </Pressable>
+    );
+  }
+
   return (
     <>
       {data.map((data: DadosEquipe) => (
-        <View key={data.id} style={styles.container}>
-          <Text style={styles.title}>{data.nome}</Text>
-          <Text style={styles.subitle}>Identificação: {data.id}</Text>
-        </View>
+        <Pressable
+          key={data.id}
+          style={[
+            style ? style : styles.container,
+            selectedItem === data && styles.selected,
+          ]}
+          onPress={onPress}
+        >
+          <CardEquipeItem data={data} onLongPress={() => handleSelectItem(data)} />
+        </Pressable>
       ))}
     </>
   );
@@ -73,5 +103,8 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "normal",
     color: "#666564",
-  }
+  },
+  selected: {
+    backgroundColor: "#B0D1ED",
+  },
 });

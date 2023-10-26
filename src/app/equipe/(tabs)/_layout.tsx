@@ -29,7 +29,7 @@ export default function EquipeLayout() {
             headerTitleStyle: styles.headerTitleStyle,
             headerLeft: () => (
               <>
-                <Pressable onPress={() => router.back()}>
+                <Pressable onPress={() => router.replace('equipes')}>
                   {({ pressed }) => (
                     <FontAwesome
                       name="arrow-left"
@@ -88,7 +88,7 @@ export default function EquipeLayout() {
             headerTitleStyle: styles.headerTitleStyle,
             headerLeft: () => (
               <>
-                <Pressable onPress={() => router.back()}>
+                <Pressable onPress={() => router.replace('equipes')}>
                   {({ pressed }) => (
                     <FontAwesome
                       name="arrow-left"
@@ -147,7 +147,7 @@ export default function EquipeLayout() {
             headerTitleStyle: styles.headerTitleStyle,
             headerLeft: () => (
               <>
-                <Pressable onPress={() => router.back()}>
+                <Pressable onPress={() => router.replace('equipes')}>
                   {({ pressed }) => (
                     <FontAwesome
                       name="arrow-left"

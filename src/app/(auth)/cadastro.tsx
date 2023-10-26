@@ -3,7 +3,8 @@ import {
   View,
   StyleSheet,
   Pressable,
-  ScrollView
+  ScrollView,
+  ToastAndroid
 } from "react-native";
 import { useRouter } from "expo-router";
 import { CheckBox } from "@rneui/themed";
@@ -53,6 +54,7 @@ export default function Cadastro() {
       if (response.status === 201) {
         console.log(`${JSON.stringify(response.data)}`);
         setIsLoading(false);
+        ToastAndroid.show(`Usuário ${user} entrou.`, ToastAndroid.SHORT);
         router.push("(auth)");
       } else {
         throw new Error(
@@ -60,6 +62,7 @@ export default function Cadastro() {
         );
       }
     } catch (error) {
+      ToastAndroid.show(`Erro ao entrar.`, ToastAndroid.SHORT);
       console.log(error);
       setIsLoading(false);
     }

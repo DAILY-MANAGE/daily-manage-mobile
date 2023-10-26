@@ -3,6 +3,8 @@ import { View, Text, StyleSheet } from "react-native";
 import { Overlay } from "@rneui/themed";
 import ButtonComponent from "../../../components/Button";
 import InputComponent from "../../../components/Input";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { router } from "expo-router";
 
 interface OverlayEquipeProps {
   value: string | null;
@@ -23,24 +25,34 @@ export default function OverlayEquipe({
     setVisible(!visible);
   };
 
+  const onPressSave = () => {
+    onPress();
+    toggleOverlay();
+    router.replace('equipes')
+  };
+
   return (
     <View>
-      <ButtonComponent onPress={toggleOverlay} title='Nova Equipe +' />
+      <ButtonComponent onPress={toggleOverlay} title="Nova Equipe +" />
       <Overlay
         overlayStyle={styles.overlayStyle}
         isVisible={visible}
         onBackdropPress={toggleOverlay}
       >
-        <Text style={styles.title}>Nova Equipe</Text>
+        <View style={styles.header}>
+          <Text style={styles.title}>Criar nova Equipe</Text>
+          <FontAwesome name="close" size={24} onPress={toggleOverlay}/>
+        </View>
+
         <InputComponent
-          placeholder='Digite o nome da Equipe'
-          label='Nome da Equipe'
-          autoComplete='name'
+          placeholder="Digite o nome da Equipe"
+          label="Nome da Equipe"
+          autoComplete="name"
           value={value}
           setValue={setValue}
           editable={editable}
         />
-        <ButtonComponent onPress={onPress} title='Salvar' />
+        <ButtonComponent onPress={onPressSave} title="Salvar" />
       </Overlay>
     </View>
   );
@@ -54,6 +66,13 @@ const styles = StyleSheet.create({
     height: "auto",
     margin: 0,
     gap: 16,
+  },
+  header: {
+    flexDirection: 'row',
+    width: '100%',
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingRight: 8, 
   },
   title: {
     paddingTop: 8,
