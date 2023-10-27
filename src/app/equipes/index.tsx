@@ -3,7 +3,8 @@ import {
   ScrollView,
   Pressable,
   RefreshControl,
-  ToastAndroid
+  ToastAndroid,
+  Text
 } from "react-native";
 import React, { useState } from "react";
 import { useRouter } from "expo-router";
@@ -89,10 +90,11 @@ export default function Equipes() {
         onPress={criarEquipe}
         editable={!isLoading}
       />
+      {isLoading && (<Text>Carregando...</Text>)}
       <Pressable
         onPress={async () =>
           router.push({
-            pathname: `/equipe/(tabs)/${(await getInnerEquipeId()).id}}`,
+            pathname: `/equipe/(tabs)/${(await getInnerEquipeId()).id}`,
             params: { id: `${(await getInnerEquipeId()).id}` },
           })
         }

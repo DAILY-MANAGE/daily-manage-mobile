@@ -9,16 +9,18 @@ import { getEquipeData } from "../../equipes";
 export function CardFormulario() {
   const [data, setData] = useState<DadosFormulario[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [equipeData, setEquipeData] = useState(null); // verificar uso dps
 
   const axiosInstance = axios.create({
     baseURL: ENDPOINT,
   });
 
+  const equipeData = async () => {
+    return await getEquipeData();
+  };
+
   async function fetchData() {
     setIsLoading(true);
     try {
-      const equipeData = await getEquipeData();
       const token = await getToken();
       const response = await axiosInstance.get(
         `${ENDPOINT}${VER_FORMULARIOS_DA_EQUIPE}`,
@@ -26,7 +28,7 @@ export function CardFormulario() {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
-            Equipe: equipeData as number,
+            Equipe: await equipeData() as number,
           },
           data: {},
         }
@@ -45,7 +47,7 @@ export function CardFormulario() {
 
   useEffect(() => {
     fetchData();
-  }, [equipeData]);
+  }, [equipeData()]);
 
   return (
     <>
@@ -77,5 +79,5 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "normal",
     color: "#666564",
-  }
+  },
 });

@@ -11,28 +11,8 @@ import { getEquipeData } from "../equipes";
 import CustomButton from "../components/Button/index";
 import { Switch } from "@rneui/themed";
 import { ListItem } from "@rneui/themed";
-import { Icon } from "@rneui/themed";
-
-export interface PermittedUsers {
-  id: number;
-  name: string;
-  value: string[];
-}
-
-const permittedUsers: PermittedUsers[] = [
-  {
-    id: 1,
-    name: "arthur",
-    value: [
-      "VISUALIZAR_FORMULARIO",
-      "CRIAR_FORMULARIO",
-      "EXCLUIR_FORMULARIO",
-      "EDITAR_FORMULARIO",
-      "RESPONDER_FORMULARIO",
-      "VER_FORMULARIO_RESPONDIDO"
-    ]
-  }
-]
+import AccordionPessoas, { PresetPermittedUsers, setIdUsuariosPermitidos } from "./components/PessoasPermitidas";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export interface Preset {
   id: number;
@@ -100,15 +80,22 @@ export default function CriarFormulario() {
   const [respostaOpcional, setRespostaOpcional] = useState<boolean | null>(
     false
   );
-  const [idUsuariosPermitidos, setIdUsuariosPermitidos] = useState<
-    number | null
-  >(null);
-
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState<DadosFormulario[]>([]);
-  const [expanded, setExpanded] = useState(false)
-  const [expandedUsers, setExpandedUsers] = useState(false)
+  const [expanded, setExpanded] = useState(false);
   const router = useRouter();
+
+  const getIdUsuariosPermitidos = async (): Promise<PresetPermittedUsers | null> => {
+    try {
+      const id = await AsyncStorage.getItem("id");
+      if (id !== null) {
+        return JSON.parse(id);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    return null;
+  };
 
   const axiosInstance = axios.create({
     baseURL: ENDPOINT,
@@ -121,6 +108,10 @@ export default function CriarFormulario() {
     setTipoResposta("");
     setIdUsuariosPermitidos(null);
     setRespostaOpcional(false);
+  };
+
+  const idUsuariosPermitidos = async () => {
+    return await getIdUsuariosPermitidos()
   }
 
   const criarFormulario = async () => {
@@ -128,6 +119,7 @@ export default function CriarFormulario() {
     try {
       const equipeData = await getEquipeData();
       const token = await getToken();
+      const idUsuariosPermitidos = await getIdUsuariosPermitidos();
       const response = await axiosInstance.post(
         `${ENDPOINT}${CRIAR_FORMULARIO}`,
         {
@@ -161,7 +153,15 @@ export default function CriarFormulario() {
         throw new Error(`${JSON.stringify(response.data)}`);
       }
     } catch (error) {
-      console.log(await getEquipeData(), nomeFormulario, descricaoFormulario, descricaoPergunta, tipoResposta, idUsuariosPermitidos, respostaOpcional);
+      console.log(
+        await getEquipeData(),
+        nomeFormulario,
+        descricaoFormulario,
+        descricaoPergunta,
+        tipoResposta,
+        await idUsuariosPermitidos(),
+        respostaOpcional
+      );
       console.log(error);
       setIsLoading(false);
     }
@@ -197,7 +197,9 @@ export default function CriarFormulario() {
           content={
             <>
               <ListItem.Content>
-                <ListItem.Title style={styles.accordion__title}>Tipo de resposta</ListItem.Title>
+                <ListItem.Title style={styles.accordion__title}>
+                  Tipo de resposta
+                </ListItem.Title>
               </ListItem.Content>
             </>
           }
@@ -207,39 +209,24 @@ export default function CriarFormulario() {
           }}
         >
           {presets.map((data: Preset) => (
-            <ListItem style={styles.list} key={data.id} onPress={(e) => { setTipoResposta(data.value); console.log(tipoResposta) }} bottomDivider>
+            <ListItem
+              style={styles.list}
+              key={data.id}
+              onPress={(e) => {
+                setTipoResposta(data.value);
+                console.log(tipoResposta);
+              }}
+              bottomDivider
+            >
               <ListItem.Content>
                 <ListItem.Title>{data.name}</ListItem.Title>
               </ListItem.Content>
             </ListItem>
           ))}
         </ListItem.Accordion>
-        <ListItem.Accordion
-          containerStyle={styles.accordion__container}
-          content={
-            <>
-              <ListItem.Content>
-                <ListItem.Title style={styles.accordion__title}>Usuários permitidos</ListItem.Title>
-              </ListItem.Content>
-            </>
-          }
-          isExpanded={expandedUsers}
-          onPress={() => {
-            setExpandedUsers(!expandedUsers);
-          }}
-        >
-          {permittedUsers.map((data: PermittedUsers) => (
-            <ListItem style={styles.list} key={data.id} onPress={(e) => { setIdUsuariosPermitidos(data.id); console.log(permittedUsers) }} bottomDivider>
-              <ListItem.Content>
-                <ListItem.Title>{data.name}</ListItem.Title>
-              </ListItem.Content>
-            </ListItem>
-          ))}
-        </ListItem.Accordion>
+        <AccordionPessoas />
         <View style={styles.switch__container}>
-          <Text style={styles.switch__label}>
-            Obrigatório
-          </Text>
+          <Text style={styles.switch__label}>Obrigatório</Text>
           <Switch
             color="black"
             value={respostaOpcional}
@@ -257,15 +244,15 @@ export default function CriarFormulario() {
 const styles = StyleSheet.create({
   list: {
     width: "60%",
-    backgroundColor: "red"
+    backgroundColor: "red",
   },
   inputs: {
-    gap: 8
+    gap: 8,
   },
   footer: {
     width: "100%",
     height: "auto",
-    bottom: 0
+    bottom: 0,
   },
   accordion__container: {
     flexDirection: "row",
@@ -276,7 +263,7 @@ const styles = StyleSheet.create({
   },
   accordion__title: {
     fontSize: 20,
-    fontWeight: "700"
+    fontWeight: "700",
   },
   container: {
     justifyContent: "space-between",
@@ -291,10 +278,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 8,
     width: "100%",
-    alignItems: "center"
+    alignItems: "center",
   },
   switch__label: {
     fontSize: 20,
-    fontWeight: "700"
+    fontWeight: "700",
   },
 });
