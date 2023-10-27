@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
-import { Text } from "react-native";
+import { Text, View, StyleSheet, ScrollView } from "react-native";
 import { getToken } from "../../hooks/token";
 import { IdStorage } from "../../hooks/useId";
 import { DadosFormulario } from "../../interfaces/DadosFormulario";
@@ -12,6 +12,27 @@ import CustomButton from "../components/Button/index";
 import { Switch } from "@rneui/themed";
 import { ListItem } from "@rneui/themed";
 import { Icon } from "@rneui/themed";
+
+export interface PermittedUsers {
+  id: number;
+  name: string;
+  value: string[];
+}
+
+const permittedUsers: PermittedUsers[] = [
+  {
+    id: 1,
+    name: "arthur",
+    value: [
+      "VISUALIZAR_FORMULARIO",
+      "CRIAR_FORMULARIO",
+      "EXCLUIR_FORMULARIO",
+      "EDITAR_FORMULARIO",
+      "RESPONDER_FORMULARIO",
+      "VER_FORMULARIO_RESPONDIDO"
+    ]
+  }
+]
 
 export interface Preset {
   id: number;
@@ -86,11 +107,21 @@ export default function CriarFormulario() {
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState<DadosFormulario[]>([]);
   const [expanded, setExpanded] = useState(false)
+  const [expandedUsers, setExpandedUsers] = useState(false)
   const router = useRouter();
 
   const axiosInstance = axios.create({
     baseURL: ENDPOINT,
   });
+
+  const clearValues = () => {
+    setNomeFormulario("");
+    setDescricaoFormulario("");
+    setDescricaoPergunta("");
+    setTipoResposta("");
+    setIdUsuariosPermitidos(null);
+    setRespostaOpcional(false);
+  }
 
   const criarFormulario = async () => {
     setIsLoading(true);
@@ -124,18 +155,13 @@ export default function CriarFormulario() {
         console.log(`${JSON.stringify(response.data)}`);
         setData(response.data);
         IdStorage.setId(response.data.id);
-        setNomeFormulario("");
-        setDescricaoFormulario("");
-        setDescricaoPergunta("");
-        setTipoResposta("");
-        setIdUsuariosPermitidos(null);
-        setRespostaOpcional(false);
+        clearValues();
         setIsLoading(false);
       } else {
         throw new Error(`${JSON.stringify(response.data)}`);
       }
     } catch (error) {
-      console.log(nomeFormulario, descricaoFormulario);
+      console.log(await getEquipeData(), nomeFormulario, descricaoFormulario, descricaoPergunta, tipoResposta, idUsuariosPermitidos, respostaOpcional);
       console.log(error);
       setIsLoading(false);
     }
@@ -146,54 +172,129 @@ export default function CriarFormulario() {
   };
 
   return (
-    <>
-      <Text>Criar Formulario</Text>
-      <CustomInput
-        placeholder="Nome do formulário"
-        value={nomeFormulario}
-        setValue={setNomeFormulario}
-      />
-      <CustomInput
-        placeholder="Descrição do formulário"
-        value={descricaoFormulario}
-        setValue={setDescricaoFormulario}
-      />
-      <CustomInput
-        placeholder="Descrição da pergunta"
-        value={descricaoPergunta}
-        setValue={setDescricaoPergunta}
-      />
-      <ListItem.Accordion
-        content={
-          <>
-            <ListItem.Content>
-              <ListItem.Title>Tipo de resposta</ListItem.Title>
-            </ListItem.Content>
-          </>
-        }
-        isExpanded={expanded}
-        onPress={() => {
-          setExpanded(!expanded);
-        }}
-      >
-        {presets.map((data: Preset) => (
-          <ListItem key={data.id} onPress={(e) => {setTipoResposta(data.value); console.log(tipoResposta)}} bottomDivider>
-            <ListItem.Content>
-              <ListItem.Title>{data.name}</ListItem.Title>
-            </ListItem.Content>
-          </ListItem>
-        ))}
-      </ListItem.Accordion>
-      <Switch
-        value={respostaOpcional}
-        onValueChange={(value) => setRespostaOpcional(value)}
-      />
-      <CustomInput
-        placeholder="Usuários permitidos"
-        value={idUsuariosPermitidos}
-        setValue={setIdUsuariosPermitidos}
-      />
-      <CustomButton onPress={criarFormulario} title={"+ Criar"} />
-    </>
+    <ScrollView contentContainerStyle={styles.container}>
+      <View style={styles.inputs}>
+        <CustomInput
+          label="Nome:"
+          placeholder="Lista de Compras..."
+          value={nomeFormulario}
+          setValue={setNomeFormulario}
+        />
+        <CustomInput
+          label="Descrição:"
+          placeholder="Lista de compras da família Lutherik..."
+          value={descricaoFormulario}
+          setValue={setDescricaoFormulario}
+        />
+        <CustomInput
+          label="Pergunta:"
+          placeholder="Comprou leite?"
+          value={descricaoPergunta}
+          setValue={setDescricaoPergunta}
+        />
+        <ListItem.Accordion
+          containerStyle={styles.accordion__container}
+          content={
+            <>
+              <ListItem.Content>
+                <ListItem.Title style={styles.accordion__title}>Tipo de resposta</ListItem.Title>
+              </ListItem.Content>
+            </>
+          }
+          isExpanded={expanded}
+          onPress={() => {
+            setExpanded(!expanded);
+          }}
+        >
+          {presets.map((data: Preset) => (
+            <ListItem style={styles.list} key={data.id} onPress={(e) => { setTipoResposta(data.value); console.log(tipoResposta) }} bottomDivider>
+              <ListItem.Content>
+                <ListItem.Title>{data.name}</ListItem.Title>
+              </ListItem.Content>
+            </ListItem>
+          ))}
+        </ListItem.Accordion>
+        <ListItem.Accordion
+          containerStyle={styles.accordion__container}
+          content={
+            <>
+              <ListItem.Content>
+                <ListItem.Title style={styles.accordion__title}>Usuários permitidos</ListItem.Title>
+              </ListItem.Content>
+            </>
+          }
+          isExpanded={expandedUsers}
+          onPress={() => {
+            setExpandedUsers(!expandedUsers);
+          }}
+        >
+          {permittedUsers.map((data: PermittedUsers) => (
+            <ListItem style={styles.list} key={data.id} onPress={(e) => { setIdUsuariosPermitidos(data.id); console.log(permittedUsers) }} bottomDivider>
+              <ListItem.Content>
+                <ListItem.Title>{data.name}</ListItem.Title>
+              </ListItem.Content>
+            </ListItem>
+          ))}
+        </ListItem.Accordion>
+        <View style={styles.switch__container}>
+          <Text style={styles.switch__label}>
+            Obrigatório
+          </Text>
+          <Switch
+            color="black"
+            value={respostaOpcional}
+            onValueChange={(value) => setRespostaOpcional(value)}
+          />
+        </View>
+      </View>
+      <View style={styles.footer}>
+        <CustomButton onPress={criarFormulario} title={"+ Criar"} />
+      </View>
+    </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  list: {
+    width: "60%",
+    backgroundColor: "red"
+  },
+  inputs: {
+    gap: 8
+  },
+  footer: {
+    width: "100%",
+    height: "auto",
+    bottom: 0
+  },
+  accordion__container: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingLeft: 0,
+    paddingRight: 0,
+  },
+  accordion__title: {
+    fontSize: 20,
+    fontWeight: "700"
+  },
+  container: {
+    justifyContent: "space-between",
+    height: "100%",
+    width: "100%",
+    flexDirection: "column",
+    backgroundColor: "white",
+    gap: 8,
+    padding: 16,
+  },
+  switch__container: {
+    flexDirection: "row",
+    gap: 8,
+    width: "100%",
+    alignItems: "center"
+  },
+  switch__label: {
+    fontSize: 20,
+    fontWeight: "700"
+  },
+});

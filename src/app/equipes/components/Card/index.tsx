@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, StyleSheet, Text, Pressable } from "react-native";
+import { StyleSheet, Text, Pressable } from "react-native";
 import { ENDPOINT, VER_EQUIPES_CRIADAS } from "../../../../utils/endpoints";
 import { DadosEquipe } from "../../../../interfaces/DadosEquipe";
 import { getToken } from "../../../../hooks/token";
@@ -35,6 +35,7 @@ export function CardEquipe() {
       }
     } catch (error) {
       console.log(error);
+      console.log(data)
       setIsLoading(false);
     }
   }

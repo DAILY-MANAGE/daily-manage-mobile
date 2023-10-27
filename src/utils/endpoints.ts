@@ -1,6 +1,6 @@
 // API ------------------------------------------------------------
 
-export const ENDPOINT = 'http://10.68.21.237:8080'
+export const ENDPOINT = 'http://192.168.0.102:8080'
 
 export const REGISTRO = "/auth/registro";
 export const LOGIN = "/auth/login";

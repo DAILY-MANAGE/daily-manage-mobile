@@ -125,7 +125,4 @@ const styles = StyleSheet.create({
     width: "100%",
     gap: 8,
   },
-  select: {
-    backgroundColor: ""
-  }
 });

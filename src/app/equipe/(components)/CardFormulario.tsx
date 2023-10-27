@@ -4,50 +4,21 @@ import { ENDPOINT, VER_FORMULARIOS_DA_EQUIPE } from "../../../utils/endpoints";
 import { DadosFormulario } from "../../../interfaces/DadosFormulario";
 import { getToken } from "../../../hooks/token";
 import axios from "axios";
+import { getEquipeData } from "../../equipes";
 
 export function CardFormulario() {
   const [data, setData] = useState<DadosFormulario[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [equipeData, setEquipeData] = useState(null);
+  const [equipeData, setEquipeData] = useState(null); // verificar uso dps
 
   const axiosInstance = axios.create({
     baseURL: ENDPOINT,
   });
 
-  /* useEffect(() => {
-    (async () => {
-      setIsLoading(true);
-      try {
-        const equipeData = await getEquipeData()
-        const token = await getToken()
-        const response = await axiosInstance.get(
-          `${ENDPOINT}${VER_FORMULARIOS_DA_EQUIPE}`,
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-              Equipe: equipeData as number,
-            },
-            data: {},
-          }
-        );
-        if (response.status === 200) {
-          setData(response.data.content);
-          setIsLoading(false);
-        } else {
-          throw new Error(`${JSON.stringify(response.data)}`);
-        }
-      } catch (error) {
-        console.log(`Formulários criados: ${data}`)
-        console.log(error);
-        setIsLoading(false);
-      }
-    })();
-  }, []); */
-
   async function fetchData() {
     setIsLoading(true);
     try {
+      const equipeData = await getEquipeData();
       const token = await getToken();
       const response = await axiosInstance.get(
         `${ENDPOINT}${VER_FORMULARIOS_DA_EQUIPE}`,
@@ -67,7 +38,6 @@ export function CardFormulario() {
         throw new Error(`${JSON.stringify(response.data)}`);
       }
     } catch (error) {
-      console.log(`Formulários criados: ${data}`);
       console.log(error);
       setIsLoading(false);
     }
