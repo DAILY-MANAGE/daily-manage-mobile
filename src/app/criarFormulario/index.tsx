@@ -160,7 +160,8 @@ export default function CriarFormulario() {
         descricaoPergunta,
         tipoResposta,
         await idUsuariosPermitidos(),
-        respostaOpcional
+        respostaOpcional,
+        await getToken()
       );
       console.log(error);
       setIsLoading(false);

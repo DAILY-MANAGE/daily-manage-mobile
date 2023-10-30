@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, Pressable } from "react-native";
+import { StyleSheet, Text, View } from 'react-native';
 import { ENDPOINT, VER_EQUIPES_CRIADAS } from "../../../../utils/endpoints";
 import { DadosEquipe } from "../../../../interfaces/DadosEquipe";
 import { getToken } from "../../../../hooks/token";
@@ -47,10 +47,10 @@ export function CardEquipe() {
   return (
     <>
       {data.map((data: DadosEquipe) => (
-        <Pressable key={data.id} style={styles.container}>
+        <View key={data.id} style={styles.container}>
           <Text style={styles.title}>{data.nome}</Text>
           <Text style={styles.subitle}>Identificação: {data.id}</Text>
-        </Pressable>
+        </View>
       ))}
     </>
   );

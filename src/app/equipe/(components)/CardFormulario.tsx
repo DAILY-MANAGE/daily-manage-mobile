@@ -47,7 +47,7 @@ export function CardFormulario() {
 
   useEffect(() => {
     fetchData();
-  }, [equipeData()]);
+  }, [equipeData]);
 
   return (
     <>

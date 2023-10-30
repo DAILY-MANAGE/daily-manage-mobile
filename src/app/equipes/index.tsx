@@ -4,7 +4,8 @@ import {
   Pressable,
   RefreshControl,
   ToastAndroid,
-  Text
+  Text,
+  TouchableOpacity,
 } from "react-native";
 import React, { useState } from "react";
 import { useRouter } from "expo-router";
@@ -90,15 +91,14 @@ export default function Equipes() {
         onPress={criarEquipe}
         editable={!isLoading}
       />
-      {isLoading && (<Text>Carregando...</Text>)}
       <Pressable
-        onPress={async () =>
+        style={styles.equipeContainer}
+        onPress={() =>
           router.push({
-            pathname: `/equipe/(tabs)/${(await getInnerEquipeId()).id}`,
-            params: { id: `${(await getInnerEquipeId()).id}` },
+            pathname: `/equipe/(tabs)/${(getInnerEquipeId())}`,
+            params: { id: `${(getInnerEquipeId())}` },
           })
         }
-        style={styles.equipeContainer}
       >
         <CardEquipe />
       </Pressable>

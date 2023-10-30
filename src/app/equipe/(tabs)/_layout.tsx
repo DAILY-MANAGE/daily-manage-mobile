@@ -25,24 +25,22 @@ export default function EquipeLayout() {
         <Tabs.Screen
           name="[id]"
           options={{
-            headerTitle: "Equipe",
+            headerTitle: `Equipe`,
             headerTitleStyle: styles.headerTitleStyle,
             headerLeft: () => (
-              <>
-                <Pressable onPress={() => router.replace('equipes')}>
-                  {({ pressed }) => (
-                    <FontAwesome
-                      name="arrow-left"
-                      size={20}
-                      style={{
-                        marginLeft: 16,
-                        marginRight: 8,
-                        opacity: pressed ? 0.5 : 1,
-                      }}
-                    />
-                  )}
-                </Pressable>
-              </>
+              <Pressable onPress={() => router.back()}>
+                {({ pressed }) => (
+                  <FontAwesome
+                    name="arrow-left"
+                    size={20}
+                    style={{
+                      marginLeft: 16,
+                      marginRight: 8,
+                      opacity: pressed ? 0.5 : 1,
+                    }}
+                  />
+                )}
+              </Pressable>
             ),
             headerRight: () => (
               <View style={styles.headerIconsStyle}>
@@ -88,7 +86,7 @@ export default function EquipeLayout() {
             headerTitleStyle: styles.headerTitleStyle,
             headerLeft: () => (
               <>
-                <Pressable onPress={() => router.replace('equipes')}>
+                <Pressable onPress={() => router.back()}>
                   {({ pressed }) => (
                     <FontAwesome
                       name="arrow-left"
@@ -147,7 +145,7 @@ export default function EquipeLayout() {
             headerTitleStyle: styles.headerTitleStyle,
             headerLeft: () => (
               <>
-                <Pressable onPress={() => router.replace('equipes')}>
+                <Pressable onPress={() => router.back()}>
                   {({ pressed }) => (
                     <FontAwesome
                       name="arrow-left"
@@ -219,18 +217,18 @@ export default function EquipeLayout() {
 
 const styles = StyleSheet.create({
   headerTitleStyle: {
-    fontWeight: "900"
+    fontWeight: "900",
   },
   headerIconsStyle: {
-    height: "auto", 
+    height: "auto",
     width: "auto",
     flexDirection: "row",
     gap: 2,
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
   },
   tabBarLabelStyle: {
-    color: "black", 
-    paddingBottom: 4
-  }
+    color: "black",
+    paddingBottom: 4,
+  },
 });

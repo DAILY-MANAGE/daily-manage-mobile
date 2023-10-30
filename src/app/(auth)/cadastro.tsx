@@ -54,7 +54,7 @@ export default function Cadastro() {
       if (response.status === 201) {
         console.log(`${JSON.stringify(response.data)}`);
         setIsLoading(false);
-        ToastAndroid.show(`Usuário ${user} entrou.`, ToastAndroid.SHORT);
+        ToastAndroid.show(`Usuário ${user} criado com sucesso!`, ToastAndroid.SHORT);
         router.push("(auth)");
       } else {
         throw new Error(
