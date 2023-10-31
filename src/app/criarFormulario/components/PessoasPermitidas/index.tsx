@@ -11,21 +11,19 @@ import {
 import { getEquipeData } from "../../../equipes";
 
 export interface PresetPermittedUsers {
-  id: number | undefined;
+  id?: any;
   nome?: string;
   usuario?: string;
   email?: string;
 }
 
-const equipeData = async () => {
-  return await getEquipeData();
-};
-
 export const setIdUsuariosPermitidos = async (data: PresetPermittedUsers) => {
-  try {
-    await AsyncStorage.setItem("id", JSON.stringify(data.id));
-  } catch (error) {
-    console.log(error);
+  if (data) {
+    try {
+      await AsyncStorage.setItem("id", JSON.stringify(data.id));
+    } catch (error) {
+      console.log(error);
+    }
   }
 };
 
@@ -44,13 +42,14 @@ export default function AccordionPessoas() {
     setIsLoading(true);
     try {
       const token = await getToken();
+      const equipeData = await getEquipeData();
       const response = await axiosInstance.get(
         `${ENDPOINT}${FILTRAR_USUARIOS_DA_EQUIPE}`,
         {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
-            Equipe: (await equipeData()) as number,
+            Equipe: equipeData as number,
           },
           data: {},
         }
@@ -67,21 +66,15 @@ export default function AccordionPessoas() {
       setIsLoading(false);
     }
   };
-
+  
   return (
     <ListItem.Accordion
       containerStyle={styles.accordion__container}
       content={
         <ListItem.Content>
-          {usuarioPermitido && usuarioPermitido === null ? (
             <ListItem.Title style={styles.accordion__title}>
               Usuários permitidos
             </ListItem.Title>
-          ) : (
-            <ListItem.Title style={styles.accordion__title}>
-              {nomeUsuarioPermitido}
-            </ListItem.Title>
-          )}
         </ListItem.Content>
       }
       isExpanded={expanded}
@@ -95,7 +88,6 @@ export default function AccordionPessoas() {
           style={styles.list}
           key={data.id}
           onPress={() => {
-            console.log(data.usuario);
             setUsuarioPermitido(data.id);
             setNomeUsuarioPermitido(data.usuario);
           }}

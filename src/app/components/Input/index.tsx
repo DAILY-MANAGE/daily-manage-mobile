@@ -15,7 +15,8 @@ interface CustomInputProps {
   editable?: boolean,
   autoComplete?: any,
   rightIcon?: any,
-  label?: string
+  label?: string,
+  errorMessage?: string,
 }
 
 export default function CustomInput({
@@ -27,7 +28,8 @@ export default function CustomInput({
   editable,
   autoComplete,
   rightIcon,
-  label
+  label,
+  errorMessage,
 }: CustomInputProps) {
   return (
     <View style={styles.input}>
@@ -35,6 +37,7 @@ export default function CustomInput({
         <Text style={styles.label}>{label}</Text>
       </View>
       <Input
+        errorMessage={errorMessage}
         placeholder={placeholder}
         textContentType={textContentType}
         style={styles.inputStyle}

@@ -1,6 +1,4 @@
-// API ------------------------------------------------------------
-
-export const ENDPOINT = 'http://10.68.20.127:8080'
+export const ENDPOINT = 'http://192.168.15.6:8080'
 
 export const REGISTRO = "/auth/registro";
 export const LOGIN = "/auth/login";
@@ -38,14 +36,3 @@ export const FILTRAR_USUARIOS = "/usuarios/procurar";
 export const VER_REGISTROS_DE_UM_USUARIO = "/equipes/{usuarioId}/registros";
 
 export const VER_NOTIFICACOES = "/notificacoes/todos";
-
-type param = {
-  key: string,
-  value: unknown
-}
-
-export const getEndpointWithArguments = (endpoint: string, params: param[]) => {
-  return params.map((paramData: param) => {
-
-  })
-}

@@ -110,10 +110,6 @@ export default function CriarFormulario() {
     setRespostaOpcional(false);
   };
 
-  const idUsuariosPermitidos = async () => {
-    return await getIdUsuariosPermitidos()
-  }
-
   const criarFormulario = async () => {
     setIsLoading(true);
     try {
@@ -132,7 +128,7 @@ export default function CriarFormulario() {
               opcional: respostaOpcional,
             },
           ],
-          idusuariospermitidos: idUsuariosPermitidos,
+          idusuariospermitidos: [idUsuariosPermitidos],
         },
         {
           headers: {
@@ -153,16 +149,6 @@ export default function CriarFormulario() {
         throw new Error(`${JSON.stringify(response.data)}`);
       }
     } catch (error) {
-      console.log(
-        await getEquipeData(),
-        nomeFormulario,
-        descricaoFormulario,
-        descricaoPergunta,
-        tipoResposta,
-        await idUsuariosPermitidos(),
-        respostaOpcional,
-        await getToken()
-      );
       console.log(error);
       setIsLoading(false);
     }
@@ -215,7 +201,6 @@ export default function CriarFormulario() {
               key={data.id}
               onPress={(e) => {
                 setTipoResposta(data.value);
-                console.log(tipoResposta);
               }}
               bottomDivider
             >
