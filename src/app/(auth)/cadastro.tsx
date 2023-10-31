@@ -1,11 +1,5 @@
 import { useState } from "react";
-import {
-  View,
-  StyleSheet,
-  Pressable,
-  ScrollView,
-  ToastAndroid
-} from "react-native";
+import { View, StyleSheet, Pressable, ScrollView, ToastAndroid } from "react-native";
 import { useRouter } from "expo-router";
 import { CheckBox } from "@rneui/themed";
 import { ENDPOINT, REGISTRO } from "../../utils/endpoints";
@@ -24,14 +18,14 @@ export default function Cadastro() {
   const [isEyeOpen, setIsEyeOpen] = useState(false);
 
   const validateFields = () => {
-    const errors = {name, user, mail, password, confirmPassword};
-  
+    const errors = { name, user, mail, password, confirmPassword };
+
     if (!name) {
       errors.name = "O campo nome é obrigatório.";
     } else {
       errors.name = ""
     }
-  
+
     if (!user) {
       errors.user = "O campo usuário é obrigatório.";
     } else if (user.length < 5) {
@@ -39,7 +33,7 @@ export default function Cadastro() {
     } else {
       errors.user = ""
     }
-  
+
     const regex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
     if (!mail) {
       errors.mail = "O campo e-mail é obrigatório."
@@ -48,7 +42,7 @@ export default function Cadastro() {
     } else {
       errors.mail = ""
     }
-  
+
     const regexPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/;
     if (!password) {
       errors.password = "A senha é obrigatória."
@@ -57,7 +51,7 @@ export default function Cadastro() {
     } else {
       errors.password = ""
     }
-  
+
     if (!confirmPassword) {
       errors.confirmPassword = "É necessário confirmar a senha."
     } else if (confirmPassword !== password) {
@@ -65,12 +59,11 @@ export default function Cadastro() {
     } else {
       errors.confirmPassword = ""
     }
-  
+
     return errors;
   };
 
   const errors = validateFields();
-
   const router = useRouter();
 
   const toggleCheckbox = () => {
@@ -86,8 +79,7 @@ export default function Cadastro() {
   });
 
   const handleRegister = async () => {
-    setIsLoading(true); 
-
+    setIsLoading(true);
     try {
       const response = await axiosInstance.post(`${ENDPOINT}${REGISTRO}`, {
         usuario: user,
