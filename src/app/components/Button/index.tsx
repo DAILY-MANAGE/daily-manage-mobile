@@ -1,4 +1,4 @@
-import { Button } from "@rneui/base";
+import { Button } from "@rneui/themed";
 
 interface CustomButtonProps {
   size?: "md" | "sm" | "lg";
@@ -9,6 +9,7 @@ interface CustomButtonProps {
   onPress: string | any;
   titleStyle?: any;
   buttonStyle?: any;
+  icon?: any;
 }
 
 CustomButton.defaultProps = {
@@ -18,6 +19,7 @@ CustomButton.defaultProps = {
   radius: "md",
   titleStyle: "",
   buttonStyle: "",
+  icon: undefined
 };
 
 export default function CustomButton({
@@ -29,9 +31,11 @@ export default function CustomButton({
   onPress,
   titleStyle,
   buttonStyle,
+  icon,
 }: CustomButtonProps) {
   return (
     <Button
+      icon={icon}
       size={size}
       type={type}
       color={color}

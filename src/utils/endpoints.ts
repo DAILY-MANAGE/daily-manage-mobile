@@ -1,4 +1,4 @@
-export const ENDPOINT = 'http://192.168.15.6:8080'
+export const ENDPOINT = 'http://192.168.15.12:8080'
 
 export const REGISTRO = "/auth/registro";
 export const LOGIN = "/auth/login";

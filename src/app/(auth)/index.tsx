@@ -15,6 +15,7 @@ import { ENDPOINT, LOGIN } from "../../utils/endpoints";
 import ButtonComponent from "../components/Button";
 import InputComponent from "../components/Input";
 import Logo from "../components/Logo";
+import CustomInput from "../components/Input";
 
 
 export default function Login() {
@@ -24,6 +25,26 @@ export default function Login() {
   const [checked, setChecked] = useState(false);
   const [rememberPassword, setRememberPassword] = useState<React.SetStateAction<boolean>>(false);
 
+  const validateFields = () => {
+    const errors = { user, password };
+
+    if (!user) {
+      errors.user = "O campo usuário é obrigatório.";
+    } else {
+      errors.user = ""
+    }
+
+    const regexPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/;
+    if (!password) {
+      errors.password = "A senha é obrigatória."
+    } else {
+      errors.password = ""
+    }
+
+    return errors;
+  };
+
+  const errors = validateFields();
   const router = useRouter();
 
   const toggleCheckbox = () => {
@@ -75,7 +96,8 @@ export default function Login() {
             </View>
             <View style={styles.form}>
               <View style={styles.inputs}>
-                <InputComponent
+                <CustomInput
+                  errorMessage={errors.user}
                   placeholder="Digite seu nome de usuário"
                   label="Usuário:"
                   value={user}
@@ -83,7 +105,8 @@ export default function Login() {
                   textContentType="username"
                   autoComplete="username"
                 />
-                <InputComponent
+                <CustomInput
+                  errorMessage={errors.password}
                   placeholder="Digite sua senha"
                   label="Senha:"
                   value={password}
