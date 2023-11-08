@@ -10,7 +10,10 @@ export default function EquipesLayout() {
   const router = useRouter();
 
   const options = [
-    { title: "Perfil" },
+    {
+      title: "Perfil",      
+      onPress: () => (setIsVisible(!isVisible), router.replace("perfil")),
+    },
     { title: "Ajuda" },
     {
       title: "Sair",

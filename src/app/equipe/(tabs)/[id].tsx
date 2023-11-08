@@ -34,7 +34,7 @@ export default function Formularios() {
         isVisible={visible}
         onBackdropPress={toggleOverlay}>
         <View style={styles.overlayHeader}>
-          <Text style={styles.overlayTitle}>O que você deseja fazer com o formulário?</Text>
+          <Text style={styles.overlayTitle}>O que você deseja fazer com o formulário <Text>a</Text></Text>
           <FontAwesome name="close" size={24} onPress={toggleOverlay}/>
         </View>
         <View style={styles.actions}>

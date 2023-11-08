@@ -3,13 +3,17 @@ import { Pressable, StyleSheet, View } from "react-native";
 import { Link, Tabs, useRouter } from "expo-router";
 import { BottomSheet, ListItem } from "@rneui/themed";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import TabBarIcon from "../(components)/TabBarIcon";
 
 export default function EquipeLayout() {
   const [isVisible, setIsVisible] = useState(false);
   const router = useRouter();
 
   const options = [
-    { title: "Perfil" },
+    {
+      title: "Perfil",      
+      onPress: () => (setIsVisible(!isVisible), router.replace("perfil")),
+    },
     { title: "Ajuda" },
     {
       title: "Sair",
@@ -27,6 +31,9 @@ export default function EquipeLayout() {
           options={{
             headerTitle: `Equipe`,
             headerTitleStyle: styles.headerTitleStyle,
+            tabBarActiveTintColor: "black",
+            tabBarInactiveTintColor: "gray",
+            tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
             headerLeft: () => (
               <Pressable onPress={() => router.back()}>
                 {({ pressed }) => (
@@ -72,9 +79,6 @@ export default function EquipeLayout() {
                 </Pressable>
               </View>
             ),
-            tabBarIcon: () => {
-              return <FontAwesome name="list" size={24} color={"black"} />;
-            },
             tabBarLabel: "Formulários",
             tabBarLabelStyle: styles.tabBarLabelStyle,
           }}
@@ -84,6 +88,9 @@ export default function EquipeLayout() {
           options={{
             headerTitle: "Usuários",
             headerTitleStyle: styles.headerTitleStyle,
+            tabBarActiveTintColor: "black",
+            tabBarInactiveTintColor: "gray",
+            tabBarIcon: ({ color }) => <TabBarIcon name="users" color={color} />,
             headerLeft: () => (
               <>
                 <Pressable onPress={() => router.back()}>
@@ -131,9 +138,6 @@ export default function EquipeLayout() {
                 </Pressable>
               </View>
             ),
-            tabBarIcon: () => {
-              return <FontAwesome name="user" size={24} color={"black"} />;
-            },
             tabBarLabel: "Usuários",
             tabBarLabelStyle: styles.tabBarLabelStyle,
           }}
@@ -143,6 +147,9 @@ export default function EquipeLayout() {
           options={{
             headerTitle: "Configurações",
             headerTitleStyle: styles.headerTitleStyle,
+            tabBarActiveTintColor: "black",
+            tabBarInactiveTintColor: "gray",
+            tabBarIcon: ({ color }) => <TabBarIcon name="cog" color={color} />,
             headerLeft: () => (
               <>
                 <Pressable onPress={() => router.back()}>
@@ -190,9 +197,6 @@ export default function EquipeLayout() {
                 </Pressable>
               </View>
             ),
-            tabBarIcon: () => {
-              return <FontAwesome name="group" size={24} color={"black"} />;
-            },
             tabBarLabel: "Equipe",
             tabBarLabelStyle: styles.tabBarLabelStyle,
           }}

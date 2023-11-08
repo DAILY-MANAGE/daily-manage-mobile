@@ -10,6 +10,7 @@ export default function AppLayout() {
       <Stack.Screen name="criarFormulario" options={{ headerShown: false }}/>
       <Stack.Screen name="(formulario)/editar" options={{ headerShown: false }}/>
       <Stack.Screen name="(formulario)/responder" options={{ headerShown: false }}/>
+      <Stack.Screen name="perfil" options={{ headerShown: false }}/>
     </Stack>
   );
 }
