@@ -1,13 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import { ENDPOINT, VER_EQUIPES_CRIADAS } from "../../../../utils/endpoints";
 import { DadosEquipe } from "../../../../interfaces/DadosEquipe";
 import { getToken } from "../../../../hooks/token";
 import axios from "axios";
+import { IdStorage } from "../../../../hooks/useId";
+import { useRouter } from 'expo-router';
 
 export function CardEquipe() {
   const [data, setData] = useState<DadosEquipe[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+
+  const router = useRouter()
 
   const axiosInstance = axios.create({
     baseURL: ENDPOINT,
@@ -35,11 +39,11 @@ export function CardEquipe() {
       }
     } catch (error) {
       console.log(error);
-      console.log(data)
+      console.log(data);
       setIsLoading(false);
     }
   }
-  
+
   useEffect(() => {
     fetchData();
   }, []);
@@ -47,16 +51,35 @@ export function CardEquipe() {
   return (
     <>
       {data.map((data: DadosEquipe) => (
-        <View key={data.id} style={styles.container}>
-          <Text style={styles.title}>{data.nome}</Text>
-          <Text style={styles.subitle}>Identificação: {data.id}</Text>
-        </View>
+        <Pressable
+          key={data.id}
+          style={styles.equipeContainer}
+          onPress={() => {
+            IdStorage.setId(data.id as any);
+            console.log(data.id as any, "qqqqqqqqqqqq");
+            router.push({
+              pathname: `/equipe/(tabs)/${data.id as any}`,
+              params: { id: `${data.id as any}` },
+            });
+          }}
+        >
+          <View key={data.id} style={styles.container}>
+            <Text style={styles.title}>{data.nome}</Text>
+            <Text style={styles.subitle}>Identificação: {data.id}</Text>
+          </View>
+        </Pressable>
       ))}
     </>
   );
 }
 
 const styles = StyleSheet.create({
+  equipeContainer: {
+    paddingTop: 8,
+    height: "auto",
+    width: "100%",
+    gap: 8,
+  },
   container: {
     height: "auto",
     width: "100%",

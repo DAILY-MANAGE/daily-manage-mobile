@@ -91,17 +91,7 @@ export default function Equipes() {
         onPress={criarEquipe}
         editable={!isLoading}
       />
-      <Pressable
-        style={styles.equipeContainer}
-        onPress={() =>
-          router.push({
-            pathname: `/equipe/(tabs)/${(getInnerEquipeId())}`,
-            params: { id: `${(getInnerEquipeId())}` },
-          })
-        }
-      >
-        <CardEquipe />
-      </Pressable>
+      <CardEquipe />
     </ScrollView>
   );
 }

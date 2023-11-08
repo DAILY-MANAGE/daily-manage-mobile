@@ -1,14 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { View, StyleSheet, Text } from "react-native";
+import { View, StyleSheet, Text, Pressable } from "react-native";
 import { ENDPOINT, VER_FORMULARIOS_DA_EQUIPE } from "../../../utils/endpoints";
 import { DadosFormulario } from "../../../interfaces/DadosFormulario";
 import { getToken } from "../../../hooks/token";
 import axios from "axios";
 import { getEquipeData } from "../../equipes";
+import { useRouter } from "expo-router";
+import { IdStorage } from "../../../hooks/useId";
 
 export function CardFormulario() {
   const [data, setData] = useState<DadosFormulario[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+
+  const router = useRouter();
 
   const axiosInstance = axios.create({
     baseURL: ENDPOINT,
@@ -20,6 +24,7 @@ export function CardFormulario() {
 
   async function fetchData() {
     setIsLoading(true);
+    console.log(await equipeData());
     try {
       const token = await getToken();
       const response = await axiosInstance.get(
@@ -28,7 +33,7 @@ export function CardFormulario() {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
-            Equipe: await equipeData() as number,
+            Equipe: (await equipeData()) as number,
           },
           data: {},
         }
@@ -47,15 +52,28 @@ export function CardFormulario() {
 
   useEffect(() => {
     fetchData();
-  },[]);
+  }, []);
 
   return (
     <>
       {data.map((data: DadosFormulario) => (
-        <View key={data.id} style={styles.container}>
-          <Text style={styles.title}>{data.nome}</Text>
-          <Text style={styles.subtitle}>Identificação: {data.id}</Text>
-        </View>
+        <Pressable
+          key={data.id}
+          style={styles.equipeContainer}
+          onPress={() => {
+            IdStorage.setId(data.id as any);
+            console.log(data.id as any, "qqqqqqqqqqqq");
+            router.push({
+              pathname: `/equipe/(tabs)/${data.id as any}`,
+              params: { id: `${data.id as any}` },
+            });
+          }}
+        >
+          <View style={styles.container}>
+            <Text style={styles.title}>{data.nome}</Text>
+            <Text style={styles.subtitle}>Identificação: {data.id}</Text>
+          </View>
+        </Pressable>
       ))}
     </>
   );
@@ -79,5 +97,11 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "normal",
     color: "#666564",
+  },
+  equipeContainer: {
+    paddingTop: 8,
+    height: "auto",
+    width: "100%",
+    gap: 8,
   },
 });
