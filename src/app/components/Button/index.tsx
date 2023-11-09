@@ -6,10 +6,11 @@ interface CustomButtonProps {
   title: string;
   color?: string;
   radius?: "md" | "sm" | "lg";
-  onPress: string | any;
+  onPress?: string | any;
   titleStyle?: any;
   buttonStyle?: any;
   icon?: any;
+  loading?: boolean
 }
 
 CustomButton.defaultProps = {
@@ -19,7 +20,8 @@ CustomButton.defaultProps = {
   radius: "md",
   titleStyle: "",
   buttonStyle: "",
-  icon: undefined
+  icon: undefined,
+  loading: false
 };
 
 export default function CustomButton({
@@ -32,9 +34,11 @@ export default function CustomButton({
   titleStyle,
   buttonStyle,
   icon,
+  loading,
 }: CustomButtonProps) {
   return (
     <Button
+      loading={loading}
       icon={icon}
       size={size}
       type={type}

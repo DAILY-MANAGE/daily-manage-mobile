@@ -50,13 +50,12 @@ export function CardEquipe() {
 
   return (
     <>
-      {data.map((data: DadosEquipe) => (
+      {data && data.map((data: DadosEquipe) => (
         <Pressable
           key={data.id}
           style={styles.equipeContainer}
           onPress={() => {
             IdStorage.setId(data.id as any);
-            console.log(data.id as any, "qqqqqqqqqqqq");
             router.push({
               pathname: `/equipe/(tabs)/${data.id as any}`,
               params: { id: `${data.id as any}` },

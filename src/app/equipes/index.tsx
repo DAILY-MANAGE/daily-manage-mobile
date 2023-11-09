@@ -32,7 +32,7 @@ export default function Equipes() {
     setTimeout(() => {
       setRefreshing(false);
       router.replace("equipes");
-    }, 1000);
+    }, 500);
   }, []);
 
   const router = useRouter();
@@ -72,10 +72,6 @@ export default function Equipes() {
       console.log(error);
       setIsLoading(false);
     }
-  };
-
-  const getInnerEquipeId = async () => {
-    return await getEquipeData();
   };
 
   return (

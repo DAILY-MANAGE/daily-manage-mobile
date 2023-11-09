@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useRouter } from "expo-router";
 import { ENDPOINT } from "../../../utils/endpoints";
 import { CardFormulario } from "../(components)/CardFormulario";
@@ -8,11 +8,21 @@ import axios from "axios";
 import CustomButton from "../../components/Button";
 import { Button, Icon, Overlay } from "@rneui/themed";
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const formularioid = IdStorage.getId();
 
 export default function Formularios() {
   const [visible, setVisible] = useState(false);
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+      router.replace("equipe/(tabs)/[id]");
+    }, 500);
+  }, []);
 
   const toggleOverlay = () => {
     setVisible(!visible);
@@ -21,7 +31,12 @@ export default function Formularios() {
   const router = useRouter();
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView 
+      style={styles.container}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
+      >
       <CustomButton title="Criar Formulario" onPress={() => router.push('criarFormulario')} />
       <Pressable
         onPress={() => setVisible(!visible)}
@@ -34,10 +49,25 @@ export default function Formularios() {
         isVisible={visible}
         onBackdropPress={toggleOverlay}>
         <View style={styles.overlayHeader}>
-          <Text style={styles.overlayTitle}>O que você deseja fazer com o formulário?</Text>
+          <Text style={styles.overlayTitle}>O que você deseja fazer?</Text>
           <FontAwesome name="close" size={24} onPress={toggleOverlay}/>
         </View>
         <View style={styles.actions}>
+          <CustomButton
+            icon={
+              <Icon
+                name="check"
+                type="font-awesome"
+                color="white"
+                size={25}
+                iconStyle={{ marginRight: 10 }}
+              />
+            }
+            title="Responder"
+            color="black"
+            buttonStyle={styles.button}
+            onPress={() => {router.replace('(formulario)/editar')}}
+          />
           <CustomButton
             icon={
               <Icon
@@ -48,24 +78,8 @@ export default function Formularios() {
                 iconStyle={{ marginRight: 10 }}
               />
             }
-            title="Ver"
-            color="black"
-            buttonStyle={styles.button}
-            onPress={() => { }}
-          />
-          <CustomButton
-            icon={
-              <Icon
-                name="edit"
-                type="font-awesome"
-                color="white"
-                size={25}
-                iconStyle={{ marginRight: 10 }}
-              />
-            }
-            title="Editar"
-            color="orange"
-            buttonStyle={styles.button}
+            title="Ver respostas"
+            buttonStyle={styles.buttonRight}
             onPress={() => { }}
           />
         </View>
@@ -116,9 +130,16 @@ const styles = StyleSheet.create({
     paddingTop: 8,
     textAlign: "center",
     fontSize: 20,
+    fontWeight: "bold"
+  },
+  buttonRight: {
+    width: "auto",  
+    height: 48,
+    backgroundColor: "rgb(77,68,226), linear-gradient(90deg, rgba(77,68,226,1) 35%, rgba(87,30,139,1) 100%)"
   },
   button: {
-    width: 124,  
-    height: 48
+    width: "auto",  
+    height: 48,
+    backgroundColor: "black"
   }
 });

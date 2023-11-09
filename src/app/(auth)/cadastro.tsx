@@ -1,5 +1,11 @@
 import { useState } from "react";
-import { View, StyleSheet, Pressable, ScrollView, ToastAndroid } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Pressable,
+  ScrollView,
+  ToastAndroid,
+} from "react-native";
 import { useRouter } from "expo-router";
 import { CheckBox } from "@rneui/themed";
 import { ENDPOINT, REGISTRO } from "../../utils/endpoints";
@@ -23,7 +29,7 @@ export default function Cadastro() {
     if (!name) {
       errors.name = "O campo nome é obrigatório.";
     } else {
-      errors.name = ""
+      errors.name = "";
     }
 
     if (!user) {
@@ -31,33 +37,36 @@ export default function Cadastro() {
     } else if (user.length < 5) {
       errors.user = "O campo usuário deve ter mais que 5 caracteres.";
     } else {
-      errors.user = ""
+      errors.user = "";
     }
 
-    const regex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+    const regex =
+      /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
     if (!mail) {
-      errors.mail = "O campo e-mail é obrigatório."
+      errors.mail = "O campo e-mail é obrigatório.";
     } else if (!regex.test(mail)) {
       errors.mail = "E-mail inválido";
     } else {
-      errors.mail = ""
+      errors.mail = "";
     }
 
-    const regexPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/;
+    const regexPassword =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/;
     if (!password) {
-      errors.password = "A senha é obrigatória."
+      errors.password = "A senha é obrigatória.";
     } else if (!regexPassword.test(password)) {
-      errors.password = "A senha precisa ter uma letra maiúscula, uma minúscula, um número e um símbolo, e no mínimo 8 caracteres";
+      errors.password =
+        "A senha precisa ter uma letra maiúscula, uma minúscula, um número e um símbolo, e no mínimo 8 caracteres";
     } else {
-      errors.password = ""
+      errors.password = "";
     }
 
     if (!confirmPassword) {
-      errors.confirmPassword = "É necessário confirmar a senha."
+      errors.confirmPassword = "É necessário confirmar a senha.";
     } else if (confirmPassword !== password) {
       errors.confirmPassword = "As senhas precisam ser iguais";
     } else {
-      errors.confirmPassword = ""
+      errors.confirmPassword = "";
     }
 
     return errors;
@@ -81,25 +90,32 @@ export default function Cadastro() {
   const handleRegister = async () => {
     setIsLoading(true);
     try {
-      const response = await axiosInstance.post(`${ENDPOINT}${REGISTRO}`, {
-        usuario: user,
-        senha: password,
-        nome: name,
-        email: mail,
-      }, {
-        headers: {
-          "Content-Type": "application/json",
+      const response = await axiosInstance.post(
+        `${ENDPOINT}${REGISTRO}`,
+        {
+          usuario: user,
+          senha: password,
+          nome: name,
+          email: mail,
         },
-      });
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
       switch (response.status) {
         case 201:
           setIsLoading(false);
-          ToastAndroid.show(`Usuário ${user} criado com sucesso!`, ToastAndroid.SHORT);
+          ToastAndroid.show(
+            `Usuário ${user} criado com sucesso!`,
+            ToastAndroid.SHORT
+          );
           router.push("(auth)");
           break;
         case 409:
-          ToastAndroid.show(`O usuário ${user} já existe`, ToastAndroid.SHORT)
-          break
+          ToastAndroid.show(`O usuário ${user} já existe`, ToastAndroid.SHORT);
+          break;
         default:
           throw new Error(`${JSON.stringify(response.data)}`);
       }
@@ -173,7 +189,11 @@ export default function Cadastro() {
         />
       </View>
       <Pressable style={styles.button}>
-        <ButtonComponent onPress={handleRegister} title="Salvar" />
+        {isLoading ? (
+          <ButtonComponent title="Salvar" loading={true} />
+        ) : (
+          <ButtonComponent onPress={handleRegister} title="Salvar" />
+        )}
       </Pressable>
     </ScrollView>
   );
@@ -201,7 +221,7 @@ const styles = StyleSheet.create({
   },
   checkboxTextStyle: {
     fontWeight: "600",
-    color: "black"
+    color: "black",
   },
   button: {
     width: "100%",

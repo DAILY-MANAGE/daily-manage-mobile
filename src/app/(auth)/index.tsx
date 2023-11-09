@@ -1,11 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import {
-  View,
-  StyleSheet,
-  Pressable,
-  Text
-} from "react-native";
+import { View, StyleSheet, Pressable, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { useRouter } from "expo-router";
@@ -17,13 +12,13 @@ import InputComponent from "../components/Input";
 import Logo from "../components/Logo";
 import CustomInput from "../components/Input";
 
-
 export default function Login() {
   const [user, setUser] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [checked, setChecked] = useState(false);
-  const [rememberPassword, setRememberPassword] = useState<React.SetStateAction<boolean>>(false);
+  const [rememberPassword, setRememberPassword] =
+    useState<React.SetStateAction<boolean>>(false);
 
   const validateFields = () => {
     const errors = { user, password };
@@ -31,14 +26,15 @@ export default function Login() {
     if (!user) {
       errors.user = "O campo usuário é obrigatório.";
     } else {
-      errors.user = ""
+      errors.user = "";
     }
 
-    const regexPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/;
+    const regexPassword =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/;
     if (!password) {
-      errors.password = "A senha é obrigatória."
+      errors.password = "A senha é obrigatória.";
     } else {
-      errors.password = ""
+      errors.password = "";
     }
 
     return errors;
@@ -59,14 +55,18 @@ export default function Login() {
   const handleLogin = async () => {
     setIsLoading(true);
     try {
-      const response = await axiosInstance.post(`${ENDPOINT}${LOGIN}`, {
-        usuario: user,
-        senha: password,
-      }, {
-        headers: {
-          "Content-Type": "application/json",
+      const response = await axiosInstance.post(
+        `${ENDPOINT}${LOGIN}`,
+        {
+          usuario: user,
+          senha: password,
         },
-      });
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
       if (response.status === 200) {
         console.log(`${JSON.stringify(response.data)}`);
         setToken(response.data.token);
@@ -89,9 +89,7 @@ export default function Login() {
           <Logo style={styles.logo} />
           <View style={styles.container__form}>
             <View style={styles.header}>
-              <Text style={styles.title}>
-                Bem-vindo ao Daily Manage!
-              </Text>
+              <Text style={styles.title}>Bem-vindo ao Daily Manage!</Text>
               <Text style={styles.subtitle}>Entre na sua conta</Text>
             </View>
             <View style={styles.form}>
@@ -117,7 +115,11 @@ export default function Login() {
                 />
               </View>
               <View style={styles.sumbite}>
-                <ButtonComponent onPress={handleLogin} title="Continuar" />
+                {isLoading ? (
+                  <ButtonComponent title="Continuar" loading={true} />
+                ) : (
+                  <ButtonComponent title="Continuar" onPress={handleLogin} />
+                )}
               </View>
             </View>
           </View>
@@ -170,10 +172,10 @@ const styles = StyleSheet.create({
   },
   title: {
     fontWeight: "bold",
-    fontSize: 24
+    fontSize: 24,
   },
   subtitle: {
-    color: "#585655"
+    color: "#585655",
   },
   form: {
     width: "100%",
@@ -189,7 +191,7 @@ const styles = StyleSheet.create({
   },
   checkboxContainerStyle: {
     backgroundColor: "white",
-    padding: 0
+    padding: 0,
   },
   checkboxTextStyle: {
     fontWeight: "normal",
@@ -210,14 +212,14 @@ const styles = StyleSheet.create({
     height: "auto",
   },
   buttonTitleStyle: {
-    color: "black"
+    color: "black",
   },
   buttonStyle: {
     borderColor: "black",
-    borderWidth: 1
+    borderWidth: 1,
   },
   lutherik: {
     color: "#ccc",
-    fontSize: 16
+    fontSize: 16,
   },
 });

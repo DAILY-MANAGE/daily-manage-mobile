@@ -17,22 +17,26 @@ export interface PresetPermittedUsers {
   email?: string;
 }
 
-export const setIdUsuariosPermitidos = async (data: PresetPermittedUsers) => {
+export const setIdUsuariosPermitidos = async (data: number[]) => {
   if (data) {
     try {
-      await AsyncStorage.setItem("id", JSON.stringify(data.id));
+      await AsyncStorage.setItem("idusuariospermitidos", JSON.stringify(data));
     } catch (error) {
       console.log(error);
     }
   }
 };
 
+const equipeData = async () => {
+  return await getEquipeData();
+};
+
 export default function AccordionPessoas() {
   const [expanded, setExpanded] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState<PresetPermittedUsers[]>([]);
-  const [usuarioPermitido, setUsuarioPermitido] = useState(null);
-  const [nomeUsuarioPermitido, setNomeUsuarioPermitido] = useState("");
+  const [usuariosPermitidos, setUsuariosPermitidos] = useState<number[]>([]);
+  const [nomeUsuariosPermitidos, setNomeUsuariosPermitidos] = useState("");
 
   const axiosInstance = axios.create({
     baseURL: ENDPOINT,
@@ -42,20 +46,19 @@ export default function AccordionPessoas() {
     setIsLoading(true);
     try {
       const token = await getToken();
-      const equipeData = await getEquipeData();
       const response = await axiosInstance.get(
         `${ENDPOINT}${FILTRAR_USUARIOS_DA_EQUIPE}`,
         {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
-            Equipe: equipeData as number,
+            Equipe: (await equipeData()) as number,
           },
           data: {},
         }
       );
       if (response.status === 200) {
-        setIdUsuariosPermitidos(response.data.id);
+        setIdUsuariosPermitidos(usuariosPermitidos);
         setData(response.data.content);
         setIsLoading(false);
       } else {
@@ -81,6 +84,7 @@ export default function AccordionPessoas() {
       onPress={() => {
         getUsuariosEquipe();
         setExpanded(!expanded);
+        console.log(usuariosPermitidos)
       }}
     >
       {data.map((data: PresetPermittedUsers) => (
@@ -88,8 +92,14 @@ export default function AccordionPessoas() {
           style={styles.list}
           key={data.id}
           onPress={() => {
-            setUsuarioPermitido(data.id);
-            setNomeUsuarioPermitido(data.usuario);
+            setUsuariosPermitidos((state: number[]) => {
+              if (state.includes(data.id)) {
+                const aux = state.filter((id: number) => id !== data.id)
+                return aux
+              }
+              return [...state, data.id]
+            });
+            setNomeUsuariosPermitidos(data.usuario);
           }}
           bottomDivider
         >

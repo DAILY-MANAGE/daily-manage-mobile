@@ -68,6 +68,16 @@ const presets: Preset[] = [
   },
 ];
 
+export const setPerguntas = async (data: string[]) => {
+  if (data) {
+    try {
+      await AsyncStorage.setItem("perguntas", JSON.stringify(data));
+    } catch (error) {
+      console.log(error);
+    }
+  }
+};
+
 export default function CriarFormulario() {
   const [nomeFormulario, setNomeFormulario] = useState<string | null>(null);
   const [descricaoFormulario, setDescricaoFormulario] = useState<string | null>(
@@ -84,10 +94,11 @@ export default function CriarFormulario() {
   const [data, setData] = useState<DadosFormulario[]>([]);
   const [expanded, setExpanded] = useState(false);
   const router = useRouter();
+  const [questions, setQuestions] = useState<string[]>([])
 
-  const getIdUsuariosPermitidos = async (): Promise<PresetPermittedUsers | null> => {
+  const getIdUsuariosPermitidos = async (): Promise<number[] | null> => {
     try {
-      const id = await AsyncStorage.getItem("id");
+      const id = await AsyncStorage.getItem("idusuariospermitidos");
       if (id !== null) {
         return JSON.parse(id);
       }
@@ -110,10 +121,13 @@ export default function CriarFormulario() {
     setRespostaOpcional(false);
   };
 
+  const equipeData = async () => {
+    return await getEquipeData();
+  };
+
   const criarFormulario = async () => {
     setIsLoading(true);
     try {
-      const equipeData = await getEquipeData();
       const token = await getToken();
       const idUsuariosPermitidos = await getIdUsuariosPermitidos();
       const response = await axiosInstance.post(
@@ -128,13 +142,13 @@ export default function CriarFormulario() {
               opcional: respostaOpcional,
             },
           ],
-          idusuariospermitidos: [idUsuariosPermitidos],
+          idusuariospermitidos: idUsuariosPermitidos,
         },
         {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
-            Equipe: equipeData as number,
+            Equipe: (await equipeData()) as number,
           },
           data: {},
         }
@@ -142,6 +156,7 @@ export default function CriarFormulario() {
       if (response.status === 201) {
         console.log(`${JSON.stringify(response.data)}`);
         setData(response.data);
+        setPerguntas(response.data.perguntas)
         IdStorage.setId(response.data.id);
         clearValues();
         setIsLoading(false);
@@ -201,6 +216,7 @@ export default function CriarFormulario() {
               key={data.id}
               onPress={(e) => {
                 setTipoResposta(data.value);
+                console.log(tipoResposta)
               }}
               bottomDivider
             >

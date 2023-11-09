@@ -24,7 +24,6 @@ export function CardFormulario() {
 
   async function fetchData() {
     setIsLoading(true);
-    console.log(await equipeData());
     try {
       const token = await getToken();
       const response = await axiosInstance.get(
@@ -56,24 +55,11 @@ export function CardFormulario() {
 
   return (
     <>
-      {data.map((data: DadosFormulario) => (
-        <Pressable
-          key={data.id}
-          style={styles.equipeContainer}
-          onPress={() => {
-            IdStorage.setId(data.id as any);
-            console.log(data.id as any, "qqqqqqqqqqqq");
-            router.push({
-              pathname: `/equipe/(tabs)/${data.id as any}`,
-              params: { id: `${data.id as any}` },
-            });
-          }}
-        >
-          <View style={styles.container}>
-            <Text style={styles.title}>{data.nome}</Text>
-            <Text style={styles.subtitle}>Identificação: {data.id}</Text>
-          </View>
-        </Pressable>
+      {data && data.map((data: DadosFormulario) => (
+        <View key={data.id} style={styles.container}>
+          <Text style={styles.title}>{data.nome}</Text>
+          <Text style={styles.subtitle}>Identificação: {data.id}</Text>
+        </View>
       ))}
     </>
   );
