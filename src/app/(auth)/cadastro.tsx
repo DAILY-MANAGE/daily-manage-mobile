@@ -176,17 +176,6 @@ export default function Cadastro() {
           autoComplete="password"
           secureTextEntry={true}
         />
-        <CheckBox
-          containerStyle={styles.checkboxContainerStyle}
-          checked={checked}
-          onPress={toggleCheckbox}
-          iconType="material-community"
-          checkedIcon="checkbox-marked"
-          uncheckedIcon="checkbox-blank-outline"
-          checkedColor="black"
-          title="Li e aceito os Termos de Uso"
-          textStyle={styles.checkboxTextStyle}
-        />
       </View>
       <Pressable style={styles.button}>
         {isLoading ? (

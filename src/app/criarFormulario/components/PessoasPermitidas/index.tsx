@@ -117,12 +117,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    paddingLeft: 0,
-    paddingRight: 0,
+    padding: 16,
+    backgroundColor: "#f3f6f4",
+    borderRadius: 8
   },
   accordion__title: {
-    fontSize: 20,
-    fontWeight: "700",
+    fontSize: 16,
+    fontWeight: "500",
   },
   list: {
     width: "60%",

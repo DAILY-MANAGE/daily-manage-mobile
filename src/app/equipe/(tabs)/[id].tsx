@@ -9,6 +9,8 @@ import CustomButton from "../../components/Button";
 import { Button, Icon, Overlay } from "@rneui/themed";
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import TouchableScale from 'react-native-touchable-scale';
+import { LinearGradient } from 'react-native-linear-gradient';
 
 export const formularioid = IdStorage.getId();
 

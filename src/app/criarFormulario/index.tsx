@@ -11,7 +11,10 @@ import { getEquipeData } from "../equipes";
 import CustomButton from "../components/Button/index";
 import { Switch } from "@rneui/themed";
 import { ListItem } from "@rneui/themed";
-import AccordionPessoas, { PresetPermittedUsers, setIdUsuariosPermitidos } from "./components/PessoasPermitidas";
+import AccordionPessoas, {
+  PresetPermittedUsers,
+  setIdUsuariosPermitidos,
+} from "./components/PessoasPermitidas";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export interface Preset {
@@ -94,7 +97,7 @@ export default function CriarFormulario() {
   const [data, setData] = useState<DadosFormulario[]>([]);
   const [expanded, setExpanded] = useState(false);
   const router = useRouter();
-  const [questions, setQuestions] = useState<string[]>([])
+  const [questions, setQuestions] = useState<string[]>([]);
 
   const getIdUsuariosPermitidos = async (): Promise<number[] | null> => {
     try {
@@ -156,7 +159,7 @@ export default function CriarFormulario() {
       if (response.status === 201) {
         console.log(`${JSON.stringify(response.data)}`);
         setData(response.data);
-        setPerguntas(response.data.perguntas)
+        setPerguntas(response.data.perguntas);
         IdStorage.setId(response.data.id);
         clearValues();
         setIsLoading(false);
@@ -188,53 +191,57 @@ export default function CriarFormulario() {
           value={descricaoFormulario}
           setValue={setDescricaoFormulario}
         />
-        <CustomInput
-          label="Pergunta:"
-          placeholder="Comprou leite?"
-          value={descricaoPergunta}
-          setValue={setDescricaoPergunta}
-        />
-        <ListItem.Accordion
-          containerStyle={styles.accordion__container}
-          content={
-            <>
-              <ListItem.Content>
-                <ListItem.Title style={styles.accordion__title}>
-                  Tipo de resposta
-                </ListItem.Title>
-              </ListItem.Content>
-            </>
-          }
-          isExpanded={expanded}
-          onPress={() => {
-            setExpanded(!expanded);
-          }}
-        >
-          {presets.map((data: Preset) => (
-            <ListItem
-              style={styles.list}
-              key={data.id}
-              onPress={(e) => {
-                setTipoResposta(data.value);
-                console.log(tipoResposta)
+        <ScrollView>
+          <View style={styles.question}>
+            <CustomInput
+              label="Pergunta:"
+              placeholder="Comprou leite?"
+              value={descricaoPergunta}
+              setValue={setDescricaoPergunta}
+            />
+            <ListItem.Accordion
+              containerStyle={styles.accordion__container}
+              content={
+                <>
+                  <ListItem.Content>
+                    <ListItem.Title style={styles.accordion__title}>
+                      Tipo de resposta
+                    </ListItem.Title>
+                  </ListItem.Content>
+                </>
+              }
+              isExpanded={expanded}
+              onPress={() => {
+                setExpanded(!expanded);
               }}
-              bottomDivider
             >
-              <ListItem.Content>
-                <ListItem.Title>{data.name}</ListItem.Title>
-              </ListItem.Content>
-            </ListItem>
-          ))}
-        </ListItem.Accordion>
-        <AccordionPessoas />
-        <View style={styles.switch__container}>
-          <Text style={styles.switch__label}>Obrigatório</Text>
-          <Switch
-            color="black"
-            value={respostaOpcional}
-            onValueChange={(value) => setRespostaOpcional(value)}
-          />
-        </View>
+              {presets.map((data: Preset) => (
+                <ListItem
+                  key={data.id}
+                  style={styles.list}
+                  onPress={(e) => {
+                    setTipoResposta(data.value);
+                    console.log(tipoResposta);
+                  }}
+                  bottomDivider
+                >
+                  <ListItem.Content style={styles.list__content}>
+                    <ListItem.Title>{data.name}</ListItem.Title>
+                  </ListItem.Content>
+                </ListItem>
+              ))}
+            </ListItem.Accordion>
+            <AccordionPessoas />
+            <View style={styles.switch__container}>
+              <Text style={styles.switch__label}>Obrigatório</Text>
+              <Switch
+                color="black"
+                value={respostaOpcional}
+                onValueChange={(value) => setRespostaOpcional(value)}
+              />
+            </View>
+          </View>
+        </ScrollView>
       </View>
       <View style={styles.footer}>
         <CustomButton onPress={criarFormulario} title={"+ Criar"} />
@@ -244,12 +251,20 @@ export default function CriarFormulario() {
 }
 
 const styles = StyleSheet.create({
-  list: {
-    width: "60%",
-    backgroundColor: "red",
+  list__content: {
+    backgroundColor: "#FAFAFA",
+
+  },
+  question: {
+    backgroundColor: "#FFFFFF",
+    padding: 16,
+    borderWidth: 1,
+    borderColor: "black",
+    borderRadius: 4,
+    gap: 8,
   },
   inputs: {
-    gap: 8,
+    gap: 16,
   },
   footer: {
     width: "100%",
@@ -260,12 +275,18 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    paddingLeft: 0,
-    paddingRight: 0,
+    padding: 16,
+    backgroundColor: "#f3f6f4",
+    borderRadius: 8,
   },
   accordion__title: {
-    fontSize: 20,
-    fontWeight: "700",
+    fontSize: 16,
+    fontWeight: "500",
+  },
+  list: {
+    width: "60%",
+    height: "auto",
+    backgroundColor: "red"
   },
   container: {
     justifyContent: "space-between",
@@ -283,7 +304,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   switch__label: {
-    fontSize: 20,
+    fontSize: 16,
     fontWeight: "700",
   },
 });

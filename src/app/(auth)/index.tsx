@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { View, StyleSheet, Pressable, Text } from "react-native";
+import { View, StyleSheet, Pressable, Text, ScrollView } from 'react-native';
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { useRouter } from "expo-router";
@@ -82,7 +82,7 @@ export default function Login() {
   };
 
   return (
-    <SafeAreaView>
+    <View>
       <StatusBar />
       <View style={styles.container}>
         <View style={styles.container__logo}>
@@ -137,7 +137,7 @@ export default function Login() {
           <Text style={styles.lutherik}>Lutherik</Text>
         </View>
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 
