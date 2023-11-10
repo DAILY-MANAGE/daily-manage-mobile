@@ -1,17 +1,14 @@
 import { ListItem } from "@rneui/themed";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StyleSheet } from "react-native";
 import { getToken } from "../../../../hooks/token";
-import {
-  ENDPOINT,
-  FILTRAR_USUARIOS_DA_EQUIPE,
-} from "../../../../utils/endpoints";
+import { ENDPOINT, FILTRAR_USUARIOS_DA_EQUIPE } from "../../../../utils/endpoints";
 import { getEquipeData } from "../../../equipes";
 
 export interface PresetPermittedUsers {
-  id?: any;
+  id?: number;
   nome?: string;
   usuario?: string;
   email?: string;
@@ -119,7 +116,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     padding: 16,
     backgroundColor: "#f3f6f4",
-    borderRadius: 8
+    borderRadius: 8,
   },
   accordion__title: {
     fontSize: 16,
@@ -127,5 +124,6 @@ const styles = StyleSheet.create({
   },
   list: {
     width: "60%",
+    height: "auto",
   },
 });

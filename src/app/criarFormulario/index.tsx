@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { Text, View, StyleSheet, ScrollView } from "react-native";
 import { getToken } from "../../hooks/token";
 import { IdStorage } from "../../hooks/useId";
-import { DadosFormulario } from "../../interfaces/DadosFormulario";
+import { DadosFormulario, Perguntas } from "../../interfaces/DadosFormulario";
 import { CRIAR_FORMULARIO, ENDPOINT } from "../../utils/endpoints";
 import CustomInput from "../components/Input";
 import { getEquipeData } from "../equipes";
@@ -12,7 +12,6 @@ import CustomButton from "../components/Button/index";
 import { Switch } from "@rneui/themed";
 import { ListItem } from "@rneui/themed";
 import AccordionPessoas, {
-  PresetPermittedUsers,
   setIdUsuariosPermitidos,
 } from "./components/PessoasPermitidas";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -71,33 +70,17 @@ const presets: Preset[] = [
   },
 ];
 
-export const setPerguntas = async (data: string[]) => {
-  if (data) {
-    try {
-      await AsyncStorage.setItem("perguntas", JSON.stringify(data));
-    } catch (error) {
-      console.log(error);
-    }
-  }
-};
-
 export default function CriarFormulario() {
   const [nomeFormulario, setNomeFormulario] = useState<string | null>(null);
-  const [descricaoFormulario, setDescricaoFormulario] = useState<string | null>(
-    null
-  );
-  const [descricaoPergunta, setDescricaoPergunta] = useState<string | null>(
-    null
-  );
+  const [descricaoFormulario, setDescricaoFormulario] = useState<string | null>(null);
+  const [descricaoPergunta, setDescricaoPergunta] = useState<string | null>(null);
   const [tipoResposta, setTipoResposta] = useState<string | null>(null);
-  const [respostaOpcional, setRespostaOpcional] = useState<boolean | null>(
-    false
-  );
+  const [respostaOpcional, setRespostaOpcional] = useState<boolean | null>(false);
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState<DadosFormulario[]>([]);
   const [expanded, setExpanded] = useState(false);
+  const [questions, setQuestions] = useState<Perguntas[]>([]);
   const router = useRouter();
-  const [questions, setQuestions] = useState<string[]>([]);
 
   const getIdUsuariosPermitidos = async (): Promise<number[] | null> => {
     try {
@@ -111,10 +94,6 @@ export default function CriarFormulario() {
     return null;
   };
 
-  const axiosInstance = axios.create({
-    baseURL: ENDPOINT,
-  });
-
   const clearValues = () => {
     setNomeFormulario("");
     setDescricaoFormulario("");
@@ -127,6 +106,10 @@ export default function CriarFormulario() {
   const equipeData = async () => {
     return await getEquipeData();
   };
+
+  const axiosInstance = axios.create({
+    baseURL: ENDPOINT,
+  });
 
   const criarFormulario = async () => {
     setIsLoading(true);
@@ -159,9 +142,11 @@ export default function CriarFormulario() {
       if (response.status === 201) {
         console.log(`${JSON.stringify(response.data)}`);
         setData(response.data);
-        setPerguntas(response.data.perguntas);
+        setQuestions(questions);
+        console.log(questions)
         IdStorage.setId(response.data.id);
         clearValues();
+        router.replace('equipe/(tabs)/[id]')
         setIsLoading(false);
       } else {
         throw new Error(`${JSON.stringify(response.data)}`);
@@ -170,10 +155,6 @@ export default function CriarFormulario() {
       console.log(error);
       setIsLoading(false);
     }
-  };
-
-  const toggleSwitch = () => {
-    setRespostaOpcional(!respostaOpcional);
   };
 
   return (
@@ -253,7 +234,6 @@ export default function CriarFormulario() {
 const styles = StyleSheet.create({
   list__content: {
     backgroundColor: "#FAFAFA",
-
   },
   question: {
     backgroundColor: "#FFFFFF",
@@ -286,7 +266,6 @@ const styles = StyleSheet.create({
   list: {
     width: "60%",
     height: "auto",
-    backgroundColor: "red"
   },
   container: {
     justifyContent: "space-between",

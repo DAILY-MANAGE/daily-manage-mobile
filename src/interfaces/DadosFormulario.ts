@@ -2,11 +2,11 @@ export interface DadosFormulario {
  id?: number,
  nome?: string,
  descricao?: string
- usuariosPermitidos?: number,
- perguntas?: Pergunta[],
+ idusuariospermitidos?: number,
+ perguntas?: Perguntas[],
 }
 
-export interface Pergunta {
+export interface Perguntas {
  descricao?: string, 
  tiporesposta?: TipoResposta,
  opcional?: boolean

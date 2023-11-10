@@ -1,4 +1,4 @@
-export const ENDPOINT = 'http://10.68.20.106:8080'
+export const ENDPOINT = 'http://192.168.15.12:8080'
 
 export const REGISTRO = "/auth/registro";
 export const LOGIN = "/auth/login";
@@ -35,4 +35,4 @@ export const EXCLUIR_RESPOSTA = "/equipes/formularios/respostas/{formularioRespo
 export const FILTRAR_USUARIOS = "/usuarios/procurar";
 export const VER_REGISTROS_DE_UM_USUARIO = "/equipes/{usuarioId}/registros";
 
-export const VER_NOTIFICACOES = "/notificacoes/todos";
+export const VER_NOTIFICACOES = "/notificacoes/todas";

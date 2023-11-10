@@ -1,16 +1,11 @@
 import React, { useState } from "react";
 import { Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useRouter } from "expo-router";
-import { ENDPOINT } from "../../../utils/endpoints";
 import { CardFormulario } from "../(components)/CardFormulario";
 import { IdStorage } from "../../../hooks/useId";
-import axios from "axios";
 import CustomButton from "../../components/Button";
-import { Button, Icon, Overlay } from "@rneui/themed";
+import { Icon, Overlay } from "@rneui/themed";
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import TouchableScale from 'react-native-touchable-scale';
-import { LinearGradient } from 'react-native-linear-gradient';
 
 export const formularioid = IdStorage.getId();
 
