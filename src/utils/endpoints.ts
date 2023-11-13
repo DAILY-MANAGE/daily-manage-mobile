@@ -1,6 +1,7 @@
-export const ENDPOINT = 'http://192.168.15.12:8080'
+export const ENDPOINT = 'http://10.68.20.129:8080'
 
 export const REGISTRO = "/auth/registro";
+
 export const LOGIN = "/auth/login";
 export const RENOVAR_TOKEN = "/auth/renovarToken";
 export const VER_TODAS_PERMISSOES = "/permissoes/todas";
@@ -15,7 +16,7 @@ export const ADICONAR_USUARIO_A_EQUIPE = "/equipes/usuarios/{usuarioId}";
 export const REMOVER_USUARIO_DA_EQUIPE = "/equipes/usuarios/{usuarioId}";
 export const FILTRAR_USUARIOS_DA_EQUIPE = "/equipes/usuarios/procurar";
 
-export const EDITAR_PERMISSOES_DE_UM_USUARIO_POR_USUARIO = "/equipes/usuarios/usuario/{usuario}";
+export const EDITAR_PERMISSOES_DE_UM_USUARIO_POR_USUaARIO = "/equipes/usuarios/usuario/{usuario}";
 export const REMOVER_USUARIO_DA_EQUIPE_POR_USUARIO = "/equipes/usuarios/usuario/{usuario}";
 
 export const EXCLUIR_EQUIPE = "/equipes/excluir";

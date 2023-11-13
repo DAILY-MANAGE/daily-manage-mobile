@@ -4,7 +4,6 @@ import {
   Pressable,
   RefreshControl,
   ToastAndroid,
-  Text,
   TouchableOpacity,
 } from "react-native";
 import React, { useState } from "react";
@@ -16,6 +15,7 @@ import { getToken } from "../../hooks/token";
 import { DadosEquipe } from "../../interfaces/DadosEquipe";
 import OverlayEquipe from "./components/Overlay";
 import { IdStorage } from "../../hooks/useId";
+import SearchBar from "../components/SearchBar";
 
 export const getEquipeData = async () => {
   return await IdStorage.getId();
@@ -75,20 +75,23 @@ export default function Equipes() {
   };
 
   return (
-    <ScrollView
-      style={styles.container}
-      refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-      }
-    >
-      <OverlayEquipe
-        value={nomeEquipe}
-        setValue={setNomeEquipe}
-        onPress={criarEquipe}
-        editable={!isLoading}
-      />
-      <CardEquipe />
-    </ScrollView>
+    <>
+      <SearchBar />
+      <ScrollView
+        style={styles.container}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
+        <OverlayEquipe
+          value={nomeEquipe}
+          setValue={setNomeEquipe}
+          onPress={criarEquipe}
+          editable={!isLoading}
+        />
+        <CardEquipe />
+      </ScrollView>
+    </>
   );
 }
 
@@ -100,12 +103,12 @@ const styles = StyleSheet.create({
     position: "absolute",
   },
   container: {
-    gap: 8,
     height: "100%",
     width: "100%",
     padding: 16,
     flexDirection: "column",
     margin: 0,
+    backgroundColor: "white"
   },
   equipeContainer: {
     paddingTop: 8,

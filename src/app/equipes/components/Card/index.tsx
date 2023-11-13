@@ -74,10 +74,9 @@ export function CardEquipe() {
 
 const styles = StyleSheet.create({
   equipeContainer: {
-    paddingTop: 8,
+    paddingTop: 10,
     height: "auto",
     width: "100%",
-    gap: 8,
   },
   container: {
     height: "auto",
@@ -86,7 +85,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderWidth: 1,
     borderRadius: 8,
-    borderColor: "black",
+    borderColor: "#c5c5c5",
   },
   title: {
     fontSize: 20,

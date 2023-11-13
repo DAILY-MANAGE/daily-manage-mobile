@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
-import { Overlay } from "@rneui/themed";
+import { FAB, Overlay, SpeedDial } from "@rneui/themed";
 import ButtonComponent from "../../../components/Button";
 import InputComponent from "../../../components/Input";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { router } from "expo-router";
+import { color } from "@rneui/base";
 
 interface OverlayEquipeProps {
   value: string | null;
@@ -28,12 +29,13 @@ export default function OverlayEquipe({
   const onPressSave = () => {
     onPress();
     toggleOverlay();
-    router.replace('equipes')
+    router.replace("equipes");
   };
 
   return (
     <View>
-      <ButtonComponent onPress={toggleOverlay} title="Nova Equipe +" />
+      <ButtonComponent onPress={toggleOverlay} title="+ Nova equipe" />
+
       <Overlay
         overlayStyle={styles.overlayStyle}
         isVisible={visible}
@@ -41,7 +43,7 @@ export default function OverlayEquipe({
       >
         <View style={styles.header}>
           <Text style={styles.title}>Criar nova Equipe</Text>
-          <FontAwesome name="close" size={24} onPress={toggleOverlay}/>
+          <FontAwesome name="close" size={24} onPress={toggleOverlay} />
         </View>
 
         <InputComponent
@@ -59,6 +61,10 @@ export default function OverlayEquipe({
 }
 
 const styles = StyleSheet.create({
+  fab: {
+    bottom: 0,
+    position: "absolute",
+  },
   overlayStyle: {
     borderRadius: 16,
     padding: 16,
@@ -68,11 +74,11 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   header: {
-    flexDirection: 'row',
-    width: '100%',
+    flexDirection: "row",
+    width: "100%",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingRight: 8, 
+    paddingRight: 8,
   },
   title: {
     paddingTop: 8,
