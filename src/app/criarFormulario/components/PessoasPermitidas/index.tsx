@@ -16,6 +16,7 @@ export interface PresetPermittedUsers {
 
 export const setIdUsuariosPermitidos = async (data: number[]) => {
   if (data) {
+    console.log(data)
     try {
       await AsyncStorage.setItem("idusuariospermitidos", JSON.stringify(data));
     } catch (error) {
@@ -43,13 +44,15 @@ export default function AccordionPessoas() {
     setIsLoading(true);
     try {
       const token = await getToken();
+      const equipeid = await equipeData();
+      console.log(equipeid)
       const response = await axiosInstance.get(
         `${ENDPOINT}${FILTRAR_USUARIOS_DA_EQUIPE}`,
         {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
-            Equipe: (await equipeData()) as number,
+            Equipe: equipeid as number,
           },
           data: {},
         }
@@ -97,6 +100,7 @@ export default function AccordionPessoas() {
               return [...state, data.id]
             });
             setNomeUsuariosPermitidos(data.usuario);
+            console.log(usuariosPermitidos)
           }}
           bottomDivider
         >

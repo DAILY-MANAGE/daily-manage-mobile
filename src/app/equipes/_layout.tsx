@@ -29,9 +29,11 @@ export default function EquipesLayout() {
         <Stack.Screen
           name="index"
           options={{
+            headerStyle: { backgroundColor: "#1C1C1C" },
             headerTitle: "Equipes",
             headerTitleStyle: {
               fontWeight: "900",
+              color: "white"
             },
             headerRight: () => (
               <>
@@ -42,6 +44,7 @@ export default function EquipesLayout() {
                         name="bell"
                         size={20}
                         style={{
+                          color: "white",
                           marginRight: 15,
                           opacity: pressed ? 0.5 : 1,
                         }}
@@ -55,6 +58,7 @@ export default function EquipesLayout() {
                       name="cog"
                       size={24}
                       style={{
+                        color: "white",
                         marginRight: 15,
                         opacity: pressed ? 0.5 : 1,
                       }}

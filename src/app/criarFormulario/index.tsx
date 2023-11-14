@@ -72,10 +72,16 @@ const presets: Preset[] = [
 
 export default function CriarFormulario() {
   const [nomeFormulario, setNomeFormulario] = useState<string | null>(null);
-  const [descricaoFormulario, setDescricaoFormulario] = useState<string | null>(null);
-  const [descricaoPergunta, setDescricaoPergunta] = useState<string | null>(null);
+  const [descricaoFormulario, setDescricaoFormulario] = useState<string | null>(
+    null
+  );
+  const [descricaoPergunta, setDescricaoPergunta] = useState<string | null>(
+    null
+  );
   const [tipoResposta, setTipoResposta] = useState<string | null>(null);
-  const [respostaOpcional, setRespostaOpcional] = useState<boolean | null>(false);
+  const [respostaOpcional, setRespostaOpcional] = useState<boolean | null>(
+    false
+  );
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState<DadosFormulario[]>([]);
   const [expanded, setExpanded] = useState(false);
@@ -116,6 +122,7 @@ export default function CriarFormulario() {
     try {
       const token = await getToken();
       const idUsuariosPermitidos = await getIdUsuariosPermitidos();
+      const equipeid = await equipeData();
       const response = await axiosInstance.post(
         `${ENDPOINT}${CRIAR_FORMULARIO}`,
         {
@@ -134,7 +141,7 @@ export default function CriarFormulario() {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
-            Equipe: (await equipeData()) as number,
+            Equipe: equipeid as number,
           },
           data: {},
         }
@@ -143,10 +150,9 @@ export default function CriarFormulario() {
         console.log(`${JSON.stringify(response.data)}`);
         setData(response.data);
         setQuestions(questions);
-        console.log(questions)
-        IdStorage.setId(response.data.id);
+        console.log(questions);
         clearValues();
-        router.replace('equipe/(tabs)/[id]')
+        router.back();
         setIsLoading(false);
       } else {
         throw new Error(`${JSON.stringify(response.data)}`);

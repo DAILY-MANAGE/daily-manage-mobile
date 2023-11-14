@@ -1,14 +1,11 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { View, StyleSheet, Pressable, Text, ScrollView } from 'react-native';
-import { SafeAreaView } from "react-native-safe-area-context";
+import { View, StyleSheet, Pressable, Text } from 'react-native';
 import { StatusBar } from "expo-status-bar";
 import { useRouter } from "expo-router";
-import { CheckBox } from "@rneui/themed";
 import { setToken } from "../../hooks/token";
 import { ENDPOINT, LOGIN } from "../../utils/endpoints";
 import ButtonComponent from "../components/Button";
-import InputComponent from "../components/Input";
 import Logo from "../components/Logo";
 import CustomInput from "../components/Input";
 

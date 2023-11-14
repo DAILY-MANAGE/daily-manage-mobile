@@ -46,7 +46,7 @@ export function CardEquipe() {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [data]);
 
   return (
     <>

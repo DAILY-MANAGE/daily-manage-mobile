@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderWidth: 1,
     borderRadius: 8,
-    borderColor: "black",
+    borderColor: "#c5c5c5",
   },
   title: {
     fontSize: 20,

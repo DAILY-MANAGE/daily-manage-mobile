@@ -25,7 +25,8 @@ export default function Equipes() {
   const [nomeEquipe, setNomeEquipe] = useState<string | null>(null);
   const [data, setData] = useState<DadosEquipe[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [refreshing, setRefreshing] = React.useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const [search, setSearch] = useState('');
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
@@ -76,7 +77,7 @@ export default function Equipes() {
 
   return (
     <>
-      <SearchBar />
+      <SearchBar value={search} onChangeText={setSearch} />
       <ScrollView
         style={styles.container}
         refreshControl={

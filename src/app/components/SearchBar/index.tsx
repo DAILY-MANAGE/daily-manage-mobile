@@ -2,19 +2,17 @@ import React, { useState } from "react";
 import { SearchBar } from "@rneui/themed";
 import { StyleSheet } from "react-native";
 
-export default function CustomSearchBar() {
-    const [search, setSearch] = useState("");
+interface SearchProps {
+    value: string;
+    onChangeText: React.Dispatch<React.SetStateAction<string>>;
+  }
 
-    const updateSearch = (search: any) => {
-        setSearch(search);
-    };
-
+export default function CustomSearchBar({ value, onChangeText }: SearchProps) {
     return (
         <SearchBar
-            ref={(search: any) => (this.search = search)}
             placeholder="Pesquisar equipe..."
-            onChangeText={updateSearch}
-            value={search}
+            value={value}
+            onChangeText={onChangeText}
             lightTheme={true}
             style={styles.searchBar}
             inputStyle={styles.inputStyle}
@@ -30,7 +28,7 @@ const styles = StyleSheet.create({
         padding: 8,        
     },
     inputStyle: {
-        backgroundColor: "white",
+        backgroundColor: "#FAFAFA",
     },
     containerStyle: {
         backgroundColor: "white",
@@ -38,14 +36,13 @@ const styles = StyleSheet.create({
         padding: 16,
     },
     inputContainerStyle: {
-        backgroundColor: "white",
+        backgroundColor: "#FAFAFA",
         borderRadius: 64,
         borderWidth: 1,
         shadowOpacity: 0,
         elevation: 0,
-        
     },
     leftIcon: {
         paddingLeft:8,
     }
-});
+}); 
