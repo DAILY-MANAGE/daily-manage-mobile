@@ -32,7 +32,7 @@ export default function EquipesLayout() {
             headerStyle: { backgroundColor: "#1C1C1C" },
             headerTitle: "Equipes",
             headerTitleStyle: {
-              fontWeight: "900",
+              fontWeight: "500",
               color: "white"
             },
             headerRight: () => (
@@ -55,7 +55,7 @@ export default function EquipesLayout() {
                 <Pressable onPress={() => setIsVisible(!isVisible)}>
                   {({ pressed }) => (
                     <FontAwesome
-                      name="cog"
+                      name="user"
                       size={24}
                       style={{
                         color: "white",

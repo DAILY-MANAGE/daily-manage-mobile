@@ -4,6 +4,7 @@ import { Link, Tabs, useRouter } from "expo-router";
 import { BottomSheet, ListItem } from "@rneui/themed";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import TabBarIcon from "../(components)/TabBarIcon";
+import { color } from '@rneui/base';
 
 export default function EquipeLayout() {
   const [isVisible, setIsVisible] = useState(false);
@@ -11,7 +12,7 @@ export default function EquipeLayout() {
 
   const options = [
     {
-      title: "Perfil",      
+      title: "Perfil",
       onPress: () => (setIsVisible(!isVisible), router.replace("perfil")),
     },
     { title: "Ajuda" },
@@ -29,10 +30,12 @@ export default function EquipeLayout() {
         <Tabs.Screen
           name="[id]"
           options={{
+            headerStyle: { backgroundColor: "#1C1C1C" },
             headerTitle: `Equipe`,
             headerTitleStyle: styles.headerTitleStyle,
             tabBarActiveTintColor: "black",
             tabBarInactiveTintColor: "gray",
+            tabBarStyle: { backgroundColor: "#1C1C1C" },
             tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
             headerLeft: () => (
               <Pressable onPress={() => router.back()}>
@@ -41,6 +44,7 @@ export default function EquipeLayout() {
                     name="arrow-left"
                     size={20}
                     style={{
+                      color: "white",
                       marginLeft: 16,
                       marginRight: 8,
                       opacity: pressed ? 0.5 : 1,
@@ -58,6 +62,7 @@ export default function EquipeLayout() {
                         name="bell"
                         size={20}
                         style={{
+                          color: "white",
                           marginRight: 15,
                           opacity: pressed ? 0.5 : 1,
                         }}
@@ -71,6 +76,7 @@ export default function EquipeLayout() {
                       name="cog"
                       size={24}
                       style={{
+                        color: "white",
                         marginRight: 15,
                         opacity: pressed ? 0.5 : 1,
                       }}
@@ -86,11 +92,14 @@ export default function EquipeLayout() {
         <Tabs.Screen
           name="usuarios"
           options={{
+            headerStyle: { backgroundColor: "#1C1C1C" },
             headerTitle: "Usuários",
             headerTitleStyle: styles.headerTitleStyle,
             tabBarActiveTintColor: "black",
             tabBarInactiveTintColor: "gray",
-            tabBarIcon: ({ color }) => <TabBarIcon name="users" color={color} />,
+            tabBarIcon: ({ color }) => (
+              <TabBarIcon name="users" color={color} />
+            ),
             headerLeft: () => (
               <>
                 <Pressable onPress={() => router.back()}>
@@ -99,6 +108,7 @@ export default function EquipeLayout() {
                       name="arrow-left"
                       size={20}
                       style={{
+                        color: "white",
                         marginLeft: 16,
                         marginRight: 8,
                         opacity: pressed ? 0.5 : 1,
@@ -117,6 +127,7 @@ export default function EquipeLayout() {
                         name="bell"
                         size={20}
                         style={{
+                          color: "white",
                           marginRight: 15,
                           opacity: pressed ? 0.5 : 1,
                         }}
@@ -130,6 +141,7 @@ export default function EquipeLayout() {
                       name="cog"
                       size={24}
                       style={{
+                        color: "white",
                         marginRight: 15,
                         opacity: pressed ? 0.5 : 1,
                       }}
@@ -145,6 +157,7 @@ export default function EquipeLayout() {
         <Tabs.Screen
           name="configuracoes"
           options={{
+            headerStyle: { backgroundColor: "#1C1C1C" },
             headerTitle: "Configurações",
             headerTitleStyle: styles.headerTitleStyle,
             tabBarActiveTintColor: "black",
@@ -158,6 +171,7 @@ export default function EquipeLayout() {
                       name="arrow-left"
                       size={20}
                       style={{
+                        color: "white",
                         marginLeft: 16,
                         marginRight: 8,
                         opacity: pressed ? 0.5 : 1,
@@ -176,6 +190,7 @@ export default function EquipeLayout() {
                         name="bell"
                         size={20}
                         style={{
+                          color: "white",
                           marginRight: 15,
                           opacity: pressed ? 0.5 : 1,
                         }}
@@ -189,6 +204,7 @@ export default function EquipeLayout() {
                       name="cog"
                       size={24}
                       style={{
+                        color: "white",
                         marginRight: 15,
                         opacity: pressed ? 0.5 : 1,
                       }}
@@ -221,7 +237,8 @@ export default function EquipeLayout() {
 
 const styles = StyleSheet.create({
   headerTitleStyle: {
-    fontWeight: "900",
+    fontWeight: "500",
+    color: "white"
   },
   headerIconsStyle: {
     height: "auto",
