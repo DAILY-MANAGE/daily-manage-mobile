@@ -77,6 +77,8 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     height: "auto",
     width: "100%",
+    shadowColor: "#c5c5c5",
+    elevation: 8
   },
   container: {
     height: "auto",
@@ -86,6 +88,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 8,
     borderColor: "#c5c5c5",
+    shadowColor: "#c5c5c5",
+    elevation: 8
   },
   title: {
     fontSize: 20,

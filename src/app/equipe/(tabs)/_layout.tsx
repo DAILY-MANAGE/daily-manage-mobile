@@ -4,7 +4,7 @@ import { Link, Tabs, useRouter } from "expo-router";
 import { BottomSheet, ListItem } from "@rneui/themed";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import TabBarIcon from "../(components)/TabBarIcon";
-import { color } from '@rneui/base';
+import { color } from "@rneui/base";
 
 export default function EquipeLayout() {
   const [isVisible, setIsVisible] = useState(false);
@@ -33,7 +33,7 @@ export default function EquipeLayout() {
             headerStyle: { backgroundColor: "#1C1C1C" },
             headerTitle: `Equipe`,
             headerTitleStyle: styles.headerTitleStyle,
-            tabBarActiveTintColor: "black",
+            tabBarActiveTintColor: "white",
             tabBarInactiveTintColor: "gray",
             tabBarStyle: { backgroundColor: "#1C1C1C" },
             tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
@@ -85,8 +85,7 @@ export default function EquipeLayout() {
                 </Pressable>
               </View>
             ),
-            tabBarLabel: "Formulários",
-            tabBarLabelStyle: styles.tabBarLabelStyle,
+            tabBarShowLabel: false,
           }}
         />
         <Tabs.Screen
@@ -95,8 +94,9 @@ export default function EquipeLayout() {
             headerStyle: { backgroundColor: "#1C1C1C" },
             headerTitle: "Usuários",
             headerTitleStyle: styles.headerTitleStyle,
-            tabBarActiveTintColor: "black",
+            tabBarActiveTintColor: "white",
             tabBarInactiveTintColor: "gray",
+            tabBarStyle: { backgroundColor: "#1C1C1C" },
             tabBarIcon: ({ color }) => (
               <TabBarIcon name="users" color={color} />
             ),
@@ -150,8 +150,7 @@ export default function EquipeLayout() {
                 </Pressable>
               </View>
             ),
-            tabBarLabel: "Usuários",
-            tabBarLabelStyle: styles.tabBarLabelStyle,
+            tabBarShowLabel: false,
           }}
         />
         <Tabs.Screen
@@ -160,8 +159,9 @@ export default function EquipeLayout() {
             headerStyle: { backgroundColor: "#1C1C1C" },
             headerTitle: "Configurações",
             headerTitleStyle: styles.headerTitleStyle,
-            tabBarActiveTintColor: "black",
+            tabBarActiveTintColor: "white",
             tabBarInactiveTintColor: "gray",
+            tabBarStyle: { backgroundColor: "#1C1C1C" },
             tabBarIcon: ({ color }) => <TabBarIcon name="cog" color={color} />,
             headerLeft: () => (
               <>
@@ -213,8 +213,7 @@ export default function EquipeLayout() {
                 </Pressable>
               </View>
             ),
-            tabBarLabel: "Equipe",
-            tabBarLabelStyle: styles.tabBarLabelStyle,
+            tabBarShowLabel: false,
           }}
         />
       </Tabs>
@@ -238,7 +237,7 @@ export default function EquipeLayout() {
 const styles = StyleSheet.create({
   headerTitleStyle: {
     fontWeight: "500",
-    color: "white"
+    color: "white",
   },
   headerIconsStyle: {
     height: "auto",
@@ -249,7 +248,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   tabBarLabelStyle: {
-    color: "black",
+    color: "white",
     paddingBottom: 4,
   },
 });
