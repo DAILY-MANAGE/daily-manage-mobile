@@ -1,25 +1,21 @@
-import axios from "axios";
-import { useRouter } from "expo-router";
-import React, { useState } from "react";
-import { Text, View, StyleSheet, ScrollView } from "react-native";
-import { getToken } from "../../hooks/token";
-import { IdStorage } from "../../hooks/useId";
-import { DadosFormulario, Perguntas } from "../../interfaces/DadosFormulario";
-import { CRIAR_FORMULARIO, ENDPOINT } from "../../utils/endpoints";
-import CustomInput from "../components/Input";
-import { getEquipeData } from "../equipes";
-import CustomButton from "../components/Button/index";
-import { Switch } from "@rneui/themed";
-import { ListItem } from "@rneui/themed";
-import AccordionPessoas, {
-  setIdUsuariosPermitidos,
-} from "./components/PessoasPermitidas";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useRouter } from "expo-router"
+import React, { useEffect, useState } from "react"
+import { Text, View, StyleSheet, ScrollView } from "react-native"
+import { getToken } from "../../hooks/token"
+import { QuestionData, FormData } from "../../interfaces/DadosFormulario"
+import { CRIAR_FORMULARIO, BASEURL, FILTRAR_USUARIOS_DA_EQUIPE } from "../../utils/endpoints"
+import CustomInput from "../components/Input"
+import CustomButton from "../components/Button/index"
+import { Switch } from "@rneui/themed"
+import { ListItem } from "@rneui/themed"
+import AsyncStorage from "@react-native-async-storage/async-storage"
+import { axiosInstance } from '../../utils/useAxios'
+import { getEquipeId } from "../equipes/(tabs)/index"
 
-export interface Preset {
-  id: number;
-  name: string;
-  value: string;
+interface Preset {
+  id: number
+  name: string
+  value: string
 }
 
 const presets: Preset[] = [
@@ -68,63 +64,127 @@ const presets: Preset[] = [
     name: "Litro",
     value: "LITRO",
   },
-];
+]
+
+interface PresetPermittedUsers {
+  id?: number
+  nome?: string
+  usuario?: string
+  email?: string
+}
 
 export default function CriarFormulario() {
-  const [nomeFormulario, setNomeFormulario] = useState<string | null>(null);
-  const [descricaoFormulario, setDescricaoFormulario] = useState<string | null>(
-    null
-  );
-  const [descricaoPergunta, setDescricaoPergunta] = useState<string | null>(
-    null
-  );
-  const [tipoResposta, setTipoResposta] = useState<string | null>(null);
-  const [respostaOpcional, setRespostaOpcional] = useState<boolean | null>(
-    false
-  );
-  const [isLoading, setIsLoading] = useState(false);
-  const [data, setData] = useState<DadosFormulario[]>([]);
-  const [expanded, setExpanded] = useState(false);
-  const [questions, setQuestions] = useState<Perguntas[]>([]);
-  const router = useRouter();
+  const [nomeFormulario, setNomeFormulario] = useState<string | null>(null)
+  const [descricaoFormulario, setDescricaoFormulario] = useState<string | null>(null)
+  const [descricaoPergunta, setDescricaoPergunta] = useState<string | null>(null)
+  const [tipoResposta, setTipoResposta] = useState<string | null>(null)
+  const [respostaOpcional, setRespostaOpcional] = useState<boolean | null>(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [data, setData] = useState<FormData[]>([])
+  const [expandedRes, setExpandedRes] = useState(false)
+  const [countValue, setCountValue] = useState(1)
+  const [questions, setQuestions] = useState<QuestionData[]>()
+  const router = useRouter()
+  const [expandedUsr, setExpandedUsr] = useState(false)
+  const [dataUsr, setDataUsr] = useState<PresetPermittedUsers[]>([])
+  const [usuariosPermitidos, setUsuariosPermitidos] = useState<number[]>([])
+
+  const i = axiosInstance
+
+  const resetCounter = () => {
+    setCountValue(1)
+  }
+
+  const setIdUsuariosPermitidos = async (data: number[]) => {
+    if (data) {
+      console.log(data)
+      try {
+        await AsyncStorage.setItem("idusuariospermitidos", JSON.stringify(data))
+      } catch (error) {
+        console.log(error)
+      }
+    }
+  }
 
   const getIdUsuariosPermitidos = async (): Promise<number[] | null> => {
+
     try {
-      const id = await AsyncStorage.getItem("idusuariospermitidos");
+      const id = await AsyncStorage.getItem("idusuariospermitidos")
+
       if (id !== null) {
-        return JSON.parse(id);
+        return JSON.parse(id)
       }
+
     } catch (error) {
-      console.log(error);
+      console.log(error)
     }
-    return null;
-  };
 
-  const clearValues = () => {
-    setNomeFormulario("");
-    setDescricaoFormulario("");
-    setDescricaoPergunta("");
-    setTipoResposta("");
-    setIdUsuariosPermitidos(null);
-    setRespostaOpcional(false);
-  };
+    return null
+  }
 
-  const equipeData = async () => {
-    return await getEquipeData();
-  };
+  const clearFields = () => {
+    setNomeFormulario("")
+    setDescricaoFormulario("")
+    setDescricaoPergunta("")
+    setTipoResposta("")
+    setIdUsuariosPermitidos(null)
+    setRespostaOpcional(false)
+  }
 
-  const axiosInstance = axios.create({
-    baseURL: ENDPOINT,
-  });
+  async function getPermittedUsers() {
 
-  const criarFormulario = async () => {
-    setIsLoading(true);
+    setIsLoading(true)
+
     try {
-      const token = await getToken();
-      const idUsuariosPermitidos = await getIdUsuariosPermitidos();
-      const equipeid = await equipeData();
-      const response = await axiosInstance.post(
-        `${ENDPOINT}${CRIAR_FORMULARIO}`,
+      const token = await getToken()
+
+      const equipeid = await getEquipeId()
+
+      const res = await i.get(
+        `${BASEURL}${FILTRAR_USUARIOS_DA_EQUIPE}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+            Equipe: equipeid as number,
+          },
+          data: {},
+        }
+      )
+
+      if (res.status === 200) {
+        setIdUsuariosPermitidos(usuariosPermitidos)
+        setDataUsr(res.data.content)
+        setIsLoading(false)
+      }
+
+      else {
+        throw new Error(`${JSON.stringify(res.data)}`)
+      }
+
+    } catch (err) {
+      console.log(err)
+      setIsLoading(false)
+    }
+  };
+
+  useEffect(() => {
+    getPermittedUsers()
+  }, [setExpandedUsr])
+
+  const createForm = async () => {
+
+    setIsLoading(true)
+
+    try {
+      const token = await getToken()
+
+      const equipeid = await getEquipeId()
+
+      const idUsuariosPermitidos = await getIdUsuariosPermitidos()
+
+      const res = await i.post(
+        `${BASEURL}${CRIAR_FORMULARIO}`,
         {
           nome: nomeFormulario,
           descricao: descricaoFormulario,
@@ -145,25 +205,29 @@ export default function CriarFormulario() {
           },
           data: {},
         }
-      );
-      if (response.status === 201) {
-        console.log(`${JSON.stringify(response.data)}`);
-        setData(response.data);
-        setQuestions(questions);
-        console.log(questions);
-        clearValues();
-        router.back();
-        setIsLoading(false);
-      } else {
-        throw new Error(`${JSON.stringify(response.data)}`);
+      )
+
+      if (res.status === 201) {
+        console.log(`${JSON.stringify(res.data)}`)
+        setData(res.data)
+        setQuestions(res.data.questions)
+        console.log(questions)
+        clearFields()
+        router.back()
+        resetCounter()
+        setIsLoading(false)
       }
-    } catch (error) {
-      console.log(error);
-      setIsLoading(false);
+
+      else { throw new Error(`${JSON.stringify(res.data)}`) }
+
+    } catch (err) {
+      console.log(err)
+      setIsLoading(false)
     }
-  };
+  }
 
   return (
+
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.inputs}>
         <CustomInput
@@ -178,10 +242,47 @@ export default function CriarFormulario() {
           value={descricaoFormulario}
           setValue={setDescricaoFormulario}
         />
+        <ListItem.Accordion
+          containerStyle={styles.accordion__container}
+          content={
+            <ListItem.Content>
+              <ListItem.Title style={styles.accordion__title}>
+                Usuários permitidos
+              </ListItem.Title>
+            </ListItem.Content>
+          }
+          isExpanded={expandedUsr}
+          onPress={() => setExpandedUsr(!expandedUsr)}
+        >
+
+          {isLoading &&
+            isLoading ? (<Text>Buscando usuários...</Text>) :
+            dataUsr.length === 0 ? (<Text>Nenhum usuário foi encontrado</Text>) :
+              dataUsr.map((user: PresetPermittedUsers) => (
+                <ListItem
+                  style={styles.list}
+                  key={user.id}
+                  onPress={() => {
+                    setUsuariosPermitidos((prevState) => {
+                      if (prevState.includes(user.id)) {
+                        return prevState.filter((id) => id !== user.id)
+                      }
+                      return [...prevState, user.id]
+                    })
+                  }}
+                  bottomDivider
+                >
+                  <ListItem.Content>
+                    <ListItem.Title>{user.usuario}</ListItem.Title>
+                  </ListItem.Content>
+                </ListItem>
+              ))}
+
+        </ListItem.Accordion>
         <ScrollView>
           <View style={styles.question}>
             <CustomInput
-              label="Pergunta:"
+              label={`Pergunta ${countValue}`}
               placeholder="Comprou leite?"
               value={descricaoPergunta}
               setValue={setDescricaoPergunta}
@@ -189,36 +290,32 @@ export default function CriarFormulario() {
             <ListItem.Accordion
               containerStyle={styles.accordion__container}
               content={
-                <>
-                  <ListItem.Content>
-                    <ListItem.Title style={styles.accordion__title}>
-                      Tipo de resposta
-                    </ListItem.Title>
-                  </ListItem.Content>
-                </>
+                <ListItem.Content>
+                  <ListItem.Title style={styles.accordion__title}>
+                    Tipo de resposta
+                  </ListItem.Title>
+                </ListItem.Content>
               }
-              isExpanded={expanded}
-              onPress={() => {
-                setExpanded(!expanded);
-              }}
+              isExpanded={expandedRes}
+              onPress={() => setExpandedRes(!expandedRes)}
             >
+
               {presets.map((data: Preset) => (
                 <ListItem
                   key={data.id}
                   style={styles.list}
-                  onPress={(e) => {
-                    setTipoResposta(data.value);
-                    console.log(tipoResposta);
-                  }}
-                  bottomDivider
-                >
+                  onPress={() => { setTipoResposta(data.value); console.log(tipoResposta) }}
+                  bottomDivider>
+
                   <ListItem.Content style={styles.list__content}>
                     <ListItem.Title>{data.name}</ListItem.Title>
                   </ListItem.Content>
+
                 </ListItem>
               ))}
+
             </ListItem.Accordion>
-            <AccordionPessoas />
+
             <View style={styles.switch__container}>
               <Text style={styles.switch__label}>Obrigatório</Text>
               <Switch
@@ -229,23 +326,24 @@ export default function CriarFormulario() {
             </View>
           </View>
         </ScrollView>
+        <CustomButton onPress={() => { }} title={"+ Adicionar Pergunta"} />
       </View>
       <View style={styles.footer}>
-        <CustomButton onPress={criarFormulario} title={"+ Criar"} />
+        <CustomButton onPress={createForm} title={"+ Criar"} />
       </View>
     </ScrollView>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
   list__content: {
-    backgroundColor: "#FAFAFA",
+    backgroundColor: "#FFFFFF",
   },
   question: {
     backgroundColor: "#FFFFFF",
     padding: 16,
     borderWidth: 1,
-    borderColor: "black",
+    borderColor: "#c5c5c5",
     borderRadius: 4,
     gap: 8,
   },
@@ -262,7 +360,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     padding: 16,
-    backgroundColor: "#f3f6f4",
+    backgroundColor: "#FFFFFF",
     borderRadius: 8,
   },
   accordion__title: {
@@ -292,4 +390,4 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "700",
   },
-});
+})
