@@ -52,7 +52,7 @@ export default function Formularios() {
 
   return (
     <>
-      <SearchBar value={search} onChangeText={setSearch} />
+      <SearchBar placeholder="Pesquisar formulários..." value={search} onChangeText={setSearch} />
       <ScrollView
         style={styles.container}
         refreshControl={
@@ -63,6 +63,7 @@ export default function Formularios() {
           title="Criar Formulario"
           onPress={() => router.push("criarFormulario")}
         />
+
         <Pressable
           delayLongPress={500}
           onLongPress={() => {
@@ -71,8 +72,11 @@ export default function Formularios() {
           onPress={() => setVisible(!visible)}
           style={styles.formularioContainer}
         >
+
           <CardFormulario />
+
         </Pressable>
+
         <Overlay
           overlayStyle={styles.overlayStyle}
           isVisible={visible}
@@ -116,7 +120,9 @@ export default function Formularios() {
             />
           </View>
         </Overlay>
+
       </ScrollView>
+
       <BottomSheet
         isVisible={isVisible}
         onBackdropPress={() => setIsVisible(!isVisible)}
