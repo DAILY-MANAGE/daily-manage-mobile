@@ -98,7 +98,7 @@ export default function Users() {
 
   useEffect(() => {
     getAllUsers()
-  }, [])
+  }, [toggleOverlay])
 
   return (
     <>
