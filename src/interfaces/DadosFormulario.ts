@@ -1,18 +1,20 @@
-export interface DadosFormulario {
+export interface FormData {
  id?: number,
  nome?: string,
  descricao?: string
- idusuariospermitidos?: number,
- perguntas?: Perguntas[],
+ idusuariospermitidos?: number[],
+ perguntas?: QuestionData[],
 }
 
-export interface Perguntas {
+export interface QuestionData {
+ id?: number,
  descricao?: string, 
- tiporesposta?: TipoResposta,
+ tiporespostadefault?: string,
+ tiporesposta?: ResponseType,
  opcional?: boolean
 }
 
-export enum TipoResposta {
+export enum ResponseType {
  INTEGER,
  DECIMAL,
  STRING,
