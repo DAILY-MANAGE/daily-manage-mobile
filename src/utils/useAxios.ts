@@ -1,6 +1,6 @@
 import axios from "axios";
-import { ENDPOINT } from "./endpoints";
+import { BASEURL } from "./endpoints";
 
 export const axiosInstance = axios.create({
- baseURL: ENDPOINT
+ baseURL: BASEURL
 })
