@@ -1,21 +1,20 @@
 import React, { useState } from "react";
-import axios from "axios";
-import { View, StyleSheet, Pressable, Text } from 'react-native';
+import { View, StyleSheet, Pressable, Text, ToastAndroid } from 'react-native';
 import { StatusBar } from "expo-status-bar";
 import { useRouter } from "expo-router";
 import { setToken } from "../../hooks/token";
-import { ENDPOINT, LOGIN } from "../../utils/endpoints";
+import { BASEURL, LOGIN } from "../../utils/endpoints";
 import ButtonComponent from "../components/Button";
 import Logo from "../components/Logo";
 import CustomInput from "../components/Input";
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { axiosInstance } from "../../utils/useAxios";
 
 export default function Login() {
   const [user, setUser] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [checked, setChecked] = useState(false);
-  const [rememberPassword, setRememberPassword] =
-    useState<React.SetStateAction<boolean>>(false);
+  const [securePassword, setSecurePassword] = useState(true)
 
   const validateFields = () => {
     const errors = { user, password };
@@ -38,22 +37,22 @@ export default function Login() {
   };
 
   const errors = validateFields();
+
   const router = useRouter();
 
-  const toggleCheckbox = () => {
-    setChecked(!checked);
-    setRememberPassword(checked);
+  const toggleSecurePassword = () => {
+    setSecurePassword(!securePassword);
   };
 
-  const axiosInstance = axios.create({
-    baseURL: ENDPOINT,
-  });
+  const i = axiosInstance
 
-  const handleLogin = async () => {
+  const login = async () => {
+
     setIsLoading(true);
+
     try {
-      const response = await axiosInstance.post(
-        `${ENDPOINT}${LOGIN}`,
+      const res = await i.post(
+        `${BASEURL}${LOGIN}`,
         {
           usuario: user,
           senha: password,
@@ -63,20 +62,48 @@ export default function Login() {
             "Content-Type": "application/json",
           },
         }
-      );
-      if (response.status === 200) {
-        console.log(`${JSON.stringify(response.data)}`);
-        setToken(response.data.token);
+      )
+
+      if (res.status === 200) {
+        console.log(`${JSON.stringify(res.data)}`);
+        setToken(res.data.token);
         setIsLoading(false);
         router.replace("equipes");
+
       } else {
-        throw new Error(`${JSON.stringify(response.data)}`);
+        throw new Error(`${JSON.stringify(res.data)}`);
       }
-    } catch (error) {
-      console.log(error);
+
+    } catch (err) {
+      console.log(err);
+
+      if (err.response && err.response.status === 403) {
+        ToastAndroid.showWithGravity(
+          "Usuário ou senha incorretos...",
+          ToastAndroid.LONG,
+          ToastAndroid.CENTER
+        );
+
+        setPassword("");
+      } else {
+        ToastAndroid.showWithGravity(
+          "Erro ao fazer login. Tente novamente mais tarde.",
+          ToastAndroid.LONG,
+          ToastAndroid.CENTER
+        );
+      }
+
       setIsLoading(false);
     }
   };
+
+  function Eye({ onPress }) {
+    return (
+      <Pressable onPress={onPress}>
+        {!securePassword ? <FontAwesome size={20} name="eye" /> : <FontAwesome size={20} name="eye-slash" color="#acacac" />}
+      </Pressable>
+    );
+  }
 
   return (
     <View>
@@ -92,7 +119,7 @@ export default function Login() {
             <View style={styles.form}>
               <View style={styles.inputs}>
                 <CustomInput
-                  errorMessage={errors.user}
+                  errorMessage={''}
                   placeholder="Digite seu nome de usuário"
                   label="Usuário:"
                   value={user}
@@ -101,21 +128,23 @@ export default function Login() {
                   autoComplete="username"
                 />
                 <CustomInput
-                  errorMessage={errors.password}
+                  errorMessage={''}
                   placeholder="Digite sua senha"
                   label="Senha:"
                   value={password}
                   setValue={setPassword}
                   textContentType="password"
                   autoComplete="password"
-                  secureTextEntry={true}
+                  secureTextEntry={securePassword}
+                  rightIcon={<Eye onPress={toggleSecurePassword} />}
+                  rightIconStyle={styles.rightIconContainerStyle}
                 />
               </View>
               <View style={styles.sumbite}>
                 {isLoading ? (
                   <ButtonComponent title="Continuar" loading={true} />
                 ) : (
-                  <ButtonComponent title="Continuar" onPress={handleLogin} />
+                  <ButtonComponent title="Continuar" onPress={login} />
                 )}
               </View>
             </View>
@@ -139,6 +168,29 @@ export default function Login() {
 }
 
 const styles = StyleSheet.create({
+  rightIconContainerStyle: {
+    height: 32,
+    width: "auto",
+    alignItems: "flex-end",
+    justifyContent: "flex-end",
+    flexDirection: "column"
+  },
+  customInput: {
+    marginBottom: 12,
+    gap: 10
+  },
+  eyeIcon: {
+    height: "auto",
+    width: "auto",
+    alignSelf: "flex-end",
+    flexDirection: "column",
+  },
+  eyeContainer: {
+    height: "100%",
+    width: "100%",
+    alignItems: "flex-end",
+    justifyContent: "flex-end"
+  },
   container: {
     paddingBottom: 8,
     justifyContent: "space-between",
