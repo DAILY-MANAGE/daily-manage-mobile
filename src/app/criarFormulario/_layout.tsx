@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { Pressable } from "react-native";
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { BottomSheet, ListItem } from "@rneui/themed";
+import BackButton from "../components/BackButton";
 
 export default function CriarFormularioLayout() {
   const [isVisible, setIsVisible] = useState(false);
@@ -29,10 +30,13 @@ export default function CriarFormularioLayout() {
         <Stack.Screen
           name="index"
           options={{
+            headerStyle: { backgroundColor: "#1C1C1C" },
             headerTitle: "Criar Formulário",
             headerTitleStyle: {
+              color: "white",
               fontWeight: "900",
             },
+            headerLeft: () => ( <BackButton /> ),
             headerRight: () => (
               <>
                 <Link href="notificacoes" asChild>
@@ -42,6 +46,7 @@ export default function CriarFormularioLayout() {
                         name="bell"
                         size={20}
                         style={{
+                          color: "white",
                           marginRight: 15,
                           opacity: pressed ? 0.5 : 1,
                         }}
@@ -55,6 +60,7 @@ export default function CriarFormularioLayout() {
                       name="cog"
                       size={24}
                       style={{
+                        color: "white",
                         marginRight: 15,
                         opacity: pressed ? 0.5 : 1,
                       }}
