@@ -17,6 +17,8 @@ interface CustomInputProps {
   rightIcon?: any,
   label?: string,
   errorMessage?: string,
+  style?: any,
+  rightIconStyle?: any
 }
 
 export default function CustomInput({
@@ -30,9 +32,11 @@ export default function CustomInput({
   rightIcon,
   label,
   errorMessage,
+  style,
+  rightIconStyle
 }: CustomInputProps) {
   return (
-    <View style={styles.input}>
+    <View style={style ? style : styles.input}>
       <View style={styles.labelView}>
         <Text style={styles.label}>{label}</Text>
       </View>
@@ -48,6 +52,7 @@ export default function CustomInput({
         secureTextEntry={secureTextEntry}
         editable={editable}
         autoComplete={autoComplete}
+        rightIconContainerStyle={rightIconStyle}
         rightIcon={rightIcon}
       />
     </View>
@@ -59,6 +64,7 @@ const styles = StyleSheet.create({
     top: 12,
     fontSize: 16,
     paddingLeft: 8,
+    fontStyle: "italic"
   },
   inputContainerStyle: {
     borderBottomWidth: 0,
@@ -70,7 +76,7 @@ const styles = StyleSheet.create({
   containerStyle: {
     backgroundColor: "white",
     borderRadius: 12,
-    borderColor: "black",
+    borderColor: "#c5c5c5",
     borderWidth: 1,
     shadowColor: "black",
     elevation: 2,
