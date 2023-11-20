@@ -1,4 +1,4 @@
-export const ENDPOINT = 'http://10.68.20.106:8080'
+export const BASEURL = 'http://192.168.15.12:8080'
 
 export const REGISTRO = "/auth/registro";
 
