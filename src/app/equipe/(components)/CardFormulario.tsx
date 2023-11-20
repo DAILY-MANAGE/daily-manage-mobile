@@ -1,65 +1,67 @@
-import React, { useEffect, useState } from "react";
-import { View, StyleSheet, Text } from "react-native";
-import { ENDPOINT, VER_FORMULARIOS_DA_EQUIPE } from "../../../utils/endpoints";
-import { DadosFormulario } from "../../../interfaces/DadosFormulario";
-import { getToken } from "../../../hooks/token";
-import axios from "axios";
-import { getEquipeData } from "../../equipes";
+import React, { useEffect, useState } from "react"
+import { View, StyleSheet, Text } from "react-native"
+import { BASEURL, VER_FORMULARIOS_DA_EQUIPE } from "../../../utils/endpoints"
+import { FormData } from "../../../interfaces/DadosFormulario"
+import { getToken } from "../../../hooks/token"
+import { getEquipeId } from "../../equipes/(tabs)"
+import { axiosInstance } from "../../../utils/useAxios"
 
 export function CardFormulario() {
-  const [data, setData] = useState<DadosFormulario[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [data, setData] = useState<FormData[]>([])
+  const [isLoading, setIsLoading] = useState(false)
 
-  const axiosInstance = axios.create({
-    baseURL: ENDPOINT,
-  });
+  const i = axiosInstance
 
-  const equipeData = async () => {
-    return await getEquipeData();
-  };
+  async function getForms() {
 
-  async function fetchData() {
-    setIsLoading(true);
+    setIsLoading(true)
+
     try {
-      const token = await getToken();
-      const response = await axiosInstance.get(
-        `${ENDPOINT}${VER_FORMULARIOS_DA_EQUIPE}`,
+      const token = await getToken()
+
+      const equipeid = await getEquipeId()
+
+      const res = await i.get(
+        `${BASEURL}${VER_FORMULARIOS_DA_EQUIPE}`,
         {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
-            Equipe: (await equipeData()) as number,
+            Equipe: equipeid as number,
           },
           data: {},
         }
-      );
-      if (response.status === 200) {
-        setData(response.data.content);
-        setIsLoading(false);
-      } else {
-        throw new Error(`${JSON.stringify(response.data)}`);
+      )
+
+      if (res.status === 200) {
+        setData(res.data.content)
+        setIsLoading(false)
       }
+      else {
+        throw new Error(`${JSON.stringify(res.data)}`)
+      }
+
     } catch (error) {
-      console.log(error);
-      setIsLoading(false);
+      console.log(error)
+      setIsLoading(false)
     }
   }
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    getForms()
+  }, [data])
 
   return (
     <>
       {data &&
-        data.map((data: DadosFormulario) => (
+        data.map((data: FormData) => (
           <View key={data.id} style={styles.container}>
             <Text style={styles.title}>{data.nome}</Text>
             <Text style={styles.subtitle}>Identificação: {data.id}</Text>
           </View>
         ))}
     </>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -83,4 +85,4 @@ const styles = StyleSheet.create({
     fontWeight: "normal",
     color: "#666564",
   },
-});
+})
