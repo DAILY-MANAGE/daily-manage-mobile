@@ -7,11 +7,11 @@ import {
   ToastAndroid,
 } from "react-native";
 import { useRouter } from "expo-router";
-import { CheckBox } from "@rneui/themed";
-import { ENDPOINT, REGISTRO } from "../../utils/endpoints";
+import { BASEURL, REGISTRO } from '../../utils/endpoints';
 import ButtonComponent from "../components/Button";
-import axios from "axios";
 import CustomInput from "../components/Input";
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { axiosInstance } from "../../utils/useAxios";
 
 export default function Cadastro() {
   const [name, setName] = useState("");
@@ -19,9 +19,11 @@ export default function Cadastro() {
   const [user, setUser] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [checked, setChecked] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [isEyeOpen, setIsEyeOpen] = useState(false);
+  const [securePassword, setSecurePassword] = useState(true)
+  const [secureConfirmPassword, setSecureConfirmPassword] = useState(true)
+
+  const router = useRouter();
 
   const validateFields = () => {
     const errors = { name, user, mail, password, confirmPassword };
@@ -73,25 +75,24 @@ export default function Cadastro() {
   };
 
   const errors = validateFields();
-  const router = useRouter();
 
-  const toggleCheckbox = () => {
-    setChecked(!checked);
+  const toggleSecurePassword = () => {
+    setSecurePassword(!securePassword);
   };
 
-  const toggleEye = () => {
-    setIsEyeOpen(!isEyeOpen);
+  const toggleSecureConfirmPassword = () => {
+    setSecureConfirmPassword(!secureConfirmPassword);
   };
 
-  const axiosInstance = axios.create({
-    baseURL: ENDPOINT,
-  });
+  const i = axiosInstance
 
-  const handleRegister = async () => {
+  const register = async () => {
+
     setIsLoading(true);
+
     try {
-      const response = await axiosInstance.post(
-        `${ENDPOINT}${REGISTRO}`,
+      const res = await i.post(
+        `${BASEURL}${REGISTRO}`,
         {
           usuario: user,
           senha: password,
@@ -103,85 +104,129 @@ export default function Cadastro() {
             "Content-Type": "application/json",
           },
         }
-      );
-      switch (response.status) {
-        case 201:
-          setIsLoading(false);
-          ToastAndroid.show(
-            `Usuário ${user} criado com sucesso!`,
-            ToastAndroid.SHORT
-          );
-          router.push("(auth)");
-          break;
-        case 409:
-          ToastAndroid.show(`O usuário ${user} já existe`, ToastAndroid.SHORT);
-          break;
-        default:
-          throw new Error(`${JSON.stringify(response.data)}`);
+      )
+
+      if (res.status === 201) {
+        setIsLoading(false);
+        ToastAndroid.show(
+          `Usuário ${user} criado com sucesso!`,
+          ToastAndroid.SHORT
+        );
+        router.push("(auth)");
       }
-    } catch (error) {
-      ToastAndroid.show(`Erro ao entrar.`, ToastAndroid.SHORT);
-      console.log(error);
+      else {
+        throw new Error(`${JSON.stringify(res.data)}`);
+      }
+    }
+
+    catch (err) {
+      console.log(err);
+
+      if (err.response && err.response.status === 409) {
+        ToastAndroid.showWithGravity(
+          "Usuário ou e-mail já em uso...",
+          ToastAndroid.LONG,
+          ToastAndroid.CENTER
+        )
+      } else if (err.response && err.response.status === 403) {
+        ToastAndroid.showWithGravity(
+          "Dados incorretos...",
+          ToastAndroid.LONG,
+          ToastAndroid.CENTER
+        )
+      } else {
+        ToastAndroid.showWithGravity(
+          "Cadastro não realizado. Verifique os dados ou tente novamente mais tarde.",
+          ToastAndroid.LONG,
+          ToastAndroid.CENTER
+        )
+      }
+
       setIsLoading(false);
     }
   };
 
+  function Eye({ onPress }) {
+    return (
+      <Pressable onPress={onPress}>
+        {!securePassword ? <FontAwesome size={20} name="eye" /> : <FontAwesome size={20} name="eye-slash" color="#acacac" />}
+      </Pressable>
+    );
+  }
+
+  function EyeConfirm({ onPress }) {
+    return (
+      <Pressable onPress={onPress}>
+        {!secureConfirmPassword ? <FontAwesome size={20} name="eye" /> : <FontAwesome size={20} name="eye-slash" color="#acacac" />}
+      </Pressable>
+    );
+  }
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.inputs}>
+      <ScrollView style={styles.inputs}>
         <CustomInput
           errorMessage={errors.name}
           label="Nome:"
-          placeholder="Digite o nome completo"
+          placeholder="Arthur da Silva Crisóstomo..."
           textContentType="name"
           value={name}
           setValue={setName}
           autoComplete="name"
+          style={styles.customInput}
         />
         <CustomInput
           errorMessage={errors.user}
           label="Usuário:"
-          placeholder="Digite o nome de usuário"
+          placeholder="_lutherik2023..."
           textContentType="username"
           value={user}
           setValue={setUser}
           autoComplete="username"
+          style={styles.customInput}
         />
         <CustomInput
           errorMessage={errors.mail}
           label="E-mail:"
-          placeholder="Exemplo: user@gmail.com"
+          placeholder="lutherik@gmail.com"
           textContentType="emailAddress"
           value={mail}
           setValue={setMail}
           autoComplete="email"
+          style={styles.customInput}
         />
         <CustomInput
           errorMessage={errors.password}
           label="Senha:"
-          placeholder="Digite a senha"
+          placeholder="Senha123!..."
           textContentType="password"
           value={password}
           setValue={setPassword}
           autoComplete="password"
-          secureTextEntry={true}
+          secureTextEntry={securePassword}
+          rightIcon={<Eye onPress={toggleSecurePassword} />}
+          style={styles.customInput}
+          rightIconStyle={styles.rightIconContainerStyle}
         />
         <CustomInput
           errorMessage={errors.confirmPassword}
           label="Confirmar Senha:"
-          placeholder="Repita a senha"
+          placeholder="Senha123!..."
           textContentType="password"
           value={confirmPassword}
           setValue={setConfirmPassword}
           autoComplete="password"
-          secureTextEntry={true}
+          secureTextEntry={secureConfirmPassword}
+          rightIcon={<EyeConfirm onPress={toggleSecureConfirmPassword} />}
+          style={styles.customInput}
+          rightIconStyle={styles.rightIconContainerStyle}
         />
-      </View>
+      </ScrollView>
       <Pressable style={styles.button}>
         {isLoading ? (
           <ButtonComponent title="Salvar" loading={true} />
         ) : (
-          <ButtonComponent onPress={handleRegister} title="Salvar" />
+          <ButtonComponent onPress={register} title="Salvar" />
         )}
       </Pressable>
     </ScrollView>
@@ -189,8 +234,19 @@ export default function Cadastro() {
 }
 
 const styles = StyleSheet.create({
+  rightIconContainerStyle: {
+    height: 32,
+    width: "auto",
+    alignItems: "flex-end",
+    justifyContent: "flex-end",
+    flexDirection: "column"
+  },
+  customInput: {
+    marginBottom: 12,
+    gap: 10
+  },
   container: {
-    backgroundColor: "#FAFAFA",
+    backgroundColor: "#FFFFFF ",
     paddingBottom: 16,
     paddingHorizontal: 16,
     height: "100%",
@@ -198,8 +254,8 @@ const styles = StyleSheet.create({
   },
   inputs: {
     gap: 16,
-    paddingTop: 8,
-    height: "auto",
+    paddingTop: 16,
+    height: "100%",
     flexDirection: "column",
     width: "100%",
   },
