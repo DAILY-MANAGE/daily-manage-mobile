@@ -4,7 +4,7 @@ import { Link, Tabs, useRouter } from "expo-router";
 import { BottomSheet, ListItem } from "@rneui/themed";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import TabBarIcon from "../(components)/TabBarIcon";
-import { color } from "@rneui/base";
+import BackButton from "../../components/BackButton";
 
 export default function EquipeLayout() {
   const [isVisible, setIsVisible] = useState(false);
@@ -31,28 +31,13 @@ export default function EquipeLayout() {
           name="[id]"
           options={{
             headerStyle: { backgroundColor: "#1C1C1C" },
-            headerTitle: `Equipe`,
+            headerTitle: `Formulários da equipe`,
             headerTitleStyle: styles.headerTitleStyle,
             tabBarActiveTintColor: "white",
             tabBarInactiveTintColor: "gray",
             tabBarStyle: { backgroundColor: "#1C1C1C" },
             tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
-            headerLeft: () => (
-              <Pressable onPress={() => router.back()}>
-                {({ pressed }) => (
-                  <FontAwesome
-                    name="arrow-left"
-                    size={20}
-                    style={{
-                      color: "white",
-                      marginLeft: 16,
-                      marginRight: 8,
-                      opacity: pressed ? 0.5 : 1,
-                    }}
-                  />
-                )}
-              </Pressable>
-            ),
+            headerLeft: () => ( <BackButton /> ),
             headerRight: () => (
               <View style={styles.headerIconsStyle}>
                 <Link href="notificacoes" asChild>
@@ -163,24 +148,7 @@ export default function EquipeLayout() {
             tabBarInactiveTintColor: "gray",
             tabBarStyle: { backgroundColor: "#1C1C1C" },
             tabBarIcon: ({ color }) => <TabBarIcon name="cog" color={color} />,
-            headerLeft: () => (
-              <>
-                <Pressable onPress={() => router.back()}>
-                  {({ pressed }) => (
-                    <FontAwesome
-                      name="arrow-left"
-                      size={20}
-                      style={{
-                        color: "white",
-                        marginLeft: 16,
-                        marginRight: 8,
-                        opacity: pressed ? 0.5 : 1,
-                      }}
-                    />
-                  )}
-                </Pressable>
-              </>
-            ),
+            headerLeft: () => ( <BackButton /> ),
             headerRight: () => (
               <View style={styles.headerIconsStyle}>
                 <Link href="notificacoes" asChild>
