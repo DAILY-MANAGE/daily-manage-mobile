@@ -1,11 +1,9 @@
-import { Text } from "react-native";
-import { ListItem, Icon } from "@rneui/themed";
-import { useEffect, useState } from "react";
+import { Text } from "react-native"
+import { ListItem, Icon } from "@rneui/themed"
+import { useEffect, useState } from "react"
 import { axiosInstance } from '../../utils/useAxios'
-import { ENDPOINT, VER_NOTIFICACOES } from "../../utils/endpoints";
-import { getToken } from "../../hooks/token";
-import { getEquipeData } from "../equipes";
-
+import { BASEURL, VER_NOTIFICACOES } from "../../utils/endpoints"
+import { getToken } from "../../hooks/token"
 export interface NotificationsData {
     id?: number,
     mensagem?: string,
@@ -22,12 +20,12 @@ export default function Notificacoes() {
     async function getNotifications() {
         setIsLoading(true)
 
-        const token = await getToken();
+        const token = await getToken()
 
-        const i = axiosInstance;
+        const i = axiosInstance
 
         try {
-            const res = await i.get(`${ENDPOINT}${VER_NOTIFICACOES}`,
+            const res = await i.get(`${BASEURL}${VER_NOTIFICACOES}`,
                 {
                     headers: {
                         "Content-Type": "application/json",
@@ -38,19 +36,20 @@ export default function Notificacoes() {
 
             if (res.status === 200) {
                 setData(res.data.content)
+                console.log(data)
                 setIsLoading(false)
             } else {
-                throw new Error(`${JSON.stringify(res.data)}`);
+                throw new Error(`${JSON.stringify(res.data)}`)
             }
         } catch (err) {
-            console.log(err);
-            setIsLoading(false);
+            console.log(err)
+            setIsLoading(false)
         }
     }
 
     useEffect(() => {
-        getNotifications();
-    }, []);
+        getNotifications()
+    }, [])
 
     return (
         <>
@@ -62,7 +61,7 @@ export default function Notificacoes() {
                     </ListItem.Content>
                     <Text>{data.horario}</Text>
                 </ListItem>
-            )): (<Text>Sem notificações.</Text>)}
+            )) : (<Text>Sem notificações.</Text>)}
         </>
-    );
+    )
 }
