@@ -1,18 +1,19 @@
-import React, { useState } from "react";
-import { SearchBar } from "@rneui/themed";
-import { StyleSheet } from "react-native";
+import React, { useState } from "react"
+import { SearchBar } from "@rneui/themed"
+import { StyleSheet } from "react-native"
 
 interface SearchProps {
-    value: string;
-    onChangeText: React.Dispatch<React.SetStateAction<string>>;
-  }
+    value: string
+    onChangeText: React.Dispatch<React.SetStateAction<string>>
+    placeholder?: string
+}
 
-export default function CustomSearchBar({ value, onChangeText }: SearchProps) {
+export default function CustomSearchBar({ value, onChangeText, placeholder }: SearchProps) {
     return (
         <SearchBar
-            placeholder="Pesquisar equipe..."
+            placeholder={placeholder}
             value={value}
-            onChangeText={onChangeText}
+            onChangeText={(text) => onChangeText(text)}
             lightTheme={true}
             style={styles.searchBar}
             inputStyle={styles.inputStyle}
@@ -20,12 +21,12 @@ export default function CustomSearchBar({ value, onChangeText }: SearchProps) {
             inputContainerStyle={styles.inputContainerStyle}
             leftIconContainerStyle={styles.leftIcon}
         />
-    );
+    )
 }
 
 const styles = StyleSheet.create({
     searchBar: {
-        padding: 8,        
+        padding: 8,
     },
     inputStyle: {
         backgroundColor: "#FAFAFA",
@@ -43,6 +44,6 @@ const styles = StyleSheet.create({
         elevation: 0,
     },
     leftIcon: {
-        paddingLeft:8,
+        paddingLeft: 8,
     }
-}); 
+}) 
