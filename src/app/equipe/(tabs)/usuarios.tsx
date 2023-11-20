@@ -1,66 +1,109 @@
-import axios from "axios";
-import { Text, View, StyleSheet } from "react-native";
-import { ENDPOINT, FILTRAR_USUARIOS_DA_EQUIPE } from "../../../utils/endpoints";
-import { DadosFormulario } from "../../../interfaces/DadosFormulario";
-import { useEffect, useState } from "react";
-import { getEquipeData } from "../../equipes";
-import { getToken } from "../../../hooks/token";
-import { Icon } from "@rneui/themed";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { Text, View, StyleSheet } from "react-native"
+import { BASEURL, FILTRAR_USUARIOS, FILTRAR_USUARIOS_DA_EQUIPE } from "../../../utils/endpoints"
+import { useEffect, useState } from "react"
+import { getEquipeId } from "../../equipes/(tabs)"
+import { getToken } from "../../../hooks/token"
+import FontAwesome from "@expo/vector-icons/FontAwesome"
+import { axiosInstance } from "../../../utils/useAxios"
+import CustomButton from "../../components/Button"
+import { Overlay } from "@rneui/themed";
+import CustomInput from "../../components/Input";
+import CustomSearchBar from '../../components/SearchBar/index';
 
 export interface DadosUsuario {
-  id?: number;
-  usuario?: string;
-  nome?: string;
+  id?: number
+  usuario?: string
+  nome?: string
 }
 
-export default function Usuarios() {
-  const [data, setData] = useState<DadosUsuario[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+export default function Users() {
+  const [data, setData] = useState<DadosUsuario[]>([])
+  const [allUsers, setAllUsers] = useState<DadosUsuario[]>([])
+  const [isLoading, setIsLoading] = useState(false)
+  const [visible, setVisible] = useState(false);
 
-  const axiosInstance = axios.create({
-    baseURL: ENDPOINT,
-  });
-
-  const equipeData = async () => {
-    return await getEquipeData();
+  const toggleOverlay = () => {
+    setVisible(!visible);
   };
 
-  async function fetchData() {
-    setIsLoading(true);
+  const i = axiosInstance
+
+  async function getTeamUsers() {
+    setIsLoading(true)
     try {
-      const token = await getToken();
-      const response = await axiosInstance.get(
-        `${ENDPOINT}${FILTRAR_USUARIOS_DA_EQUIPE}`,
+      const token = await getToken()
+
+      const equipeid = await getEquipeId()
+
+      const res = await i.get(
+        `${BASEURL}${FILTRAR_USUARIOS_DA_EQUIPE}`,
         {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
-            Equipe: (await equipeData()) as number,
+            Equipe: equipeid as number,
           },
           data: {},
         }
-      );
-      if (response.status === 200) {
-        setData(response.data.content);
-        setIsLoading(false);
+      )
+
+      if (res.status === 200) {
+        setData(res.data.content)
+        setIsLoading(false)
       } else {
-        throw new Error(`${JSON.stringify(response.data)}`);
+        throw new Error(`${JSON.stringify(res.data)}`)
       }
-    } catch (error) {
-      console.log(error);
-      setIsLoading(false);
+
+    } catch (err) {
+      console.log(err)
+      setIsLoading(false)
     }
   }
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    getTeamUsers()
+  }, [])
+
+  async function getAllUsers() {
+    setIsLoading(true)
+    try {
+      const token = await getToken()
+
+      const equipeid = await getEquipeId()
+
+      const res = await i.get(
+        `${BASEURL}${FILTRAR_USUARIOS}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+            Equipe: equipeid as number,
+          },
+          data: {},
+        }
+      )
+
+      if (res.status === 200) {
+        setAllUsers(res.data.content)
+        setIsLoading(false)
+      } else {
+        throw new Error(`${JSON.stringify(res.data)}`)
+      }
+
+    } catch (err) {
+      console.log(err)
+      setIsLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    getAllUsers()
+  }, [])
 
   return (
     <>
-      {data.map((data: DadosUsuario) => (
-        <View key={data.id} style={styles.container}>
+      {data.map((user: DadosUsuario) => (
+        <View key={user.id} style={styles.container}>
           <View style={{ padding: 8 }}>
             <Text style={{ fontSize: 16, color: "#555555", fontWeight: "600" }}>Membros da equipe:</Text>
           </View>
@@ -69,17 +112,44 @@ export default function Usuarios() {
               <FontAwesome name="user-circle-o" size={48} color="#ccc" />
             </View>
             <View style={styles.textContainer}>
-              <Text style={styles.title}>{data.nome}</Text>
-              <Text style={styles.subtitle}>Vulgo: {data.usuario}</Text>
+              <Text style={styles.title}>{user.nome}</Text>
+              <Text style={styles.subtitle}>Vulgo: {user.usuario}</Text>
             </View>
           </View>
+          <CustomButton onPress={toggleOverlay} title="Adicionar membro" />
         </View>
       ))}
+      <Overlay
+        overlayStyle={styles.overlayStyle}
+        isVisible={visible}
+        onBackdropPress={toggleOverlay}
+      >
+        <Text style={styles.modal__title}>Adicionar membros à equipe</Text>
+        <CustomSearchBar
+          placeholder='Pesquisar usuários'
+          value={''}
+          onChangeText={() => {}}
+        />
+        <CustomButton onPress={() => {}} title='Salvar' />
+      </Overlay>
     </>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
+  overlayStyle: {
+    borderRadius: 16,
+    padding: 16,
+    width: "90%",
+    height: "auto",
+    margin: 0,
+    gap: 16,
+  },
+  modal__title: {
+    paddingTop: 8,
+    textAlign: "center",
+    fontSize: 20,
+  },
   textContainer: {
     flexDirection: "column",
   },
@@ -93,9 +163,10 @@ const styles = StyleSheet.create({
     height: "100%",
     width: "100%",
     padding: 8,
-    backgroundColor: "white"
+    backgroundColor: "white",
   },
   card: {
+    marginBottom: 8,
     height: "auto",
     width: "100%",
     padding: 16,
@@ -117,4 +188,4 @@ const styles = StyleSheet.create({
     fontWeight: "normal",
     color: "#666564",
   },
-});
+})
