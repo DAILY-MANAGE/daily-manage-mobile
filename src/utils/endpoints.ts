@@ -1,4 +1,4 @@
-export const BASEURL = 'http://192.168.15.12:8080'
+export const BASEURL = 'http://192.168.15.11:8080'
 
 export const REGISTRO = "/auth/registro";
 
@@ -12,7 +12,7 @@ export const VER_EQUIPES_MEMBRO = "/equipes/todas/membro";
 
 export const VER_EQUIPE_POR_ID = "/equipes/{equipeId}";
 
-export const ADICONAR_USUARIO_A_EQUIPE = "/equipes/usuarios/{usuarioId}";
+export const ADICONAR_USUARIO_A_EQUIPE = "/equipes/usuarios";
 export const REMOVER_USUARIO_DA_EQUIPE = "/equipes/usuarios/{usuarioId}";
 export const FILTRAR_USUARIOS_DA_EQUIPE = "/equipes/usuarios/procurar";
 
