@@ -50,9 +50,13 @@ export default function Formularios() {
     setVisible(!visible);
   };
 
+  const handleSearch = (text: string) => {
+    setSearch(text)
+  }
+
   return (
     <>
-      <SearchBar placeholder="Pesquisar formulários..." value={search} onChangeText={setSearch} />
+      <SearchBar placeholder="Pesquisar formulários..." value={search} onChangeText={handleSearch} />
       <ScrollView
         style={styles.container}
         refreshControl={
@@ -60,7 +64,7 @@ export default function Formularios() {
         }
       >
         <CustomButton
-          title="Criar Formulario"
+          title="+ Criar Formulario"
           onPress={() => router.push("criarFormulario")}
         />
 
@@ -73,7 +77,7 @@ export default function Formularios() {
           style={styles.formularioContainer}
         >
 
-          <CardFormulario />
+          <CardFormulario search={search} />
 
         </Pressable>
 
@@ -152,7 +156,7 @@ const styles = StyleSheet.create({
   },
   container: {
     gap: 8,
-    height: "100%",
+    height: "auto",
     width: "100%",
     padding: 16,
     flexDirection: "column",

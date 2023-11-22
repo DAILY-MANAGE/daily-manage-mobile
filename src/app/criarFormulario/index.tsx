@@ -85,10 +85,7 @@ export default function CriarFormulario() {
   const [descricaoPergunta, setDescricaoPergunta] = useState<string | null>(
     null
   );
-  const [tipoResposta, setTipoResposta] = useState<string | null>(null);
-  const [respostaOpcional, setRespostaOpcional] = useState<boolean | null>(
-    false
-  );
+  const [tiporesposta, setTiporesposta] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState<FormData[]>([]);
   const [expandedRes, setExpandedRes] = useState(false);
@@ -102,23 +99,29 @@ export default function CriarFormulario() {
     {
       descricao: "",
       tiporesposta: "",
-      opcional: false,
+      opcional: true,
     },
   ]);
+
+  const toggleOptional = (index: number) => {
+    const questionsClone = [...questions];
+    questionsClone.map((question: (typeof questions)[0], index2: number) => {
+      if (index == index2) {
+        question.opcional = !question.opcional;
+      }
+      return question;
+    });
+    setQuestions(questionsClone);
+  };
 
   const addQuestion = () => {
     setQuestions([
       ...questions,
       { descricao: "", tiporesposta: "", opcional: false },
     ]);
-    counter();
   };
 
   const i = axiosInstance;
-
-  const counter = () => {
-    setCountValue(countValue + 1);
-  };
 
   const resetCounter = () => {
     setCountValue(1);
@@ -150,15 +153,6 @@ export default function CriarFormulario() {
     }
 
     return null;
-  };
-
-  const clearFields = () => {
-    setNomeFormulario("");
-    setDescricaoFormulario("");
-    setDescricaoPergunta("");
-    setTipoResposta("");
-    setIdUsuariosPermitidos(null);
-    setRespostaOpcional(false);
   };
 
   async function getPermittedUsers() {
@@ -203,15 +197,13 @@ export default function CriarFormulario() {
 
       const equipeid = await getEquipeId();
 
-      const idUsuariosPermitidos = await getIdUsuariosPermitidos();
-
-      const res = await i.post(
+      const res = await axiosInstance.post(
         `${BASEURL}${CRIAR_FORMULARIO}`,
         {
           nome: nomeFormulario,
+          idusuariospermitidos: usuariosPermitidos,
           descricao: descricaoFormulario,
           perguntas: questions,
-          idusuariospermitidos: idUsuariosPermitidos,
         },
         {
           headers: {
@@ -226,8 +218,9 @@ export default function CriarFormulario() {
       if (res.status === 201) {
         console.log(`${JSON.stringify(res.data)}`);
         setData(res.data);
-        setQuestions(res.data.questions);
-        console.log(questions);
+        console.log({
+          perguntas: questions
+        });
         router.replace("equipe");
         resetCounter();
         setIsLoading(false);
@@ -241,136 +234,133 @@ export default function CriarFormulario() {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <ScrollView contentContainerStyle={styles.inputs}>
-        <CustomInput
-          label="Nome:"
-          placeholder="Lista de Compras..."
-          value={nomeFormulario}
-          setValue={setNomeFormulario}
-        />
-        <CustomInput
-          label="Descrição:"
-          placeholder="Lista de compras da família Lutherik..."
-          value={descricaoFormulario}
-          setValue={setDescricaoFormulario}
-        />
-        <ListItem.Accordion
-          containerStyle={styles.accordion__container}
-          content={
-            <ListItem.Content>
-              <ListItem.Title style={styles.accordion__title}>
-                Usuários permitidos
-              </ListItem.Title>
-            </ListItem.Content>
-          }
-          isExpanded={expandedUsr}
-          onPress={() => setExpandedUsr(!expandedUsr)}
-        >
-          {isLoading && isLoading ? (
-            <Text>Buscando usuários...</Text>
-          ) : dataUsr.length === 0 ? (
-            <Text>Nenhum usuário foi encontrado</Text>
-          ) : (
-            dataUsr.map((user: PresetPermittedUsers) => (
-              <ListItem
-                style={styles.list}
-                key={user.id}
-                onPress={() => {
-                  setUsuariosPermitidos((prevState) => {
-                    if (prevState.includes(user.id)) {
-                      return prevState.filter((id) => id !== user.id);
-                    }
-                    return [...prevState, user.id];
-                  });
-                }}
-                bottomDivider
-              >
-                <ListItem.Content>
-                  <ListItem.Title>{user.usuario}</ListItem.Title>
-                </ListItem.Content>
-              </ListItem>
-            ))
-          )}
-        </ListItem.Accordion>
-        {questions.map((question, i) => (
-          <ScrollView key={i}>
-            <View style={styles.question}>
-              <CustomInput
-                label={`Pergunta ${countValue}`}
-                placeholder="Comprou leite?"
-                value={question.descricao}
-                setValue={(value) => {
-                  const newQuestion = [...questions];
-                  newQuestion[i].descricao = value;
-                  setQuestions(newQuestion);
-                }}
-              />
-              <ListItem.Accordion
-                containerStyle={styles.accordion__container}
-                content={
-                  <ListItem.Content>
-                    <ListItem.Title style={styles.accordion__title}>
-                      Tipo de resposta
-                    </ListItem.Title>
-                  </ListItem.Content>
-                }
-                isExpanded={expandedRes}
-                onPress={() => setExpandedRes(!expandedRes)}
-              >
-                {presets.map((data: Preset) => (
-                  <ListItem
-                    key={data.id}
-                    style={styles.list}
-                    onPress={() => {
-                      const newQuestion = [...questions];
-                      newQuestion[i].tiporesposta = data.value;
-                      setQuestions(newQuestion);
-                    }}
-                    bottomDivider
-                  >
-                    <ListItem.Content style={styles.list__content}>
-                      <ListItem.Title>{data.name}</ListItem.Title>
-                    </ListItem.Content>
-                  </ListItem>
-                ))}
-              </ListItem.Accordion>
-
-              <View style={styles.switch__container}>
-                <Text style={styles.switch__label}>Obrigatório</Text>
-                <Switch
-                  color="black"
-                  value={question.opcional}
-                  onValueChange={(value) => setRespostaOpcional(value)}
+    <>
+      <ScrollView contentContainerStyle={styles.container}>
+        <ScrollView contentContainerStyle={styles.inputs}>
+          <CustomInput
+            label="Nome:"
+            placeholder="Lista de Compras..."
+            value={nomeFormulario}
+            setValue={setNomeFormulario}
+          />
+          <CustomInput
+            label="Descrição:"
+            placeholder="Lista de compras da família Lutherik..."
+            value={descricaoFormulario}
+            setValue={setDescricaoFormulario}
+          />
+          <ListItem.Accordion
+            containerStyle={styles.accordion__container}
+            content={
+              <ListItem.Content>
+                <ListItem.Title style={styles.accordion__title}>
+                  Usuários permitidos
+                </ListItem.Title>
+              </ListItem.Content>
+            }
+            isExpanded={expandedUsr}
+            onPress={() => setExpandedUsr(!expandedUsr)}
+          >
+            {isLoading && isLoading ? (
+              <Text>Buscando usuários...</Text>
+            ) : dataUsr.length === 0 ? (
+              <Text>Nenhum usuário foi encontrado</Text>
+            ) : (
+              dataUsr.map((user: PresetPermittedUsers) => (
+                <ListItem
+                  bottomDivider={false}
+                  style={styles.list}
+                  key={user.id}
+                  onPress={() => {
+                    setUsuariosPermitidos((prevState) => {
+                      if (prevState.includes(user.id)) {
+                        return prevState.filter((id) => id !== user.id);
+                      }
+                      return [...prevState, user.id];
+                    });
+                  }}
+                >
+                  <Text>{user.usuario}</Text>
+                </ListItem>
+              ))
+            )}
+          </ListItem.Accordion>
+          {questions.map((question, i) => (
+            <ScrollView key={i}>
+              <View style={styles.question}>
+                <CustomInput
+                  label={`Pergunta ${i+1}`}
+                  placeholder="Comprou leite?"
+                  value={question.descricao}
+                  setValue={(value) => {
+                    const newQuestion = [...questions];
+                    newQuestion[i].descricao = value;
+                    setQuestions(newQuestion);
+                  }}
                 />
+                <ListItem.Accordion
+                  containerStyle={styles.accordion__container}
+                  content={
+                    <ListItem.Content>
+                      <ListItem.Title style={styles.accordion__title}>
+                        Tipo de resposta
+                      </ListItem.Title>
+                    </ListItem.Content>
+                  }
+                  isExpanded={expandedRes}
+                  onPress={() => setExpandedRes(!expandedRes)}
+                >
+                  {presets.map((data: Preset) => (
+                    <ListItem
+                      key={data.id}
+                      style={styles.list}
+                      onPress={() => {
+                        const newQuestion = [...questions];
+                        newQuestion[i].tiporesposta = data.value;
+                        setQuestions(newQuestion);
+                        console.log(questions[i])
+                      }}
+                    >
+                      <Text>{data.name}</Text>
+                    </ListItem>
+                  ))}
+                </ListItem.Accordion>
+
+                <View style={styles.switch__container}>
+                  <Text style={styles.switch__label}>Obrigatório</Text>
+                  <Switch
+                    color="black"
+                    value={!question.opcional}
+                    onValueChange={() => toggleOptional(i)}
+                  />
+                </View>
               </View>
-            </View>
-          </ScrollView>
-        ))}
+            </ScrollView>
+          ))}
+        </ScrollView>
       </ScrollView>
-
       <View style={styles.footer}>
-        <View style={styles.footer__buttons}>
-          <CustomButton
-            buttonStyle={styles.createButton}
-            color="#12d185"
-            onPress={createForm}
-            title="CRIAR"
-            titleStyle={{ fontWeight: 900 }}
-          />
-
-          <CustomButton
-            buttonStyle={styles.createButton}
-            onPress={() => addQuestion()}
-            title={"+ Adicionar Pergunta"}
-          />
-        </View>
+        <CustomButton
+          buttonStyle={styles.createButton}
+          onPress={() => addQuestion()}
+          title={"+ Adicionar Pergunta"}
+        />
+        <CustomButton
+          buttonStyle={styles.createButton}
+          color="#12d185"
+          onPress={createForm}
+          title="CRIAR"
+          titleStyle={{ fontWeight: 900 }}
+        />
       </View>
-    </ScrollView>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
+  list__item: {
+    padding: 0,
+  },
   footer__buttons: {
     flexDirection: "row",
     width: "100%",
@@ -379,7 +369,8 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   list__content: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "#FAFAFA",
+    padding: 0,
   },
   question: {
     backgroundColor: "#FFFFFF",
@@ -393,12 +384,12 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   footer: {
-    flexDirection: "row",
-    gap: 8,
     width: "100%",
     height: "auto",
     bottom: 0,
-    position: "absolute",
+    gap: 8,
+    backgroundColor: "white",
+    position: "relative",
     alignSelf: "center",
     justifyContent: "space-evenly",
     padding: 16,
@@ -406,9 +397,7 @@ const styles = StyleSheet.create({
   accordion__container: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
-    padding: 16,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "#fafafa",
     borderRadius: 8,
   },
   accordion__title: {
@@ -416,8 +405,10 @@ const styles = StyleSheet.create({
     fontWeight: "500",
   },
   list: {
-    width: "60%",
+    width: "100%",
     height: "auto",
+    padding: 0,
+    backgroundColor: "#FAFAFA",
   },
   container: {
     justifyContent: "space-between",

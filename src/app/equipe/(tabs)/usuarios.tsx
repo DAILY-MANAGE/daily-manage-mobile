@@ -225,6 +225,8 @@ export default function Users() {
             Membros da equipe:
           </Text>
         </View>
+        <CustomButton buttonStyle={{ marginBottom: 8 }} onPress={toggleOverlay} title="+ Adicionar membro" />
+
         {teamUsers.map((user: DadosUsuario) => (
           <View key={user.id} style={styles.card}>
             <View style={styles.imgContainer}>
@@ -236,7 +238,6 @@ export default function Users() {
             </View>
           </View>
         ))}
-        <CustomButton onPress={toggleOverlay} title="Adicionar membro" />
       </ScrollView>
 
       <Overlay
