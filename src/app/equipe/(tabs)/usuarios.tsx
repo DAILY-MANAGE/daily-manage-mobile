@@ -1,14 +1,14 @@
-import { Text, View, StyleSheet } from "react-native"
-import { BASEURL, FILTRAR_USUARIOS, FILTRAR_USUARIOS_DA_EQUIPE } from "../../../utils/endpoints"
+import { Text, View, StyleSheet, Pressable, ToastAndroid } from "react-native"
+import { ADICONAR_USUARIO_A_EQUIPE, BASEURL, FILTRAR_USUARIOS, FILTRAR_USUARIOS_DA_EQUIPE } from "../../../utils/endpoints"
 import { useEffect, useState } from "react"
 import { getEquipeId } from "../../equipes/(tabs)"
 import { getToken } from "../../../hooks/token"
 import FontAwesome from "@expo/vector-icons/FontAwesome"
 import { axiosInstance } from "../../../utils/useAxios"
 import CustomButton from "../../components/Button"
-import { Overlay } from "@rneui/themed";
-import CustomInput from "../../components/Input";
-import CustomSearchBar from '../../components/SearchBar/index';
+import { Overlay } from "@rneui/themed"
+import CustomInput from "../../components/Input"
+import CustomSearchBar from '../../components/SearchBar/index'
 
 export interface DadosUsuario {
   id?: number
@@ -16,15 +16,64 @@ export interface DadosUsuario {
   nome?: string
 }
 
+interface PermPreset {
+  id: number,
+  name: string,
+  value: string
+}
+
+const permPreset: PermPreset[] = [
+  {
+    id: 1,
+    name: "Visualizar",
+    value: "VISUALIZAR_FORMULARIO"
+  },
+  {
+    id: 2,
+    name: "Criar",
+    value: "CRIAR_FORMULARIO"
+  },
+  {
+    id: 3,
+    name: "Excluir",
+    value: "EXCLUIR_FORMULARIO"
+  },
+  {
+    id: 4,
+    name: "Editar",
+    value: "EDITAR_FORMULARIO"
+  },
+  {
+    id: 5,
+    name: "Responder",
+    value: "RESPONDER_FORMULARIO"
+  },
+  {
+    id: 6,
+    name: "Ver respostas",
+    value: "VER_FORMULARIO_RESPONDIDO"
+  }
+]
+
+
 export default function Users() {
-  const [data, setData] = useState<DadosUsuario[]>([])
+  const [newUser, setNewUser] = useState<DadosUsuario[]>([])
+  const [teamUsers, setTeamUsers] = useState<DadosUsuario[]>([])
   const [allUsers, setAllUsers] = useState<DadosUsuario[]>([])
   const [isLoading, setIsLoading] = useState(false)
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useState(false)
+  const [perm, setPerm] = useState("")
+  const [search, setSearch] = useState('')
+  const [usrId, setUsrId] = useState(0)
+  const [usrName, setUsrName] = useState('')
+
+  const handleSearch = (text: string) => {
+    setSearch(text)
+  }
 
   const toggleOverlay = () => {
-    setVisible(!visible);
-  };
+    setVisible(!visible)
+  }
 
   const i = axiosInstance
 
@@ -48,7 +97,7 @@ export default function Users() {
       )
 
       if (res.status === 200) {
-        setData(res.data.content)
+        setTeamUsers(res.data.content)
         setIsLoading(false)
       } else {
         throw new Error(`${JSON.stringify(res.data)}`)
@@ -66,6 +115,7 @@ export default function Users() {
 
   async function getAllUsers() {
     setIsLoading(true)
+    console.log(allUsers)
     try {
       const token = await getToken()
 
@@ -98,11 +148,53 @@ export default function Users() {
 
   useEffect(() => {
     getAllUsers()
-  }, [toggleOverlay])
+  }, [])
+
+  const addUser = async () => {
+    setIsLoading(!isLoading)
+
+    const token = await getToken()
+
+    const equipeid = await getEquipeId()
+
+    const usuarioid = usrId
+
+    try {
+      const res = await i.post(`${BASEURL}${ADICONAR_USUARIO_A_EQUIPE}/${usuarioid}`, // como puxar o  usuario id
+        {
+          permissoes: perm
+
+        }, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+          Equipe: equipeid as number,
+        },
+        data: {},
+      })
+
+      if (res.status === 200) {
+        setNewUser(res.data.content)
+        ToastAndroid.show(`Usuário ${usrName} convidado para a equipe`,
+          ToastAndroid.SHORT)
+        setIsLoading(!isLoading)
+      } else {
+        throw new Error(`${JSON.stringify(res.data)}`)
+      }
+    }
+    catch (err) {
+      console.log(err)
+      setIsLoading(!isLoading)
+    }
+  }
+
+  const filteredUsers = allUsers.filter((usr) =>
+    search ? usr.nome.toLowerCase().includes(search.toLowerCase()) : true
+  )
 
   return (
     <>
-      {data.map((user: DadosUsuario) => (
+      {teamUsers.map((user: DadosUsuario) => (
         <View key={user.id} style={styles.container}>
           <View style={{ padding: 8 }}>
             <Text style={{ fontSize: 16, color: "#555555", fontWeight: "600" }}>Membros da equipe:</Text>
@@ -126,11 +218,29 @@ export default function Users() {
       >
         <Text style={styles.modal__title}>Adicionar membros à equipe</Text>
         <CustomSearchBar
-          placeholder='Pesquisar usuários'
-          value={''}
-          onChangeText={() => {}}
+          placeholder='Nome do usuário'
+          value={search}
+          onChangeText={handleSearch}
         />
-        <CustomButton onPress={() => {}} title='Salvar' />
+        {allUsers.length === 0 ? (<Text>Nenhum usuário foi encontrado...</Text>) :
+          allUsers && allUsers.map((usr: DadosUsuario) => (
+            <Pressable
+              key={usr.id}
+              onPress={() => {
+                setUsrId(usr.id),
+                  setUsrName(usr.nome)
+              }}
+            >
+              <Text >{usr.nome}</Text>
+              <Text>ID: {usr.id}</Text>
+            </Pressable>
+          ))}
+        {permPreset && permPreset.map((perm: PermPreset) => (
+          <Pressable key={perm.id} onPress={() => setPerm(perm.value)}>
+            <Text>{perm.name}</Text>
+          </Pressable>
+        ))}
+        <CustomButton onPress={addUser} title='+ Adicionar' />
       </Overlay>
     </>
   )
