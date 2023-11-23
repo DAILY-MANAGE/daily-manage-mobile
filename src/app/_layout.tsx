@@ -8,8 +8,8 @@ export default function AppLayout() {
       <Stack.Screen name="notificacoes" options={{ headerShown: false }}/>
       <Stack.Screen name="equipe/(tabs)" options={{ headerShown: false }}/>
       <Stack.Screen name="criarFormulario" options={{ headerShown: false }}/>
-      <Stack.Screen name="(formulario)/editar" options={{ headerShown: false }}/>
       <Stack.Screen name="(formulario)/responder" options={{ headerShown: false }}/>
+      <Stack.Screen name="(formulario)/ver" options={{ headerShown: false }}/>
       <Stack.Screen name="perfil" options={{ headerShown: false }}/>
     </Stack>
   );
