@@ -13,7 +13,7 @@ export default function AuthLayout() {
       <Stack.Screen
         name="cadastro"
         options={{
-          headerTitle: 'Cadastro',
+          headerTitle: 'Cadastre-se',
           headerStyle: styles.headerStyle,
           headerTitleStyle: styles.headerTitleStyle,
           headerLeft: () => (<BackButton />),
