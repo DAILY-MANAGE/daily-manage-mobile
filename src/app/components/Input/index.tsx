@@ -64,7 +64,8 @@ const styles = StyleSheet.create({
     top: 12,
     fontSize: 16,
     paddingLeft: 8,
-    fontStyle: "italic"
+    fontStyle: "italic",
+    fontWeight: "400"
   },
   inputContainerStyle: {
     borderBottomWidth: 0,
@@ -89,8 +90,9 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   label: {
-    fontSize: 16,
-    fontWeight: "900",
+    fontSize: 18,
+    fontWeight: "600",
+    color: "#323232"
   },
   error: {
     color: "red",
