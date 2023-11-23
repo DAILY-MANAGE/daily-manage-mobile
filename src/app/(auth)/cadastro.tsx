@@ -24,6 +24,7 @@ export default function Cadastro() {
   const [isLoading, setIsLoading] = useState(false)
   const [securePassword, setSecurePassword] = useState(true)
   const [secureConfirmPassword, setSecureConfirmPassword] = useState(true)
+  const [render, setRender] = useState(false)
 
   const router = useRouter()
 
@@ -89,7 +90,7 @@ export default function Cadastro() {
   const i = axiosInstance
 
   const register = async () => {
-
+    setRender(true)
     setIsLoading(true)
 
     try {
@@ -167,41 +168,44 @@ export default function Cadastro() {
   return (
     <>
       <ScrollView contentContainerStyle={styles.container}>
-        <ScrollView style={styles.inputs}>
+        <ScrollView contentContainerStyle={styles.inputs}>
           <CustomInput
             errorMessage={errors.name}
             label="Nome:"
-            placeholder="Arthur da Silva Crisóstomo..."
+            placeholder="Digite o nome completo"
             textContentType="name"
             value={name}
             setValue={setName}
             autoComplete="name"
             style={styles.customInput}
+            renderError={render}
           />
           <CustomInput
             errorMessage={errors.user}
             label="Usuário:"
-            placeholder="_lutherik2023..."
+            placeholder="Digite o nome de usuário"
             textContentType="username"
             value={user}
             setValue={setUser}
             autoComplete="username"
             style={styles.customInput}
+            renderError={render}
           />
           <CustomInput
             errorMessage={errors.mail}
             label="E-mail:"
-            placeholder="lutherik@gmail.com"
+            placeholder="Digite o e-mail"
             textContentType="emailAddress"
             value={mail}
             setValue={setMail}
             autoComplete="email"
             style={styles.customInput}
+            renderError={render}
           />
           <CustomInput
             errorMessage={errors.password}
             label="Senha:"
-            placeholder="Senha123!..."
+            placeholder="Digite a senha"
             textContentType="password"
             value={password}
             setValue={setPassword}
@@ -210,11 +214,12 @@ export default function Cadastro() {
             rightIcon={<Eye onPress={toggleSecurePassword} />}
             style={styles.customInput}
             rightIconStyle={styles.rightIconContainerStyle}
+            renderError={render}
           />
           <CustomInput
             errorMessage={errors.confirmPassword}
             label="Confirmar Senha:"
-            placeholder="Senha123!..."
+            placeholder="Confirme a senha"
             textContentType="password"
             value={confirmPassword}
             setValue={setConfirmPassword}
@@ -223,6 +228,7 @@ export default function Cadastro() {
             rightIcon={<EyeConfirm onPress={toggleSecureConfirmPassword} />}
             style={styles.customInput}
             rightIconStyle={styles.rightIconContainerStyle}
+            renderError={render}
           />
         </ScrollView>
         <Pressable style={styles.button}>
@@ -262,12 +268,13 @@ const styles = StyleSheet.create({
   },
   customInput: {
     marginBottom: 16,
-    gap: 8
+    gap: 8,
+    width: "100%"
   },
   container: {
     backgroundColor: "white",
     paddingBottom: 16,
-    paddingHorizontal: 16,
+    paddingHorizontal: 24,
     height: "100%",
     justifyContent: "space-between",
   },
@@ -277,6 +284,8 @@ const styles = StyleSheet.create({
     paddingTop: 16,
     height: "100%",
     flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
     width: "100%",
   },
   checkboxTextStyle: {
