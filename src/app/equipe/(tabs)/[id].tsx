@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from "react"
 import {
   Pressable,
   RefreshControl,
@@ -6,49 +6,43 @@ import {
   StyleSheet,
   Text,
   View,
-} from "react-native";
-import { useRouter } from "expo-router";
-import { CardFormulario } from "../(components)/CardFormulario";
-import { IdStorage } from "../../../hooks/useId";
-import CustomButton from "../../components/Button";
-import { BottomSheet, Icon, ListItem, Overlay } from "@rneui/themed";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-import SearchBar from "../../components/SearchBar";
+} from "react-native"
+import { useRouter } from "expo-router"
+import { CardFormulario } from "../(components)/CardFormulario"
+import { IdStorage } from "../../../hooks/useId"
+import CustomButton from "../../components/Button"
+import { BottomSheet, Icon, ListItem, Overlay } from "@rneui/themed"
+import FontAwesome from "@expo/vector-icons/FontAwesome"
+import SearchBar from "../../components/SearchBar"
 
-export const equipeid = IdStorage.getId();
+export const equipeid = IdStorage.getId()
 
 export default function Formularios() {
-  const [visible, setVisible] = useState(false);
-  const [refreshing, setRefreshing] = React.useState(false);
-  const [isVisible, setIsVisible] = useState(false);
-  const [search, setSearch] = useState("");
+  const [refreshing, setRefreshing] = React.useState(false)
+  const [search, setSearch] = useState("")
 
   const options = [
     {
       title: "Editar Nome",
-      onPress: () => {},
+      onPress: () => { },
     },
     {
       title: "Deletar Formulário",
       containerStyle: { backgroundColor: "red" },
       titleStyle: { color: "white" },
-      onPress: () => {},
+      onPress: () => { },
     },
-  ];
+  ]
 
-  const router = useRouter();
+  const router = useRouter()
 
   const onRefresh = React.useCallback(() => {
-    setRefreshing(true);
+    setRefreshing(true)
     setTimeout(() => {
-      setRefreshing(false);
-      router.replace("equipe");
-    }, 500);
-  }, []);
-
-  const toggleOverlay = () => {
-    setVisible(!visible);
-  };
+      setRefreshing(false)
+      router.replace("equipe")
+    }, 500)
+  }, [])
 
   const handleSearch = (text: string) => {
     setSearch(text)
@@ -67,84 +61,11 @@ export default function Formularios() {
           title="+ Criar Formulario"
           onPress={() => router.push("criarFormulario")}
         />
-
-        <Pressable
-          delayLongPress={500}
-          onLongPress={() => {
-            setIsVisible(!isVisible), console.log("oadimawoimdaoiwd");
-          }}
-          onPress={() => setVisible(!visible)}
-          style={styles.formularioContainer}
-        >
-
-          <CardFormulario search={search} />
-
-        </Pressable>
-
-        <Overlay
-          overlayStyle={styles.overlayStyle}
-          isVisible={visible}
-          onBackdropPress={toggleOverlay}
-        >
-          <View style={styles.overlayHeader}>
-            <Text style={styles.overlayTitle}>O que você deseja fazer?</Text>
-            <FontAwesome name="close" size={24} onPress={toggleOverlay} />
-          </View>
-          <View style={styles.actions}>
-            <CustomButton
-              icon={
-                <Icon
-                  name="check"
-                  type="font-awesome"
-                  color="white"
-                  size={25}
-                  iconStyle={{ marginRight: 10 }}
-                />
-              }
-              title="Responder"
-              color="black"
-              buttonStyle={styles.button}
-              onPress={() => {
-                router.replace("(formulario)/editar");
-              }}
-            />
-            <CustomButton
-              icon={
-                <Icon
-                  name="eye"
-                  type="font-awesome"
-                  color="white"
-                  size={25}
-                  iconStyle={{ marginRight: 10 }}
-                />
-              }
-              title="Ver respostas"
-              buttonStyle={styles.buttonRight}
-              onPress={() => {}}
-            />
-          </View>
-        </Overlay>
-
+        <CardFormulario search={search} />
       </ScrollView>
 
-      <BottomSheet
-        isVisible={isVisible}
-        onBackdropPress={() => setIsVisible(!isVisible)}
-      >
-        {options.map((l, i) => (
-          <ListItem
-            key={i}
-            containerStyle={l.containerStyle}
-            onPress={l.onPress}
-          >
-            <ListItem.Content>
-              <ListItem.Title style={l.titleStyle}>{l.title}</ListItem.Title>
-            </ListItem.Content>
-          </ListItem>
-        ))}
-      </BottomSheet>
     </>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -202,4 +123,4 @@ const styles = StyleSheet.create({
     height: 48,
     backgroundColor: "black",
   },
-});
+})
