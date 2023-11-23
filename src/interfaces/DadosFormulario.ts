@@ -10,7 +10,7 @@ export interface QuestionData {
  id?: number,
  descricao?: string, 
  tiporespostadefault?: string,
- tiporesposta?: ResponseType,
+ tiporesposta?: ResponseType | string,
  opcional?: boolean
 }
 
