@@ -72,10 +72,7 @@ export function CardCreatedTeam({ search }: { search: string }) {
             style={styles.equipeContainer}
             onPress={() => {
               IdStorage.setId(team.id as any);
-              router.push({
-                pathname: `/equipe/(tabs)/${team.id as any}`,
-                params: { id: `${team.id as any}` },
-              });
+              router.push('/equipe/(tabs)');
             }}
           >
             <View key={team.id} style={styles.container}>
