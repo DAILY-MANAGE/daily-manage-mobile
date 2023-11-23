@@ -1,25 +1,26 @@
-import { useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
-import { Text, View, StyleSheet, ScrollView } from "react-native";
-import { getToken } from "../../hooks/token";
-import { QuestionData, FormData } from "../../interfaces/DadosFormulario";
+import { useRouter } from "expo-router"
+import React, { useEffect, useState } from "react"
+import { Text, View, StyleSheet, ScrollView, TouchableOpacity } from "react-native"
+import { getToken } from "../../hooks/token"
+import { QuestionData, FormData } from "../../interfaces/DadosFormulario"
 import {
   CRIAR_FORMULARIO,
   BASEURL,
   FILTRAR_USUARIOS_DA_EQUIPE,
-} from "../../utils/endpoints";
-import CustomInput from "../components/Input";
-import CustomButton from "../components/Button/index";
-import { Switch } from "@rneui/themed";
-import { ListItem } from "@rneui/themed";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { axiosInstance } from "../../utils/useAxios";
-import { getEquipeId } from "../equipes/(tabs)/index";
+} from "../../utils/endpoints"
+import CustomInput from "../components/Input"
+import CustomButton from "../components/Button/index"
+import { CheckBox, Switch } from "@rneui/themed"
+import { ListItem } from "@rneui/themed"
+import AsyncStorage from "@react-native-async-storage/async-storage"
+import { axiosInstance } from "../../utils/useAxios"
+import { getEquipeId } from "../equipes/(tabs)/index"
+import { IdStorage } from "../../hooks/getIdForm"
 
 interface Preset {
-  id: number;
-  name: string;
-  value: string;
+  id: number
+  name: string
+  value: string
 }
 
 const presets: Preset[] = [
@@ -68,32 +69,25 @@ const presets: Preset[] = [
     name: "Litro",
     value: "LITRO",
   },
-];
+]
 
 interface PresetPermittedUsers {
-  id?: number;
-  nome?: string;
-  usuario?: string;
-  email?: string;
+  id?: number
+  nome?: string
+  usuario?: string
+  email?: string
 }
 
 export default function CriarFormulario() {
-  const [nomeFormulario, setNomeFormulario] = useState<string | null>(null);
-  const [descricaoFormulario, setDescricaoFormulario] = useState<string | null>(
-    null
-  );
-  const [descricaoPergunta, setDescricaoPergunta] = useState<string | null>(
-    null
-  );
-  const [tiporesposta, setTiporesposta] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [data, setData] = useState<FormData[]>([]);
-  const [expandedRes, setExpandedRes] = useState(false);
-  const [countValue, setCountValue] = useState(1);
-  const router = useRouter();
-  const [expandedUsr, setExpandedUsr] = useState(false);
-  const [dataUsr, setDataUsr] = useState<PresetPermittedUsers[]>([]);
-  const [usuariosPermitidos, setUsuariosPermitidos] = useState<number[]>([]);
+  const [nomeFormulario, setNomeFormulario] = useState<string | null>(null)
+  const [descricaoFormulario, setDescricaoFormulario] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
+  const [data, setData] = useState<FormData[]>([])
+  const router = useRouter()
+  const [expandedUsr, setExpandedUsr] = useState(false)
+  const [dataUsr, setDataUsr] = useState<PresetPermittedUsers[]>([])
+  const [usuariosPermitidos, setUsuariosPermitidos] = useState<number[]>([])
+  const [selectedUsers, setSelectedUsers] = useState<number[]>([])
 
   const [questions, setQuestions] = useState([
     {
@@ -101,67 +95,64 @@ export default function CriarFormulario() {
       tiporesposta: "",
       opcional: true,
     },
-  ]);
+  ])
 
   const toggleOptional = (index: number) => {
-    const questionsClone = [...questions];
+    const questionsClone = [...questions]
     questionsClone.map((question: (typeof questions)[0], index2: number) => {
       if (index == index2) {
-        question.opcional = !question.opcional;
+        question.opcional = !question.opcional
       }
-      return question;
-    });
-    setQuestions(questionsClone);
-  };
+      return question
+    })
+    setQuestions(questionsClone)
+  }
 
   const addQuestion = () => {
     setQuestions([
       ...questions,
       { descricao: "", tiporesposta: "", opcional: false },
-    ]);
-  };
+    ])
+  }
 
-  const i = axiosInstance;
-
-  const resetCounter = () => {
-    setCountValue(1);
-  };
+  const i = axiosInstance
 
   const setIdUsuariosPermitidos = async (data: number[]) => {
     if (data) {
-      console.log(data);
+      console.log(data)
       try {
         await AsyncStorage.setItem(
           "idusuariospermitidos",
           JSON.stringify(data)
-        );
+        )
       } catch (error) {
-        console.log(error);
+        console.log(error)
       }
     }
-  };
+  }
 
   const getIdUsuariosPermitidos = async (): Promise<number[] | null> => {
     try {
-      const id = await AsyncStorage.getItem("idusuariospermitidos");
+      const id = await AsyncStorage.getItem("idusuariospermitidos")
 
       if (id !== null) {
-        return JSON.parse(id);
+        return JSON.parse(id)
       }
     } catch (error) {
-      console.log(error);
+      console.log(error)
     }
+    return null
+  }
 
-    return null;
-  };
+  const [expandedRes, setExpandedRes] = useState<boolean[]>(new Array(questions.length).fill(false))
 
   async function getPermittedUsers() {
-    setIsLoading(true);
+    setIsLoading(true)
 
     try {
-      const token = await getToken();
+      const token = await getToken()
 
-      const equipeid = await getEquipeId();
+      const equipeid = await getEquipeId()
 
       const res = await i.get(`${BASEURL}${FILTRAR_USUARIOS_DA_EQUIPE}`, {
         headers: {
@@ -170,32 +161,32 @@ export default function CriarFormulario() {
           Equipe: equipeid as number,
         },
         data: {},
-      });
+      })
 
       if (res.status === 200) {
-        setIdUsuariosPermitidos(usuariosPermitidos);
-        setDataUsr(res.data.content);
-        setIsLoading(false);
+        setIdUsuariosPermitidos(usuariosPermitidos)
+        setDataUsr(res.data.content)
+        setIsLoading(false)
       } else {
-        throw new Error(`${JSON.stringify(res.data)}`);
+        throw new Error(`${JSON.stringify(res.data)}`)
       }
     } catch (err) {
-      console.log(err);
-      setIsLoading(false);
+      console.log(err)
+      setIsLoading(false)
     }
   }
 
   useEffect(() => {
-    getPermittedUsers();
-  }, [setExpandedUsr]);
+    getPermittedUsers()
+  }, [setExpandedUsr])
 
   const createForm = async () => {
-    setIsLoading(true);
+    setIsLoading(true)
 
     try {
-      const token = await getToken();
+      const token = await getToken()
 
-      const equipeid = await getEquipeId();
+      const equipeid = await getEquipeId()
 
       const res = await axiosInstance.post(
         `${BASEURL}${CRIAR_FORMULARIO}`,
@@ -213,25 +204,22 @@ export default function CriarFormulario() {
           },
           data: {},
         }
-      );
+      )
 
       if (res.status === 201) {
-        console.log(`${JSON.stringify(res.data)}`);
-        setData(res.data);
-        console.log({
-          perguntas: questions
-        });
-        router.replace("equipe");
-        resetCounter();
-        setIsLoading(false);
+        console.log(`${JSON.stringify(res.data)}`)
+        setData(res.data)
+        IdStorage.setIdForm(res.data.id)
+        router.replace("equipe")
+        setIsLoading(false)
       } else {
-        throw new Error(`${JSON.stringify(res.data)}`);
+        throw new Error(`${JSON.stringify(res.data)}`)
       }
     } catch (err) {
-      console.log(err);
-      setIsLoading(false);
+      console.log(err)
+      setIsLoading(false)
     }
-  };
+  }
 
   return (
     <>
@@ -274,12 +262,23 @@ export default function CriarFormulario() {
                   onPress={() => {
                     setUsuariosPermitidos((prevState) => {
                       if (prevState.includes(user.id)) {
-                        return prevState.filter((id) => id !== user.id);
+                        return prevState.filter((id) => id !== user.id)
                       }
-                      return [...prevState, user.id];
-                    });
+                      return [...prevState, user.id]
+                    })
                   }}
                 >
+                  <CheckBox
+                    checked={selectedUsers.includes(user.id)}
+                    onPress={() => {
+                      setSelectedUsers(prevSelected => {
+                        if (prevSelected.includes(user.id)) {
+                          return prevSelected.filter(id => id !== user.id)
+                        }
+                        return [...prevSelected, user.id]
+                      })
+                    }}
+                  />
                   <Text>{user.usuario}</Text>
                 </ListItem>
               ))
@@ -289,15 +288,25 @@ export default function CriarFormulario() {
             <ScrollView key={i}>
               <View style={styles.question}>
                 <CustomInput
-                  label={`Pergunta ${i+1}`}
+                  label={`Pergunta ${i + 1}`}
                   placeholder="Comprou leite?"
                   value={question.descricao}
-                  setValue={(value) => {
-                    const newQuestion = [...questions];
-                    newQuestion[i].descricao = value;
-                    setQuestions(newQuestion);
+                  setValue={(value: any) => {
+                    const newQuestion = [...questions]
+                    newQuestion[i].descricao = value
+                    setQuestions(newQuestion)
                   }}
                 />
+                <TouchableOpacity
+                  onPress={() => {
+                    const newQuestions = [...questions]
+                    newQuestions.splice(i, 1)
+                    setQuestions(newQuestions)
+                  }}
+                >
+                  <Text>Excluir Pergunta</Text>
+                </TouchableOpacity>
+
                 <ListItem.Accordion
                   containerStyle={styles.accordion__container}
                   content={
@@ -307,17 +316,21 @@ export default function CriarFormulario() {
                       </ListItem.Title>
                     </ListItem.Content>
                   }
-                  isExpanded={expandedRes}
-                  onPress={() => setExpandedRes(!expandedRes)}
+                  isExpanded={expandedRes[i]}
+                  onPress={() => {
+                    const newExpandedRes = [...expandedRes]
+                    newExpandedRes[i] = !newExpandedRes[i]
+                    setExpandedRes(newExpandedRes)
+                  }}
                 >
                   {presets.map((data: Preset) => (
                     <ListItem
                       key={data.id}
                       style={styles.list}
                       onPress={() => {
-                        const newQuestion = [...questions];
-                        newQuestion[i].tiporesposta = data.value;
-                        setQuestions(newQuestion);
+                        const newQuestion = [...questions]
+                        newQuestion[i].tiporesposta = data.value
+                        setQuestions(newQuestion)
                         console.log(questions[i])
                       }}
                     >
@@ -354,7 +367,7 @@ export default function CriarFormulario() {
         />
       </View>
     </>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -429,4 +442,4 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "700",
   },
-});
+})
