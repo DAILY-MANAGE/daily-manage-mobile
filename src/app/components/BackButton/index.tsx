@@ -1,6 +1,6 @@
-import { useRouter } from "expo-router";
-import { Pressable } from "react-native";
-import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { useRouter } from "expo-router"
+import { Pressable } from "react-native"
+import FontAwesome from '@expo/vector-icons/FontAwesome'
 
 export default function BackButton() {
  const router = useRouter()
@@ -20,5 +20,5 @@ export default function BackButton() {
     />
    )}
   </Pressable>
- );
+ )
 }
