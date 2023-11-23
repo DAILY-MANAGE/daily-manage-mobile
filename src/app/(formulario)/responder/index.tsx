@@ -72,7 +72,6 @@ export default function ResponderFormulario() {
 
   useEffect(() => {
     getFormsById()
-    setIsLoading(false)
   }, [])
 
   const saveAnswers = async () => {
