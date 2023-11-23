@@ -1,4 +1,4 @@
-export const BASEURL = 'http://10.68.20.127:8080'
+export const BASEURL = 'http://192.168.15.11:8080'
 
 export const REGISTRO = "/auth/registro";
 
@@ -16,6 +16,9 @@ export const ADICONAR_USUARIO_A_EQUIPE = "/equipes/usuarios";
 export const REMOVER_USUARIO_DA_EQUIPE = "/equipes/usuarios/{usuarioId}";
 export const FILTRAR_USUARIOS_DA_EQUIPE = "/equipes/usuarios/procurar";
 
+export const ACEITAR_CONVITE = "/equipes/convites"
+export const REJEITAR_CONVITE = "/equipes/convites"
+
 export const EDITAR_PERMISSOES_DE_UM_USUARIO_POR_USUaARIO = "/equipes/usuarios/usuario/{usuario}";
 export const REMOVER_USUARIO_DA_EQUIPE_POR_USUARIO = "/equipes/usuarios/usuario/{usuario}";
 
@@ -24,11 +27,11 @@ export const EDITAR_EQUIPE = "/equipes/editar";
 
 export const CRIAR_FORMULARIO = "/equipes/formularios/criar";
 export const VER_FORMULARIOS_DA_EQUIPE = "/equipes/formularios/todos";
-export const VER_FORMULARIO_POR_ID = "/equipes/formularios/{formularioId}";
+export const VER_FORMULARIO_POR_ID = "/equipes/formularios";
 export const EDITAR_FORMULARIO = "/equipes/formularios/{formularioId}";
 export const EXCLUIR_FORMULARIO = "/equipes/formularios/{formularioId}";
-export const RESPONDER_FORMULARIO = "/equipes/formularios/{formularioId}/responder";
-export const VER_RESPOSTAS_DE_UM_FORMULARIO = "/equipes/formularios/{formularioId}/respostas";
+export const RESPONDER_FORMULARIO = "/equipes/formularios";
+export const VER_RESPOSTAS_DE_UM_FORMULARIO = "/equipes/formularios";
 export const VER_RESPOSTA_POR_ID = "/equipes/formularios/respostas/{formularioRespondidoId}";
 export const EDITAR_RESPOSTA = "/equipes/formularios/respostas/{formularioRespondidoId}";
 export const EXCLUIR_RESPOSTA = "/equipes/formularios/respostas/{formularioRespondidoId}";
