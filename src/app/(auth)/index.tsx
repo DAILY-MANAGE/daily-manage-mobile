@@ -120,7 +120,7 @@ export default function Login() {
               <View style={styles.inputs}>
                 <CustomInput
                   errorMessage={''}
-                  placeholder="Digite seu nome de usuário"
+                  placeholder="Digite o nome de usuário"
                   label="Usuário:"
                   value={user}
                   setValue={setUser}
@@ -129,7 +129,7 @@ export default function Login() {
                 />
                 <CustomInput
                   errorMessage={''}
-                  placeholder="Digite sua senha"
+                  placeholder="Digite a senha"
                   label="Senha:"
                   value={password}
                   setValue={setPassword}
