@@ -1,0 +1,1 @@
+export const saveColor = "#42BB87"
