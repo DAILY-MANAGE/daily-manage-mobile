@@ -1,9 +1,11 @@
-import { Text } from "react-native"
+import { Text, ToastAndroid, View } from "react-native"
 import { ListItem, Icon } from "@rneui/themed"
 import { useEffect, useState } from "react"
 import { axiosInstance } from '../../utils/useAxios'
-import { BASEURL, VER_NOTIFICACOES } from "../../utils/endpoints"
+import { BASEURL, VER_NOTIFICACOES, ACEITAR_CONVITE, REJEITAR_CONVITE } from "../../utils/endpoints"
 import { getToken } from "../../hooks/token"
+import CustomButton from "../components/Button"
+import { getEquipeId } from "../equipes/(tabs)"
 export interface NotificationsData {
     id?: number,
     mensagem?: string,
@@ -16,13 +18,14 @@ export interface NotificationsData {
 export default function Notificacoes() {
     const [data, setData] = useState<NotificationsData[]>([])
     const [isLoading, setIsLoading] = useState(false)
+    const [id, setId] = useState(0)
+
+    const i = axiosInstance
 
     async function getNotifications() {
         setIsLoading(true)
 
         const token = await getToken()
-
-        const i = axiosInstance
 
         try {
             const res = await i.get(`${BASEURL}${VER_NOTIFICACOES}`,
@@ -51,15 +54,93 @@ export default function Notificacoes() {
         getNotifications()
     }, [])
 
+    const handleAccept = async () => {
+        setIsLoading(true)
+
+        const token = await getToken()
+
+        const equipeid = await getEquipeId()
+
+        console.log(id)
+
+        try {
+            const res = await i.post(`${BASEURL}${ACEITAR_CONVITE}/${id}/aceitar`,
+                {
+                    equipeid: equipeid as number
+                },
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                        Equipe: equipeid as number
+                    },
+                    data: {},
+                })
+            if (res.status === 200) {
+                setIsLoading(false)
+                ToastAndroid.show(
+                    `Você ingressou na equipe!`,
+                    ToastAndroid.SHORT
+                )
+            } else {
+                throw new Error(`${JSON.stringify(res.data)}`)
+            }
+        } catch (err) {
+            console.log(err)
+            setIsLoading(false)
+        }
+    }
+
+    const handleRefuse = async () => {
+        setIsLoading(true)
+
+        const token = await getToken()
+
+        const equipeid = await getEquipeId()
+
+        console.log(id)
+
+        try {
+            const res = await i.post(`${BASEURL}${REJEITAR_CONVITE}/${id}/rejeitar`,
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                        Equipe: equipeid as number
+                    },
+                    data: {},
+                })
+            if (res.status === 200) {
+                setIsLoading(false)
+                ToastAndroid.show(
+                    `Convite recusado.`,
+                    ToastAndroid.SHORT
+                )
+            } else {
+                throw new Error(`${JSON.stringify(res.data)}`)
+            }
+        } catch (err) {
+            console.log(err)
+            setIsLoading(false)
+        }
+    }
+
     return (
         <>
             {data ? data.map((data: NotificationsData) => (
                 <ListItem key={data.id}>
+                    <CustomButton title="set id" onPress={() => setId(data.id)} />
                     <Icon name="inbox" type="material-community" color="grey" />
                     <ListItem.Content>
                         <ListItem.Title>{data.mensagem}</ListItem.Title>
+                        <Text>{data.horario}</Text>
+                        {data && data.tipo === 'CONVITE' ? (
+                            <View style={{ flexDirection: "row", gap: 16 }}>
+                                <CustomButton onPress={() => handleAccept()} title="Aceitar" />
+                                <CustomButton onPress={() => handleRefuse()} title="Recusar" />
+                            </View>
+                        ) : ('')}
                     </ListItem.Content>
-                    <Text>{data.horario}</Text>
                 </ListItem>
             )) : (<Text>Sem notificações.</Text>)}
         </>
