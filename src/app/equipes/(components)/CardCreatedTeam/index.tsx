@@ -6,10 +6,13 @@ import { getToken } from "../../../../hooks/token"
 import { IdStorage } from "../../../../hooks/useId"
 import { useRouter } from "expo-router"
 import { axiosInstance } from "../../../../utils/useAxios"
+import { LinearProgress } from "@rneui/themed"
+import { saveColor } from "../../../../utils/constants"
 
 export function CardCreatedTeam({ search }: { search: string }) {
   const [data, setData] = useState<DadosEquipe[]>([])
   const [isLoading, setIsLoading] = useState(false)
+  const [progress, setProgress] = useState(0);
 
   const router = useRouter()
 
@@ -32,7 +35,6 @@ export function CardCreatedTeam({ search }: { search: string }) {
         const updatedData = res.data.content
         setData(updatedData)
         setIsLoading(false)
-        console.log(updatedData)
       } else {
         throw new Error(`${JSON.stringify(res.data)}`)
       }
@@ -50,11 +52,33 @@ export function CardCreatedTeam({ search }: { search: string }) {
     getCreatedTeams()
   }, []) // precisa arrumar isso
 
+  React.useEffect(() => {
+    let subs = true;
+    if (progress < 1 && progress !== 0) {
+      setTimeout(() => {
+        if (subs) {
+          setProgress(progress + 0.1);
+        }
+      }, 100);
+    }
+    return () => {
+      subs = false;
+    };
+  }, [progress]);
+
   return (
     <>
-      {
+      {isLoading ?
+        (
+          <>
+            <Text style={{ fontSize: 16, color: "#606060", padding: 8 }}>
+              Buscando equipes...
+            </Text>
+            <LinearProgress style={{ marginVertical: 8 }} color={saveColor}/>
+          </>
+        ) :
         filteredTeams && filteredTeams.length === 0 ? (
-          <Text>Nenhuma equipe foi encontrada...</Text>
+          <Text style={{ fontSize: 16, color: "#606060", padding: 8 }}>Nenhuma equipe foi encontrada.</Text>
         ) :
           filteredTeams &&
           filteredTeams.map((team: DadosEquipe) => (
@@ -65,7 +89,7 @@ export function CardCreatedTeam({ search }: { search: string }) {
                 IdStorage.setId(team.id as any)
                 router.push({
                   pathname: `/equipe/(tabs)/${team.id as any}`,
-                  params: { equipeid: team.id as any}
+                  params: { equipeid: team.id as any }
                 })
               }}
             >
