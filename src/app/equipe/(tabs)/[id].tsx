@@ -4,15 +4,11 @@ import {
   RefreshControl,
   ScrollView,
   StyleSheet,
-  Text,
-  View,
 } from "react-native"
 import { useRouter } from "expo-router"
 import { CardFormulario } from "../(components)/CardFormulario"
 import { IdStorage } from "../../../hooks/useId"
 import CustomButton from "../../components/Button"
-import { BottomSheet, Icon, ListItem, Overlay } from "@rneui/themed"
-import FontAwesome from "@expo/vector-icons/FontAwesome"
 import SearchBar from "../../components/SearchBar"
 
 export const equipeid = IdStorage.getId()
@@ -20,19 +16,6 @@ export const equipeid = IdStorage.getId()
 export default function Formularios() {
   const [refreshing, setRefreshing] = React.useState(false)
   const [search, setSearch] = useState("")
-
-  const options = [
-    {
-      title: "Editar Nome",
-      onPress: () => { },
-    },
-    {
-      title: "Deletar Formulário",
-      containerStyle: { backgroundColor: "red" },
-      titleStyle: { color: "white" },
-      onPress: () => { },
-    },
-  ]
 
   const router = useRouter()
 
@@ -63,7 +46,6 @@ export default function Formularios() {
         />
         <CardFormulario search={search} />
       </ScrollView>
-
     </>
   )
 }
