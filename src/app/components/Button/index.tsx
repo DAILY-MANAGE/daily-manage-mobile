@@ -1,16 +1,18 @@
-import { Button } from "@rneui/themed";
+import { Button } from "@rneui/themed"
+import { StyleSheet } from "react-native"
 
 interface CustomButtonProps {
-  size?: "md" | "sm" | "lg";
-  type?: "solid" | "outline";
-  title: string;
-  color?: string;
-  radius?: "md" | "sm" | "lg";
-  onPress?: string | any;
-  titleStyle?: any;
-  buttonStyle?: any;
-  icon?: any;
+  size?: "md" | "sm" | "lg"
+  type?: "solid" | "outline"
+  title: string
+  color?: string
+  radius?: "md" | "sm" | "lg"
+  onPress?: string | any
+  titleStyle?: any
+  buttonStyle?: any
+  icon?: any
   loading?: boolean
+  disabled?: boolean
 }
 
 CustomButton.defaultProps = {
@@ -21,8 +23,9 @@ CustomButton.defaultProps = {
   titleStyle: "",
   buttonStyle: "",
   icon: undefined,
-  loading: false
-};
+  loading: false,
+  disabled: false
+}
 
 export default function CustomButton({
   size,
@@ -35,6 +38,7 @@ export default function CustomButton({
   buttonStyle,
   icon,
   loading,
+  disabled
 }: CustomButtonProps) {
   return (
     <Button
@@ -48,6 +52,14 @@ export default function CustomButton({
       onPressIn={onPress}
       titleStyle={titleStyle}
       buttonStyle={buttonStyle}
+      disabled={disabled}
+      disabledStyle={styles.disabledStyle}
     />
-  );
+  )
 }
+
+const styles = StyleSheet.create({
+  disabledStyle: {
+    backgroundColor: "#ccc"
+  }
+})
