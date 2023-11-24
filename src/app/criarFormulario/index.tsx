@@ -2,7 +2,7 @@ import { useRouter } from "expo-router"
 import React, { useEffect, useState } from "react"
 import { Text, View, StyleSheet, ScrollView, TouchableOpacity } from "react-native"
 import { getToken } from "../../hooks/token"
-import { QuestionData, FormData } from "../../interfaces/DadosFormulario"
+import { FormData } from "../../interfaces/DadosFormulario"
 import {
   CRIAR_FORMULARIO,
   BASEURL,
@@ -18,14 +18,15 @@ import { getEquipeId } from "../equipes/(tabs)/index"
 import { IdStorage } from "../../hooks/getIdForm"
 import { saveColor } from "../../utils/constants"
 import FontAwesome from '@expo/vector-icons/FontAwesome'
+import Checkbox from "../components/Checkbox"
 
-interface Preset {
+export interface ResponseTypePreset {
   id: number
   name: string
-  value: string
+  value: "TEXTO" | "BOOLEANO" | "INTEIRO" | "DECIMAL" | "MULTIPLA_ESCOLHA" | "CELSIUS" | "QUILOGRAMA" | "PORCENTAGEM" | "LITRO" | undefined
 }
 
-const presets: Preset[] = [
+export const responseTypePreset: ResponseTypePreset[] = [
   {
     id: 1,
     name: "Texto",
@@ -85,12 +86,12 @@ export default function CriarFormulario() {
   const [descricaoFormulario, setDescricaoFormulario] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [data, setData] = useState<FormData[]>([])
-  const router = useRouter()
   const [expandedUsr, setExpandedUsr] = useState(false)
   const [dataUsr, setDataUsr] = useState<PresetPermittedUsers[]>([])
   const [usuariosPermitidos, setUsuariosPermitidos] = useState<number[]>([])
   const [selectedUsers, setSelectedUsers] = useState<number[]>([])
-  const [isChecked, setIsChecked] = useState(false)
+
+  const router = useRouter()
 
   const [questions, setQuestions] = useState([
     {
@@ -133,20 +134,7 @@ export default function CriarFormulario() {
     }
   }
 
-  const getIdUsuariosPermitidos = async (): Promise<number[] | null> => {
-    try {
-      const id = await AsyncStorage.getItem("idusuariospermitidos")
-
-      if (id !== null) {
-        return JSON.parse(id)
-      }
-    } catch (error) {
-      console.log(error)
-    }
-    return null
-  }
-
-  const [isCheckedList, setIsCheckedList] = useState<boolean[]>(questions.map(() => false))
+  const [selectedResponseTypes, setSelectedResponseTypes] = useState<string[]>(new Array(questions.length).fill(''))
 
   const [expandedRes, setExpandedRes] = useState<boolean[]>(new Array(questions.length).fill(false))
 
@@ -198,7 +186,11 @@ export default function CriarFormulario() {
           nome: nomeFormulario,
           idusuariospermitidos: usuariosPermitidos,
           descricao: descricaoFormulario,
-          perguntas: questions,
+          perguntas: questions.map((question, index) => ({
+            descricao: question.descricao,
+            tiporesposta: selectedResponseTypes[index],
+            opcional: question.opcional,
+          })),
         },
         {
           headers: {
@@ -228,7 +220,7 @@ export default function CriarFormulario() {
   return (
     <>
       <ScrollView contentContainerStyle={styles.container}>
-        <ScrollView contentContainerStyle={styles.inputs}>
+        <ScrollView contentContainerStyle={styles.container__inputs}>
           <CustomInput
             label="Nome:"
             placeholder="Digite o nome do formulário"
@@ -242,8 +234,10 @@ export default function CriarFormulario() {
             setValue={setDescricaoFormulario}
           />
           <ListItem.Accordion
-            style={{ backgroundColor: "#FAFAFA" }}
-            containerStyle={styles.accordion__container}
+            style={styles.accordion__style}
+            containerStyle={styles.accordion__containerStyle}
+            isExpanded={expandedUsr}
+            onPress={() => setExpandedUsr(!expandedUsr)}
             content={
               <ListItem.Content>
                 <ListItem.Title style={styles.accordion__title}>
@@ -251,41 +245,33 @@ export default function CriarFormulario() {
                 </ListItem.Title>
               </ListItem.Content>
             }
-            isExpanded={expandedUsr}
-            onPress={() => setExpandedUsr(!expandedUsr)}
           >
-            {isLoading && isLoading ? (
-              <Text>Buscando usuários...</Text>
-            ) : dataUsr.length === 0 ? (
-              <Text>Nenhum usuário foi encontrado</Text>
-            ) : (
-              dataUsr.map((user: PresetPermittedUsers) => (
-                <ListItem
-                  containerStyle={{ padding: 0, margin: 0, height: "auto", width: "auto" }}
-                  bottomDivider={false}
-                  style={styles.list}
-                  key={user.id}
-                  onPress={() => {
-                    setUsuariosPermitidos((prevState) => {
-                      if (prevState.includes(user.id)) {
-                        return prevState.filter((id) => id !== user.id)
-                      }
-                      return [...prevState, user.id]
-                    })
-                  }}
-                >
-                  <View
-                    style={styles.userItem}
+            {
+              isLoading &&
+                isLoading ? (
+                <Text>Buscando usuários...</Text>
+              ) : dataUsr.length === 0 ? (
+                <Text>Nenhum usuário foi encontrado</Text>
+              ) : (
+                dataUsr.map((user: PresetPermittedUsers) => (
+                  <ListItem
+                    containerStyle={styles.list__containerStyle}
+                    bottomDivider={false}
+                    style={styles.list__style}
                     key={user.id}
+                    onPress={() => {
+                      setUsuariosPermitidos((prevState) => {
+                        if (prevState.includes(user.id)) {
+                          return prevState.filter((id) => id !== user.id)
+                        }
+                        return [...prevState, user.id]
+                      })
+                    }}
                   >
-                    <CheckBox
-                      size={24}
-                      iconType="material-community"
-                      checkedIcon="checkbox-marked"
-                      uncheckedIcon="checkbox-blank-outline"
-                      checkedColor={saveColor}
-                      containerStyle={{ padding: 0, margin: 0, paddingBottom: 8 }}
-                      wrapperStyle={{ padding: 0, margin: 0, height: "auto", width: "auto" }}
+                    <Checkbox
+                      label={user.usuario}
+                      checkType="square"
+                      styleCondition={selectedUsers.includes(user.id)}
                       checked={selectedUsers.includes(user.id)}
                       onPress={() => {
                         setSelectedUsers(prevSelected => {
@@ -296,112 +282,105 @@ export default function CriarFormulario() {
                         })
                       }}
                     />
-
-                    <Text style={{
-                      fontSize: 16,
-                      fontWeight: "500",
-                      color: selectedUsers.includes(user.id) ? "black" : "#888888",
-                    }}>{user.usuario}</Text>
-                  </View>
-                </ListItem>
-              ))
-            )}
+                  </ListItem>
+                ))
+              )}
           </ListItem.Accordion>
-          {questions.map((question, i) => (
-            <ScrollView key={i}>
-              <View style={styles.question}>
-                <CustomInput
-                  style={{ width: "100%", gap: 16 }}
-                  label={`Pergunta ${i + 1}`}
-                  placeholder="Comprou leite?"
-                  value={question.descricao}
-                  setValue={(value: any) => {
-                    const newQuestion = [...questions]
-                    newQuestion[i].descricao = value
-                    setQuestions(newQuestion)
-                  }}
-                />
-
-                <ListItem.Accordion
-                  containerStyle={styles.accordion__container}
-                  content={
-                    <ListItem.Content>
-                      <ListItem.Title style={styles.accordion__title}>
-                        Tipo de resposta
-                      </ListItem.Title>
-                    </ListItem.Content>
-                  }
-                  isExpanded={expandedRes[i]}
-                  onPress={() => {
-                    const newExpandedRes = [...expandedRes]
-                    newExpandedRes[i] = !newExpandedRes[i]
-                    setExpandedRes(newExpandedRes)
-                  }}
-                >
-                  {presets.map((data: Preset) => (
-                    <ListItem
-                      key={data.id}
-                      style={styles.list}
-                    >
-                      <CheckBox
-                        size={24}
-                        iconType="material-community"
-                        checkedIcon="checkbox-marked"
-                        uncheckedIcon="checkbox-blank-outline"
-                        checkedColor={saveColor}
-                        containerStyle={{ padding: 0, margin: 0, paddingBottom: 8 }}
-                        wrapperStyle={{ padding: 0, margin: 0, height: "auto", width: "auto" }}
-                        checked={isCheckedList[i]}
-                        onPress={() => {
-                          const newIsCheckedList = [...isCheckedList]
-                          newIsCheckedList[i] = !newIsCheckedList[i]
-                          setIsCheckedList(newIsCheckedList)
-
-                          const newQuestion = [...questions]
-                          newQuestion[i].tiporesposta = data.value
-                          setQuestions(newQuestion)
-                        }}
-                      />
-                      <Text>{data.name}</Text>
-                    </ListItem>
-                  ))}
-                </ListItem.Accordion>
-                <View style={{ flexDirection: "row", width: "100%", height: "auto", justifyContent: "space-between", alignItems: "center" }}>
-                  <View style={styles.switch__container}>
-                    <Text style={styles.switch__label}>Obrigatório</Text>
-                    <Switch
-                      color="black"
-                      value={!question.opcional}
-                      onValueChange={() => toggleOptional(i)}
-                    />
-                  </View>
-                  <TouchableOpacity
-                    onPress={() => {
-                      const newQuestions = [...questions]
-                      newQuestions.splice(i, 1)
-                      setQuestions(newQuestions)
+          {
+            questions &&
+            questions.map((question, index) => (
+              <ScrollView key={index}>
+                <View style={styles.question__container}>
+                  <CustomInput
+                    style={styles.customInput}
+                    label={`Pergunta ${index + 1}`}
+                    placeholder="Comprou leite?"
+                    value={question.descricao}
+                    setValue={(value: any) => {
+                      const newQuestion = [...questions]
+                      newQuestion[index].descricao = value
+                      setQuestions(newQuestion)
                     }}
+                  />
+                  <ListItem.Accordion
+                    containerStyle={styles.accordion__containerStyle}
+                    isExpanded={expandedRes[index]}
+                    onPress={() => {
+                      const newExpandedRes = [...expandedRes]
+                      newExpandedRes[index] = !newExpandedRes[index]
+                      setExpandedRes(newExpandedRes)
+                    }}
+                    content={
+                      <ListItem.Content>
+                        <ListItem.Title style={styles.accordion__title}>
+                          Tipo de resposta
+                        </ListItem.Title>
+                      </ListItem.Content>
+                    }
                   >
-                    <FontAwesome name="trash" size={32} color="red" />
-                  </TouchableOpacity>
+                    {
+                      responseTypePreset &&
+                      responseTypePreset.map((type: ResponseTypePreset) => (
+                        <ListItem
+                          key={type.id}
+                          style={styles.list__item}
+                          containerStyle={styles.list__containerStyle}
+                        >
+                          <Checkbox
+                            label={type.name}
+                            checkType="circle"
+                            checked={selectedResponseTypes[index] === type.value}
+                            styleCondition={selectedResponseTypes[index] === type.value}
+                            onPress={() => {
+                              const newSelectedResponseTypes = [...selectedResponseTypes]
+                              newSelectedResponseTypes[index] = type.value
+                              setSelectedResponseTypes(newSelectedResponseTypes)
+                              console.log(newSelectedResponseTypes)
+                            }} />
+                        </ListItem>
+                      ))}
+                  </ListItem.Accordion>
+                  <View style={styles.cardBottom__container}>
+                    <View style={styles.switch__container}>
+                      <Text style={styles.switch__label}>
+                        Obrigatório
+                      </Text>
+                      <Switch
+                        color="black"
+                        value={!question.opcional}
+                        onValueChange={() => toggleOptional(index)}
+                      />
+                    </View>
+                    <TouchableOpacity
+                      onPress={() => {
+                        const newQuestions = [...questions]
+                        newQuestions.splice(index, 1)
+                        setQuestions(newQuestions)
+                      }}
+                    >
+                      <FontAwesome
+                        name="trash"
+                        size={32}
+                        color="red" />
+                    </TouchableOpacity>
+                  </View>
                 </View>
-              </View>
-            </ScrollView>
-          ))}
-        </ScrollView>
+              </ScrollView>
+            ))}
+        </ScrollView >
       </ScrollView >
       <View style={styles.footer}>
         <CustomButton
-          buttonStyle={styles.createButton}
+          title="+ Adicionar Pergunta"
+          buttonStyle={styles.footer__button}
           onPress={() => addQuestion()}
-          title={"+ Adicionar Pergunta"}
         />
         <CustomButton
-          buttonStyle={styles.createButton}
-          color="#12d185"
-          onPress={createForm}
           title="CRIAR"
-          titleStyle={{ fontWeight: 900 }}
+          buttonStyle={styles.footer__button}
+          titleStyle={styles.footer__titleStyle}
+          color={saveColor}
+          onPress={createForm}
         />
       </View>
     </>
@@ -409,7 +388,58 @@ export default function CriarFormulario() {
 }
 
 const styles = StyleSheet.create({
-  userItem: {
+  responseTypeItem: {
+    height: "auto",
+    flexDirection: "row",
+    padding: 0,
+    margin: 0,
+    width: "100%",
+  },
+  footer__titleStyle: {
+    fontWeight: "900"
+  },
+  cardBottom__container: {
+    flexDirection: "row",
+    width: "100%",
+    height: "auto",
+    justifyContent: "space-between",
+    alignItems: "center"
+  },
+  customInput: {
+    width: "100%",
+    gap: 16
+  },
+  checkbox__Selected: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#000000",
+  },
+  checkbox__label: {
+    fontSize: 16,
+    fontWeight: "500",
+    color: "#888888",
+  },
+  checkbox__wrapperStyle: {
+    padding: 0,
+    margin: 0,
+    height: "auto",
+    width: "auto"
+  },
+  checkbox__containerStyle: {
+    padding: 0,
+    margin: 0,
+    paddingBottom: 8
+  },
+  list__containerStyle: {
+    padding: 0,
+    margin: 0,
+    height: "auto",
+    width: "auto"
+  },
+  accordion__style: {
+    backgroundColor: "#FAFAFA"
+  },
+  checkbox__container: {
     height: "auto",
     flexDirection: "row",
     padding: 0,
@@ -423,13 +453,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     width: "100%",
   },
-  createButton: {
+  footer__button: {
     width: "100%",
   },
   list__content: {
     padding: 0,
   },
-  question: {
+  question__container: {
     backgroundColor: "#FFFFFF",
     padding: 16,
     borderWidth: 1,
@@ -437,7 +467,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     gap: 8,
   },
-  inputs: {
+  container__inputs: {
     gap: 16,
   },
   footer: {
@@ -451,7 +481,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-evenly",
     padding: 16,
   },
-  accordion__container: {
+  accordion__containerStyle: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#fafafa",
@@ -463,7 +493,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "500",
   },
-  list: {
+  list__style: {
     width: "100%",
     height: "auto",
     margin: 0,
