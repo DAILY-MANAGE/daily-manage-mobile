@@ -6,10 +6,11 @@ import { getEquipeId } from "../../equipes/(tabs)"
 import { useEffect, useState } from "react"
 import { BASEURL, VER_RESPOSTAS_DE_UM_FORMULARIO } from "../../../utils/endpoints"
 import { View, Text } from "react-native"
+import { FormData, QuestionData } from "../../../interfaces/DadosFormulario"
 
 export default function VerRespostas() {
  const [isLoading, setIsLoading] = useState(false)
- const [answers, setAnswers] = useState<AnswerData[]>([])
+ const [formData, setFormData] = useState<FormData[]>([])
 
  const i = axiosInstance
 
@@ -35,8 +36,7 @@ export default function VerRespostas() {
    })
 
    if (res.status === 200) {
-    setAnswers(res.data.content)
-    console.log(res.data.perguntas)
+    setFormData(res.data.content)
     setIsLoading(false)
    } else {
     throw new Error(`${JSON.stringify(res.data)}`)
@@ -49,16 +49,20 @@ export default function VerRespostas() {
 
  useEffect(() => {
   getAnswers()
-  setIsLoading(false)
  }, [])
 
  return (
-  <>
-   {answers && answers.map((answer: AnswerData) => (
-    <View key={answer.idpergunta}>
-     <Text>{answer.resposta}</Text>
+  <View>
+   {formData && formData.map((form: FormData) => (
+    <View key={form.id}>
+     {form.perguntas.map((question: QuestionData) => (
+      <View key={question.id}>
+       <Text>{question.descricao}</Text>
+       <Text>{question.resposta.resposta}</Text>
+      </View>
+     ))}
     </View>
    ))}
-  </>
+  </View>
  )
 }
