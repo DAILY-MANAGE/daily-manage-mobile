@@ -61,18 +61,17 @@ export default function Notificacoes() {
 
         const equipeid = await getEquipeId()
 
-        console.log(id)
-
+        console.log(`\nTOKEN: ${token},\n Equipe ID: ${equipeid},\n Convite ID: ${id}`)
+        console.log(`\n${BASEURL}${ACEITAR_CONVITE}/${id}/aceitar`)
         try {
             const res = await i.post(`${BASEURL}${ACEITAR_CONVITE}/${id}/aceitar`,
                 {
-                    equipeid: equipeid as number
+                    
                 },
                 {
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: `Bearer ${token}`,
-                        Equipe: equipeid as number
                     },
                     data: {},
                 })
@@ -88,6 +87,10 @@ export default function Notificacoes() {
         } catch (err) {
             console.log(err)
             setIsLoading(false)
+            if (err.response && err.response.status === 403) {
+                const errorsArray = err.response.data.errors
+                console.log(errorsArray)
+            }
         }
     }
 
@@ -106,7 +109,6 @@ export default function Notificacoes() {
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: `Bearer ${token}`,
-                        Equipe: equipeid as number
                     },
                     data: {},
                 })
@@ -122,6 +124,10 @@ export default function Notificacoes() {
         } catch (err) {
             console.log(err)
             setIsLoading(false)
+            if (err.response && err.response.status === 403) {
+                const errorsArray = err.response.data.errors
+                console.log(errorsArray)
+            }
         }
     }
 
