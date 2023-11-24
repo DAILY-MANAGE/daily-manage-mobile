@@ -16,10 +16,6 @@ import SearchBar from "../../components/SearchBar"
 import { axiosInstance } from "../../../utils/useAxios"
 import { saveColor } from "../../../utils/constants"
 
-export const getEquipeId = async () => {
-  return await IdStorage.getId();
-};
-
 export default function Equipes() {
   const [nomeEquipe, setNomeEquipe] = useState<string | null>(null)
   const [data, setData] = useState<DadosEquipe[]>([])
