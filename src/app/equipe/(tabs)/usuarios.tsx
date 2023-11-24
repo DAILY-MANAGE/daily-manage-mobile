@@ -13,7 +13,7 @@ import {
   FILTRAR_USUARIOS_DA_EQUIPE,
 } from "../../../utils/endpoints"
 import { useEffect, useState } from "react"
-import { getEquipeId } from "../../equipes/(tabs)"
+import { getEquipeId } from "../../equipes/(components)/CardCreatedTeam"
 import { getToken } from "../../../hooks/token"
 import FontAwesome from "@expo/vector-icons/FontAwesome"
 import { axiosInstance } from "../../../utils/useAxios"
