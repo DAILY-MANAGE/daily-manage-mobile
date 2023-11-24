@@ -14,6 +14,7 @@ import OverlayEquipe from "../(components)/Overlay"
 import { IdStorage } from "../../../hooks/useId"
 import SearchBar from "../../components/SearchBar"
 import { axiosInstance } from "../../../utils/useAxios"
+import { saveColor } from "../../../utils/constants"
 
 export const getEquipeId = async () => {
   return await IdStorage.getId();
@@ -70,7 +71,6 @@ export default function Equipes() {
         ToastAndroid.show(`Equipe ${nomeEquipe} criada!`,
           ToastAndroid.SHORT)
         setNomeEquipe("")
-
       } else {
         throw new Error(`${JSON.stringify(res.data)}`)
       }
@@ -83,10 +83,10 @@ export default function Equipes() {
 
   return (
     <>
-      <SearchBar placeholder="Pesquisar equipes..." value={search} onChangeText={handleSearch} />
+      <SearchBar showLoading={search ? true : false} placeholder="Pesquisar equipes" value={search} onChangeText={handleSearch} />
       <ScrollView
         style={styles.container}
-        refreshControl={ <RefreshControl refreshing={refreshing} onRefresh={onRefresh} /> }
+        refreshControl={ <RefreshControl progressBackgroundColor={"#262626"} colors={[saveColor]} refreshing={refreshing} onRefresh={onRefresh} /> }
       >
         <OverlayEquipe
           value={nomeEquipe}
