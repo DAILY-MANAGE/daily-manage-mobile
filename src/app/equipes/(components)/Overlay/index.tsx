@@ -26,8 +26,8 @@ export default function OverlayEquipe({
   };
 
   const onPressSave = () => {
-    onPress();
     router.replace("equipes");
+    onPress();
     toggleOverlay();
   };
 
