@@ -14,7 +14,7 @@ import { CheckBox, Switch } from "@rneui/themed"
 import { ListItem } from "@rneui/themed"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { axiosInstance } from "../../utils/useAxios"
-import { getEquipeId } from "../equipes/(tabs)/index"
+import { getEquipeId } from "../equipes/(components)/CardCreatedTeam"
 import { IdStorage } from "../../hooks/getIdForm"
 import { saveColor } from "../../utils/constants"
 import FontAwesome from '@expo/vector-icons/FontAwesome'
@@ -507,7 +507,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     gap: 8,
     paddingHorizontal: 16,
-    paddingBottom: 16
+    paddingVertical: 16
   },
   switch__container: {
     flexDirection: "row",
