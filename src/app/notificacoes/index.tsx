@@ -5,7 +5,7 @@ import { axiosInstance } from '../../utils/useAxios'
 import { BASEURL, VER_NOTIFICACOES, ACEITAR_CONVITE, REJEITAR_CONVITE } from "../../utils/endpoints"
 import { getToken } from "../../hooks/token"
 import CustomButton from "../components/Button"
-import { getEquipeId } from "../equipes/(tabs)"
+import { getEquipeId } from "../equipes/(components)/CardCreatedTeam"
 import { saveColor } from "../../utils/constants"
 import FontAwesome from '@expo/vector-icons/FontAwesome'
 import React from "react"
