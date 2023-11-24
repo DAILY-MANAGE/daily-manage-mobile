@@ -1,10 +1,10 @@
-import React from "react";
-import { Input } from "@rneui/themed";
+import React, { useState } from "react"
+import { Input } from "@rneui/themed"
 import {
   StyleSheet,
   View,
   Text
-} from "react-native";
+} from "react-native"
 
 interface CustomInputProps {
   placeholder?: string,
@@ -18,7 +18,9 @@ interface CustomInputProps {
   label?: string,
   errorMessage?: string,
   style?: any,
-  rightIconStyle?: any
+  rightIconStyle?: any,
+  shake?: () => {},
+  renderError?: boolean
 }
 
 export default function CustomInput({
@@ -33,20 +35,27 @@ export default function CustomInput({
   label,
   errorMessage,
   style,
-  rightIconStyle
+  rightIconStyle,
+  shake,
+  renderError
 }: CustomInputProps) {
+  const [isFocused, setIsFocused] = useState(false)
+
   return (
     <View style={style ? style : styles.input}>
       <View style={styles.labelView}>
         <Text style={styles.label}>{label}</Text>
       </View>
       <Input
-        errorMessage={errorMessage}
+        errorMessage={renderError ? errorMessage : ''}
         placeholder={placeholder}
         textContentType={textContentType}
         style={styles.inputStyle}
         inputContainerStyle={styles.inputContainerStyle}
-        containerStyle={styles.containerStyle}
+        containerStyle={[
+          styles.containerStyle,
+          { borderColor: isFocused ? "black" : "#c5c5c5" },
+        ]}
         value={value}
         onChangeText={setValue}
         secureTextEntry={secureTextEntry}
@@ -54,9 +63,13 @@ export default function CustomInput({
         autoComplete={autoComplete}
         rightIconContainerStyle={rightIconStyle}
         rightIcon={rightIcon}
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
+        shake={shake}
+        renderErrorMessage={renderError}
       />
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -65,7 +78,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     paddingLeft: 8,
     fontStyle: "italic",
-    fontWeight: "400"
+    fontWeight: "400",
   },
   inputContainerStyle: {
     borderBottomWidth: 0,
@@ -75,6 +88,7 @@ const styles = StyleSheet.create({
     paddingBottom: 0,
   },
   containerStyle: {
+    height: 64,
     backgroundColor: "white",
     borderRadius: 12,
     borderColor: "#c5c5c5",
@@ -90,12 +104,12 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   label: {
-    fontSize: 18,
-    fontWeight: "600",
+    fontSize: 16,
+    fontWeight: "500",
     color: "#323232"
   },
   error: {
     color: "red",
     fontSize: 16,
   },
-});
+})
