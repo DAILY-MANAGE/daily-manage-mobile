@@ -13,7 +13,7 @@ import ButtonComponent from "../components/Button"
 import CustomInput from "../components/Input"
 import FontAwesome from '@expo/vector-icons/FontAwesome'
 import { axiosInstance } from "../../utils/useAxios"
-import { saveColor } from "../../constants"
+import { saveColor } from "../../utils/constants"
 
 export default function Cadastro() {
   const [name, setName] = useState("")
