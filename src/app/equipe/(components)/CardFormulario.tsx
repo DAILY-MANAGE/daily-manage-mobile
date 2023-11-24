@@ -3,13 +3,13 @@ import { View, StyleSheet, Text, Pressable } from "react-native"
 import { BASEURL, VER_FORMULARIOS_DA_EQUIPE } from "../../../utils/endpoints"
 import { FormData } from "../../../interfaces/DadosFormulario"
 import { getToken } from "../../../hooks/token"
-import { getEquipeId } from "../../equipes/(tabs)"
 import { axiosInstance } from "../../../utils/useAxios"
 import { BottomSheet, Icon, ListItem, Overlay } from "@rneui/themed"
 import FontAwesome from '@expo/vector-icons/FontAwesome'
 import CustomButton from "../../components/Button"
 import { useRouter } from "expo-router"
-import { IdStorage } from "../../../hooks/getIdForm"
+import { IdStorage } from "../../../hooks/useId"
+import { getEquipeId } from "../../equipes/(tabs)"
 
 export function CardFormulario({ search }: { search: string }) {
   const [data, setData] = useState<FormData[]>([])
@@ -61,24 +61,19 @@ export function CardFormulario({ search }: { search: string }) {
       } else {
         throw new Error(`${JSON.stringify(res.data)}`)
       }
-    } catch (error) {
-      console.log(error)
+    } catch (err) {
+      console.log(err)
       setIsLoading(false)
     }
   }
 
   useEffect(() => {
     getForms()
-    setIsLoading(false)
-  }, [data])
+  }, [])
 
   const filteredForms = data.filter((form) =>
     search ? form.nome.toLowerCase().includes(search.toLowerCase()) : true
   )
-
-  const bottomSheet = () => {
-
-  }
 
   return (
     <>
@@ -96,7 +91,7 @@ export function CardFormulario({ search }: { search: string }) {
               setIsVisible(!isVisible), console.log("oadimawoimdaoiwd")
             }}
             onPress={() => {
-              setVisible(!visible), IdStorage.setIdForm(form.id as any)
+              setVisible(!visible)
             }}
             style={styles.formularioContainer}
           >
@@ -127,8 +122,13 @@ export function CardFormulario({ search }: { search: string }) {
                   title="Responder"
                   color="black"
                   buttonStyle={styles.button}
-                  onPress={() => {
-                    router.push("/(formulario)/responder")
+                  onPress={async () => {
+                    const equipeid = await getEquipeId()
+                    IdStorage.setId(equipeid as any)
+                    router.push({
+                      pathname: "/(formulario)/responder",
+                      params: { equipeid: equipeid as any }
+                    })
                   }}
                 />
                 <CustomButton
@@ -143,8 +143,13 @@ export function CardFormulario({ search }: { search: string }) {
                   }
                   title="Ver respostas"
                   buttonStyle={styles.buttonRight}
-                  onPress={() => {
-                    router.push("/(formulario)/ver")
+                  onPress={async () => {
+                    const equipeid = await getEquipeId()
+                    IdStorage.setId(equipeid as any)
+                    router.push({
+                      pathname: "/(formulario)/ver",
+                      params: { equipeid: equipeid as any }
+                    })
                   }}
                 />
               </View>
