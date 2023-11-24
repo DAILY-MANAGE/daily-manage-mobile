@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react"
-import { View, StyleSheet, Text, Pressable } from "react-native"
-import { BASEURL, VER_FORMULARIOS_DA_EQUIPE } from "../../../utils/endpoints"
+import { View, StyleSheet, Text, Pressable, ToastAndroid } from "react-native"
+import { BASEURL, EDITAR_FORMULARIO, EXCLUIR_FORMULARIO, VER_FORMULARIOS_DA_EQUIPE } from "../../../utils/endpoints"
 import { FormData } from "../../../interfaces/DadosFormulario"
 import { getToken } from "../../../hooks/token"
 import { axiosInstance } from "../../../utils/useAxios"
@@ -8,33 +8,50 @@ import { BottomSheet, Icon, LinearProgress, ListItem, Overlay } from "@rneui/the
 import FontAwesome from '@expo/vector-icons/FontAwesome'
 import CustomButton from "../../components/Button"
 import { useRouter } from "expo-router"
-import { IdStorage } from "../../../hooks/useId"
-import { getEquipeId } from "../../equipes/(tabs)"
-import { saveColor } from "../../../utils/constants"
+import { IdStorage } from "../../../hooks/getIdForm"
+import { getEquipeId } from "../../equipes/(components)/CardCreatedTeam"
+import { deleteColor, saveColor } from "../../../utils/constants"
+import CustomInput from "../../components/Input"
 
 export function CardFormulario({ search }: { search: string }) {
   const [data, setData] = useState<FormData[]>([])
   const [isLoading, setIsLoading] = useState(false)
-  const [visible, setVisible] = useState(false)
-  const [isVisible, setIsVisible] = useState(false)
   const [progress, setProgress] = useState(0)
+  const [isBottomVisible, setIsBottomVisible] = useState(false)
+  const [newName, setNewName] = useState('')
+  const [isModalVisible, setIsModalVisible] = useState(false)
+  const [editVisible, setEditVisible] = useState(false)
+  const [isEditVisible, setIsEditVisible] = useState(false)
+  const [isDeleteVisible, setIsDeleteVisible] = useState(false)
+  const [formName, setFormName] = useState('')
+  const [confirmFormName, setConfirmFormName] = useState('')
+  const [formId, setFormId] = useState(0)
+
+  const toggleEditOverlay = () => {
+    setIsEditVisible(!isEditVisible)
+    setIsBottomVisible(false)
+    setNewName('')
+  }
+
+  const toggleDeleteOverlay = () => {
+    setIsDeleteVisible(!isDeleteVisible)
+    setIsBottomVisible(false)
+    setConfirmFormName('')
+  }
+
+  const toggleOverlay = () => {
+    setIsModalVisible(!isModalVisible)
+  }
 
   const options = [
     {
-      title: "Editar Nome",
-      onPress: () => { },
-    },
-    {
-      title: "Deletar Formulário",
-      containerStyle: { backgroundColor: "red" },
-      titleStyle: { color: "white" },
-      onPress: () => { },
+      title: "EXCLUIR",
+      icon: (<FontAwesome name="trash" color="#FFFFFF" size={24} />),
+      containerStyle: { backgroundColor: "#F96262" },
+      titleStyle: styles.deleteTitle,
+      onPress: () => toggleDeleteOverlay(),
     },
   ]
-
-  const toggleOverlay = () => {
-    setVisible(!visible)
-  }
 
   const i = axiosInstance
 
@@ -91,6 +108,80 @@ export function CardFormulario({ search }: { search: string }) {
     }
   }, [progress])
 
+  const editForm = async () => {
+    setIsLoading(false)
+
+    const token = await getToken()
+
+    const equipeid = await getEquipeId()
+
+    const formularioId = formId
+
+    try {
+      const res = await i.patch(`${BASEURL}${EDITAR_FORMULARIO}/${formularioId}`,
+        {
+          nome: newName
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+            Equipe: equipeid as number
+          },
+          data: {},
+        })
+      if (res.status === 200) {
+        ToastAndroid.show(`Nome do formulário atualizado!`,
+          ToastAndroid.SHORT)
+        setIsLoading(false)
+      } else {
+        throw new Error(`${JSON.stringify(res.data)}`)
+      }
+    } catch (err) {
+      console.log(err)
+      setIsLoading(false)
+    }
+  }
+
+  const onPressSave = () => {
+    editForm()
+    router.replace("/equipe/(tabs)/[id]")
+    toggleEditOverlay()
+  }
+
+  const deleteForm = async () => {
+    setIsLoading(false)
+
+    const token = await getToken()
+
+    const equipeid = await getEquipeId()
+
+    const formularioId = formId
+
+    try {
+      const res = await i.delete(`${BASEURL}${EXCLUIR_FORMULARIO}/${formularioId}`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+          Equipe: equipeid as number
+        },
+        data: {},
+      })
+      if (res.status === 200) {
+        ToastAndroid.show(`Formulário ${formName} excluido!`,
+          ToastAndroid.SHORT)
+        setConfirmFormName('')
+        toggleDeleteOverlay()
+        setIsLoading(false)
+      } else {
+        throw new Error(`${JSON.stringify(res.data)}`)
+      }
+    } catch (err) {
+      console.log(err)
+      setIsLoading(false)
+    }
+  }
+
   return (
     <>
       {
@@ -124,11 +215,13 @@ export function CardFormulario({ search }: { search: string }) {
                 delayLongPress={500}
                 key={form.id}
                 onLongPress={() => {
-                  setIsVisible(!isVisible),
-                    console.log("oadimawoimdaoiwd")
+                  setFormId(form.id)
+                  setFormName(form.nome)
+                  setIsBottomVisible(!isBottomVisible),
+                    console.log("Aberto")
                 }}
                 onPress={() => {
-                  setVisible(!visible)
+                  setIsModalVisible(!isModalVisible)
                 }}
                 style={styles.formularioContainer}
               >
@@ -142,7 +235,7 @@ export function CardFormulario({ search }: { search: string }) {
                 </View>
                 <Overlay
                   overlayStyle={styles.overlayStyle}
-                  isVisible={visible}
+                  isVisible={isModalVisible}
                   onBackdropPress={toggleOverlay}
                 >
                   <View style={styles.overlayHeader}>
@@ -171,10 +264,10 @@ export function CardFormulario({ search }: { search: string }) {
                       buttonStyle={styles.button}
                       onPress={async () => {
                         const equipeid = await getEquipeId()
-                        IdStorage.setId(equipeid as any)
+                        IdStorage.setIdForm(form.id as any)
                         router.push({
                           pathname: "/(formulario)/responder",
-                          params: { equipeid: equipeid as any }
+                          params: { equipeid: equipeid as any, formularioid: form.id as any }
                         })
                       }}
                     />
@@ -192,18 +285,18 @@ export function CardFormulario({ search }: { search: string }) {
                       buttonStyle={styles.buttonRight}
                       onPress={async () => {
                         const equipeid = await getEquipeId()
-                        IdStorage.setId(equipeid as any)
+                        IdStorage.setIdForm(form.id as any)
                         router.push({
                           pathname: "/(formulario)/ver",
-                          params: { equipeid: equipeid as any }
+                          params: { equipeid: equipeid as any, formularioid: form.id as any }
                         })
                       }}
                     />
                   </View>
                 </Overlay>
                 <BottomSheet
-                  isVisible={isVisible}
-                  onBackdropPress={() => setIsVisible(!isVisible)}
+                  isVisible={isBottomVisible}
+                  onBackdropPress={() => setIsBottomVisible(!isBottomVisible)}
                 >
                   {options.map((l, i) => (
                     <ListItem
@@ -211,12 +304,76 @@ export function CardFormulario({ search }: { search: string }) {
                       containerStyle={l.containerStyle}
                       onPress={l.onPress}
                     >
-                      <ListItem.Content>
+                      <ListItem.Content style={styles.bottomSheet__container}>
+                        {l.icon}
                         <ListItem.Title style={l.titleStyle}>{l.title}</ListItem.Title>
                       </ListItem.Content>
                     </ListItem>
                   ))}
                 </BottomSheet>
+                <Overlay
+                  overlayStyle={styles.overlayStyle}
+                  isVisible={isEditVisible}
+                  onBackdropPress={toggleEditOverlay}
+                >
+                  <View style={styles.header}>
+                    <Text style={styles.title}>Editar nome do formulário</Text>
+                    <FontAwesome name="close" size={24} onPress={toggleEditOverlay} />
+                  </View>
+                  <CustomInput
+                    placeholder={formName}
+                    label="Nome atual do formulário"
+                    autoComplete="name"
+                    editable={false}
+                  />
+                  <CustomInput
+                    placeholder="Digite o novo nome do formulário"
+                    label="Nome do formulário"
+                    autoComplete="name"
+                    value={newName}
+                    setValue={setNewName}
+                    editable={true}
+                  />
+                  <CustomButton onPress={onPressSave} title="SALVAR" color={saveColor} />
+                </Overlay>
+                <Overlay
+                  overlayStyle={styles.overlayStyle}
+                  isVisible={isDeleteVisible}
+                  onBackdropPress={toggleDeleteOverlay}
+                >
+                  <View style={styles.header}>
+                    <Text style={styles.title}>Confirme o nome do formulário</Text>
+                    <FontAwesome name="close" size={24} onPress={toggleDeleteOverlay} />
+                  </View>
+                  <CustomInput
+                    placeholder={formName}
+                    label="Nome do formulário"
+                    autoComplete="name"
+                    editable={false}
+                  />
+                  <CustomInput
+                    placeholder="Confirme o nome do formulário"
+                    label="Confirmar nome do formulário"
+                    autoComplete="name"
+                    value={confirmFormName}
+                    setValue={setConfirmFormName}
+                    editable={true}
+                  />
+                  {confirmFormName === formName ? (
+                    <CustomButton
+                      onPress={() => { deleteForm() }}
+                      title="EXCLUIR"
+                      color={deleteColor}
+                    />
+                  ) : (
+                    <CustomButton
+                      onPress={() => { }}
+                      title="Excluir"
+                      disabled={true}
+                      color="#ccc"
+                    />
+                  )}
+                </Overlay>
               </Pressable>
             ))
           )}
@@ -225,6 +382,28 @@ export function CardFormulario({ search }: { search: string }) {
 }
 
 const styles = StyleSheet.create({
+  editTitle: {
+    color: "orange",
+    fontWeight: "bold"
+  },
+  deleteTitle: {
+    fontWeight: "bold",
+    color: "#FFFFFF",
+    fontSize: 16
+  },
+  bottomSheet__container: {
+    flexDirection: "row",
+    gap: 16,
+    alignItems: "center",
+    justifyContent: "flex-start"
+  },
+  header: {
+    flexDirection: "row",
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingRight: 8,
+  },
   formularioContainer: {
     paddingTop: 8,
     height: "auto",
