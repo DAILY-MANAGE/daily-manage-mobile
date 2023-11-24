@@ -86,7 +86,14 @@ export default function Equipes() {
       <SearchBar showLoading={search ? true : false} placeholder="Pesquisar equipes" value={search} onChangeText={handleSearch} />
       <ScrollView
         style={styles.container}
-        refreshControl={ <RefreshControl progressBackgroundColor={"#262626"} colors={[saveColor]} refreshing={refreshing} onRefresh={onRefresh} /> }
+        refreshControl={ 
+          <RefreshControl 
+            progressBackgroundColor={"#262626"} 
+            colors={[saveColor]} 
+            refreshing={refreshing} 
+            onRefresh={onRefresh} 
+          /> 
+        }
       >
         <OverlayEquipe
           value={nomeEquipe}
