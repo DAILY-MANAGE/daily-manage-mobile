@@ -12,17 +12,18 @@ export interface QuestionData {
  resposta?: { resposta: any },
  descricao?: string,
  tiporespostadefault?: string,
- tiporesposta?: "STRING" | "BOOLEAN" | "INTEGER" | "DECIMAL" | "CELSIUS" | "KILOGRAM" | "PERCENT" | "LITER" | undefined
+ tiporesposta?: ResponseType
  opcional?: boolean
 }
 
 export enum ResponseType {
- INTEGER,
+ TEXTO,
+ BOOLEANO,
+ INTEIRO,
  DECIMAL,
- STRING,
- BOOLEAN,
  CELSIUS,
- LITER,
- KILOGRAM,
- PERCENT
+ QUILOGRAMA,
+ PORCENTAGEM,
+ LITRO,
+ MULTIPLA_ESCOLHA
 }
