@@ -27,13 +27,13 @@ export default function OverlayEquipe({
 
   const onPressSave = () => {
     onPress();
-    toggleOverlay();
     router.replace("equipes");
+    toggleOverlay();
   };
 
   return (
     <View>
-      <ButtonComponent onPress={toggleOverlay} title="+ Nova equipe" />
+      <ButtonComponent onPress={toggleOverlay} title="+ Criar nova equipe" />
 
       <Overlay
         overlayStyle={styles.overlayStyle}
