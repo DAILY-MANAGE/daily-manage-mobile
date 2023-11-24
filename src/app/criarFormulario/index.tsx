@@ -16,6 +16,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage"
 import { axiosInstance } from "../../utils/useAxios"
 import { getEquipeId } from "../equipes/(tabs)/index"
 import { IdStorage } from "../../hooks/getIdForm"
+import { saveColor } from "../../utils/constants"
+import FontAwesome from '@expo/vector-icons/FontAwesome'
 
 interface Preset {
   id: number
@@ -88,6 +90,7 @@ export default function CriarFormulario() {
   const [dataUsr, setDataUsr] = useState<PresetPermittedUsers[]>([])
   const [usuariosPermitidos, setUsuariosPermitidos] = useState<number[]>([])
   const [selectedUsers, setSelectedUsers] = useState<number[]>([])
+  const [isChecked, setIsChecked] = useState(false)
 
   const [questions, setQuestions] = useState([
     {
@@ -119,7 +122,6 @@ export default function CriarFormulario() {
 
   const setIdUsuariosPermitidos = async (data: number[]) => {
     if (data) {
-      console.log(data)
       try {
         await AsyncStorage.setItem(
           "idusuariospermitidos",
@@ -143,6 +145,8 @@ export default function CriarFormulario() {
     }
     return null
   }
+
+  const [isCheckedList, setIsCheckedList] = useState<boolean[]>(questions.map(() => false))
 
   const [expandedRes, setExpandedRes] = useState<boolean[]>(new Array(questions.length).fill(false))
 
@@ -227,17 +231,18 @@ export default function CriarFormulario() {
         <ScrollView contentContainerStyle={styles.inputs}>
           <CustomInput
             label="Nome:"
-            placeholder="Lista de Compras..."
+            placeholder="Digite o nome do formulário"
             value={nomeFormulario}
             setValue={setNomeFormulario}
           />
           <CustomInput
             label="Descrição:"
-            placeholder="Lista de compras da família Lutherik..."
+            placeholder="Digite a descrição do formulário"
             value={descricaoFormulario}
             setValue={setDescricaoFormulario}
           />
           <ListItem.Accordion
+            style={{ backgroundColor: "#FAFAFA" }}
             containerStyle={styles.accordion__container}
             content={
               <ListItem.Content>
@@ -256,6 +261,7 @@ export default function CriarFormulario() {
             ) : (
               dataUsr.map((user: PresetPermittedUsers) => (
                 <ListItem
+                  containerStyle={{ padding: 0, margin: 0, height: "auto", width: "auto" }}
                   bottomDivider={false}
                   style={styles.list}
                   key={user.id}
@@ -268,18 +274,35 @@ export default function CriarFormulario() {
                     })
                   }}
                 >
-                  <CheckBox
-                    checked={selectedUsers.includes(user.id)}
-                    onPress={() => {
-                      setSelectedUsers(prevSelected => {
-                        if (prevSelected.includes(user.id)) {
-                          return prevSelected.filter(id => id !== user.id)
-                        }
-                        return [...prevSelected, user.id]
-                      })
-                    }}
-                  />
-                  <Text>{user.usuario}</Text>
+                  <View
+                    style={styles.userItem}
+                    key={user.id}
+                  >
+                    <CheckBox
+                      size={24}
+                      iconType="material-community"
+                      checkedIcon="checkbox-marked"
+                      uncheckedIcon="checkbox-blank-outline"
+                      checkedColor={saveColor}
+                      containerStyle={{ padding: 0, margin: 0, paddingBottom: 8 }}
+                      wrapperStyle={{ padding: 0, margin: 0, height: "auto", width: "auto" }}
+                      checked={selectedUsers.includes(user.id)}
+                      onPress={() => {
+                        setSelectedUsers(prevSelected => {
+                          if (prevSelected.includes(user.id)) {
+                            return prevSelected.filter(id => id !== user.id)
+                          }
+                          return [...prevSelected, user.id]
+                        })
+                      }}
+                    />
+
+                    <Text style={{
+                      fontSize: 16,
+                      fontWeight: "500",
+                      color: selectedUsers.includes(user.id) ? "black" : "#888888",
+                    }}>{user.usuario}</Text>
+                  </View>
                 </ListItem>
               ))
             )}
@@ -288,6 +311,7 @@ export default function CriarFormulario() {
             <ScrollView key={i}>
               <View style={styles.question}>
                 <CustomInput
+                  style={{ width: "100%", gap: 16 }}
                   label={`Pergunta ${i + 1}`}
                   placeholder="Comprou leite?"
                   value={question.descricao}
@@ -297,15 +321,6 @@ export default function CriarFormulario() {
                     setQuestions(newQuestion)
                   }}
                 />
-                <TouchableOpacity
-                  onPress={() => {
-                    const newQuestions = [...questions]
-                    newQuestions.splice(i, 1)
-                    setQuestions(newQuestions)
-                  }}
-                >
-                  <Text>Excluir Pergunta</Text>
-                </TouchableOpacity>
 
                 <ListItem.Accordion
                   containerStyle={styles.accordion__container}
@@ -327,31 +342,54 @@ export default function CriarFormulario() {
                     <ListItem
                       key={data.id}
                       style={styles.list}
-                      onPress={() => {
-                        const newQuestion = [...questions]
-                        newQuestion[i].tiporesposta = data.value
-                        setQuestions(newQuestion)
-                        console.log(questions[i])
-                      }}
                     >
+                      <CheckBox
+                        size={24}
+                        iconType="material-community"
+                        checkedIcon="checkbox-marked"
+                        uncheckedIcon="checkbox-blank-outline"
+                        checkedColor={saveColor}
+                        containerStyle={{ padding: 0, margin: 0, paddingBottom: 8 }}
+                        wrapperStyle={{ padding: 0, margin: 0, height: "auto", width: "auto" }}
+                        checked={isCheckedList[i]}
+                        onPress={() => {
+                          const newIsCheckedList = [...isCheckedList]
+                          newIsCheckedList[i] = !newIsCheckedList[i]
+                          setIsCheckedList(newIsCheckedList)
+
+                          const newQuestion = [...questions]
+                          newQuestion[i].tiporesposta = data.value
+                          setQuestions(newQuestion)
+                        }}
+                      />
                       <Text>{data.name}</Text>
                     </ListItem>
                   ))}
                 </ListItem.Accordion>
-
-                <View style={styles.switch__container}>
-                  <Text style={styles.switch__label}>Obrigatório</Text>
-                  <Switch
-                    color="black"
-                    value={!question.opcional}
-                    onValueChange={() => toggleOptional(i)}
-                  />
+                <View style={{ flexDirection: "row", width: "100%", height: "auto", justifyContent: "space-between", alignItems: "center" }}>
+                  <View style={styles.switch__container}>
+                    <Text style={styles.switch__label}>Obrigatório</Text>
+                    <Switch
+                      color="black"
+                      value={!question.opcional}
+                      onValueChange={() => toggleOptional(i)}
+                    />
+                  </View>
+                  <TouchableOpacity
+                    onPress={() => {
+                      const newQuestions = [...questions]
+                      newQuestions.splice(i, 1)
+                      setQuestions(newQuestions)
+                    }}
+                  >
+                    <FontAwesome name="trash" size={32} color="red" />
+                  </TouchableOpacity>
                 </View>
               </View>
             </ScrollView>
           ))}
         </ScrollView>
-      </ScrollView>
+      </ScrollView >
       <View style={styles.footer}>
         <CustomButton
           buttonStyle={styles.createButton}
@@ -371,6 +409,13 @@ export default function CriarFormulario() {
 }
 
 const styles = StyleSheet.create({
+  userItem: {
+    height: "auto",
+    flexDirection: "row",
+    padding: 0,
+    margin: 0,
+    width: "100%",
+  },
   list__item: {
     padding: 0,
   },
@@ -382,7 +427,6 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   list__content: {
-    backgroundColor: "#FAFAFA",
     padding: 0,
   },
   question: {
@@ -412,6 +456,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#fafafa",
     borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#c1c1c1"
   },
   accordion__title: {
     fontSize: 16,
@@ -420,8 +466,8 @@ const styles = StyleSheet.create({
   list: {
     width: "100%",
     height: "auto",
+    margin: 0,
     padding: 0,
-    backgroundColor: "#FAFAFA",
   },
   container: {
     justifyContent: "space-between",
@@ -430,12 +476,13 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     backgroundColor: "white",
     gap: 8,
-    padding: 16,
+    paddingHorizontal: 16,
+    paddingBottom: 16
   },
   switch__container: {
     flexDirection: "row",
     gap: 8,
-    width: "100%",
+    width: "auto",
     alignItems: "center",
   },
   switch__label: {
