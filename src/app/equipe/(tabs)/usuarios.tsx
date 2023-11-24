@@ -19,7 +19,7 @@ import FontAwesome from "@expo/vector-icons/FontAwesome"
 import { axiosInstance } from "../../../utils/useAxios"
 import CustomButton from "../../components/Button"
 import {
-  CheckBox, Overlay, SearchBar, Text
+  CheckBox, LinearProgress, Overlay, SearchBar, Text
 } from "@rneui/themed"
 import CustomInput from "../../components/Input"
 import CustomSearchBar from "../../components/SearchBar/index"
@@ -78,7 +78,6 @@ export default function Users() {
   const [allUsers, setAllUsers] = useState<DadosUsuario[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [visible, setVisible] = useState(false)
-  const [perm, setPerm] = useState("")
   const [search, setSearch] = useState("")
   const [usrId, setUsrId] = useState(0)
   const [usrName, setUsrName] = useState("")
@@ -86,6 +85,7 @@ export default function Users() {
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null)
   const [selectedUser, setSelectedUser] = useState<string | null>(null)
   const [selectedPermissions, setSelectedPermissions] = useState<string[]>(["VISUALIZAR_FORMULARIO"])
+  const [progress, setProgress] = useState(0)
 
   const router = useRouter()
 
@@ -142,7 +142,6 @@ export default function Users() {
 
   async function getAllUsers() {
     setIsLoading(true)
-    console.log(allUsers)
     try {
       const token = await getToken()
 
@@ -226,6 +225,20 @@ export default function Users() {
     setSelectedPermissions(["VISUALIZAR_FORMULARIO"])
   }
 
+  React.useEffect(() => {
+    let subs = true
+    if (progress < 1 && progress !== 0) {
+      setTimeout(() => {
+        if (subs) {
+          setProgress(progress + 0.1)
+        }
+      }, 100)
+    }
+    return () => {
+      subs = false
+    }
+  }, [progress])
+
   return (
     <>
       <CustomSearchBar placeholder="Pesquisar membro da equipe" value={search} onChangeText={setSearch} />
@@ -243,17 +256,38 @@ export default function Users() {
           </Text>
         </View>
 
-        {teamUsers.map((user: DadosUsuario) => (
-          <View key={user.id} style={styles.card}>
-            <View style={styles.imgContainer}>
-              <FontAwesome name="user-circle-o" size={48} color="#ccc" />
-            </View>
-            <View style={styles.textContainer}>
-              <Text style={styles.title}>{user.nome}</Text>
-              <Text style={styles.subtitle}>Vulgo: {user.usuario}</Text>
-            </View>
-          </View>
-        ))}
+        {
+          isLoading ?
+            (
+              <>
+                <Text style={{ fontSize: 16, color: "#606060", padding: 8 }}>
+                  Buscando membros da equipe...
+                </Text>
+                <LinearProgress style={{ marginVertical: 8 }} color={saveColor} />
+              </>
+            ) :
+              teamUsers &&
+              teamUsers.length === 0 ? (
+              <Text style={{
+                fontSize: 16,
+                color: "#606060",
+                padding: 8
+              }}>
+                Nenhuma membro foi encontrado.
+              </Text>
+            ) :
+              teamUsers &&
+              teamUsers.map((user: DadosUsuario) => (
+                <View key={user.id} style={styles.card}>
+                  <View style={styles.imgContainer}>
+                    <FontAwesome name="user-circle-o" size={48} color="#ccc" />
+                  </View>
+                  <View style={styles.textContainer}>
+                    <Text style={styles.title}>{user.nome}</Text>
+                    <Text style={styles.subtitle}>Vulgo: {user.usuario}</Text>
+                  </View>
+                </View>
+              ))}
       </ScrollView>
 
       <Overlay
