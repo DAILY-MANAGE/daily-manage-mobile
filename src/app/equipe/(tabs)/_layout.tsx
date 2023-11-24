@@ -77,7 +77,7 @@ export default function EquipeLayout() {
           name="usuarios"
           options={{
             headerStyle: { backgroundColor: "#1C1C1C" },
-            headerTitle: "Usuários",
+            headerTitle: "Membros",
             headerTitleStyle: styles.headerTitleStyle,
             tabBarActiveTintColor: "white",
             tabBarInactiveTintColor: "gray",
