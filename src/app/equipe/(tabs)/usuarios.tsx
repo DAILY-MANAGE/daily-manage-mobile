@@ -1,5 +1,4 @@
 import {
-  Text,
   View,
   StyleSheet,
   Pressable,
@@ -19,11 +18,14 @@ import { getToken } from "../../../hooks/token"
 import FontAwesome from "@expo/vector-icons/FontAwesome"
 import { axiosInstance } from "../../../utils/useAxios"
 import CustomButton from "../../components/Button"
-import { CheckBox, Overlay } from "@rneui/themed"
+import {
+  CheckBox, Overlay, SearchBar, Text
+} from "@rneui/themed"
 import CustomInput from "../../components/Input"
 import CustomSearchBar from "../../components/SearchBar/index"
 import React from "react"
 import { useRouter } from "expo-router"
+import { saveColor } from "../../../utils/constants"
 
 export interface DadosUsuario {
   id?: number
@@ -226,18 +228,20 @@ export default function Users() {
 
   return (
     <>
+      <CustomSearchBar placeholder="Pesquisar membro da equipe" value={search} onChangeText={setSearch} />
       <ScrollView
         style={styles.container}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       >
-        <View style={{ padding: 8 }}>
+        <CustomButton buttonStyle={{ marginBottom: 8 }} onPress={toggleOverlay} title="+ Convidar para a equipe" />
+
+        <View style={{ paddingLeft: 8, paddingBottom: 8 }}>
           <Text style={{ fontSize: 16, color: "#555555", fontWeight: "600" }}>
             Membros da equipe:
           </Text>
         </View>
-        <CustomButton buttonStyle={{ marginBottom: 8 }} onPress={toggleOverlay} title="+ Adicionar membro" />
 
         {teamUsers.map((user: DadosUsuario) => (
           <View key={user.id} style={styles.card}>
@@ -257,16 +261,23 @@ export default function Users() {
         isVisible={visible}
         onBackdropPress={toggleOverlay}
       >
-        <Text style={styles.modal__title}>Adicionar membros à equipe</Text>
-        <CustomSearchBar
+        <View style={styles.header}>
+          <Text style={styles.title}>Convidar usuários</Text>
+          <FontAwesome name="close" size={24} onPress={toggleOverlay} />
+        </View>
+        <SearchBar
+          lightTheme={true}
+          style={styles.searchBar}
+          inputStyle={styles.inputStyle}
+          containerStyle={styles.containerStyle}
+          inputContainerStyle={styles.inputContainerStyle}
+          leftIconContainerStyle={styles.leftIcon}
           placeholder="Nome do usuário"
           value={search}
           onChangeText={handleSearch}
         />
-        <ScrollView style={styles.searchResults}>
-          {search.length === 0 ? (
-            <Text>Nenhum usuário foi encontrado...</Text>
-          ) : (
+        <ScrollView contentContainerStyle={styles.searchResults}>
+          {
             search &&
             filteredUsers.map((usr: DadosUsuario) => (
               <Pressable
@@ -276,21 +287,25 @@ export default function Users() {
                     setUsrName(usr.nome),
                     console.log(usr.id),
                     setSelectedUserId(usr.id),
-                    setSearch("")
-                  setSelectedUser(usr.usuario)
+                    setSelectedUser(usr.usuario)
                 }}
                 style={[
                   styles.userItem,
                   usr.id === selectedUserId && styles.selectedUserItem,
                 ]}
               >
-                <Text>{usr.nome}</Text>
-                <Text>ID: {usr.id}</Text>
+                <Text style={[
+                  styles.userData,
+                  usr.id === selectedUserId && styles.selectedUserData,
+                ]}>{usr.nome}</Text>
+                <Text style={[
+                  styles.userData,
+                  usr.id === selectedUserId && styles.selectedUserData,
+                ]}>ID: {usr.id}</Text>
               </Pressable>
             ))
-          )}
+          }
         </ScrollView>
-        {selectedUser ? (<Text>{selectedUser}</Text>) : ('')}
         {permPreset &&
           permPreset.map((perm: PermPreset) => (
             <View
@@ -298,7 +313,14 @@ export default function Users() {
               key={perm.id}
             >
               <CheckBox
+                size={24}
                 checked={selectedPermissions.includes(perm.value)}
+                iconType="material-community"
+                checkedIcon="checkbox-marked"
+                uncheckedIcon="checkbox-blank-outline"
+                checkedColor={saveColor}
+                containerStyle={{ padding: 0, margin: 0, paddingBottom: 8 }}
+                wrapperStyle={{ padding: 0, margin: 0, height: "auto", width: "auto" }}
                 onPress={() => {
                   //                   if (perm.value === "VISUALIZAR_FORMULARIO") return deixa visualizar como default
                   setSelectedPermissions((prevPermissions) => {
@@ -309,35 +331,69 @@ export default function Users() {
                   })
                 }}
               />
-              <Text>{perm.name}</Text>
+              <Text style={{ fontSize: 16, fontWeight: "800" }}>{perm.name}</Text>
             </View>
           ))}
-        <CustomButton onPress={addUser} title="+ Adicionar" />
+        <CustomButton onPress={addUser} titleStyle={{ fontWeight: 900 }} title="CONVIDAR" />
       </Overlay>
     </>
   )
 }
 
 const styles = StyleSheet.create({
-  searchResults: {
-    position: 'absolute',
-    bottom: 0,
-    left: '50%',
-    transform: [{ translateX: -50 }],
-    width: '90%',
-    maxHeight: 150,
+  userData: {
+    color: "black"
+  },
+  selectedUserData: {
+    color: "white",
+    fontWeight: "bold"
+  },
+  searchBar: {
+    padding: 8,
+  },
+  inputStyle: {
+    backgroundColor: "#FAFAFA",
+  },
+  containerStyle: {
+    borderRadius: 32,
+    margin: 0,
+    padding: 0,
+    backgroundColor: "#FFFFFF",
+  },
+  inputContainerStyle: {
+    backgroundColor: "#FAFAFA",
+    borderRadius: 64,
     borderWidth: 1,
+    shadowOpacity: 0,
+    elevation: 0,
+  },
+  leftIcon: {
+    paddingLeft: 8,
+  },
+  header: {
+    flexDirection: "row",
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingRight: 8,
+    paddingBottom: 8
+  },
+  searchResults: {
+    justifyContent: "center",
+    width: "100%",
+    maxHeight: 150,
     borderRadius: 8,
     borderColor: "#c5c5c5",
-    marginTop: 8,
+    padding: 4,
+    paddingRight: 8,
+    paddingLeft: 8
   },
   permissionItem: {
+    height: "auto",
     flexDirection: "row",
-    alignItems: "center",
-    padding: 4,
-    borderWidth: 1,
-    borderRadius: 8,
-    borderColor: "#c5c5c5",
+    padding: 0,
+    margin: 0,
+    width: "100%",
   },
   userItem: {
     padding: 8,
@@ -347,7 +403,8 @@ const styles = StyleSheet.create({
     borderColor: "#c5c5c5",
   },
   selectedUserItem: {
-    backgroundColor: "#e0e0e0",
+    backgroundColor: saveColor,
+    color: "white"
   },
   overlayStyle: {
     borderRadius: 16,
@@ -355,12 +412,13 @@ const styles = StyleSheet.create({
     width: "90%",
     height: "auto",
     margin: 0,
-    gap: 16,
+    gap: 4,
   },
   modal__title: {
     paddingTop: 8,
     textAlign: "center",
     fontSize: 20,
+    textDecorationLine: "none"
   },
   textContainer: {
     flexDirection: "column",
@@ -374,7 +432,7 @@ const styles = StyleSheet.create({
   container: {
     height: "100%",
     width: "100%",
-    padding: 8,
+    padding: 16,
     backgroundColor: "white",
   },
   card: {
