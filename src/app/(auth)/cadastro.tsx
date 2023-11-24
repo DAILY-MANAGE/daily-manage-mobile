@@ -168,7 +168,7 @@ export default function Cadastro() {
   return (
     <>
       <ScrollView contentContainerStyle={styles.container}>
-        <ScrollView contentContainerStyle={styles.inputs}>
+        <ScrollView style={styles.inputs}>
           <CustomInput
             errorMessage={errors.name}
             label="Nome:"
@@ -267,7 +267,7 @@ const styles = StyleSheet.create({
     flexDirection: "column"
   },
   customInput: {
-    marginBottom: 16,
+    marginBottom: 32,
     gap: 8,
     width: "100%"
   },
@@ -280,12 +280,9 @@ const styles = StyleSheet.create({
   },
   inputs: {
     backgroundColor: "white",
-    gap: 16,
-    paddingTop: 16,
+    paddingTop: 24,
     height: "100%",
     flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
     width: "100%",
   },
   checkboxTextStyle: {
