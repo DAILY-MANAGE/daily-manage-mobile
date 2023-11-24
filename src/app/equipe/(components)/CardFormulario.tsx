@@ -4,18 +4,20 @@ import { BASEURL, VER_FORMULARIOS_DA_EQUIPE } from "../../../utils/endpoints"
 import { FormData } from "../../../interfaces/DadosFormulario"
 import { getToken } from "../../../hooks/token"
 import { axiosInstance } from "../../../utils/useAxios"
-import { BottomSheet, Icon, ListItem, Overlay } from "@rneui/themed"
+import { BottomSheet, Icon, LinearProgress, ListItem, Overlay } from "@rneui/themed"
 import FontAwesome from '@expo/vector-icons/FontAwesome'
 import CustomButton from "../../components/Button"
 import { useRouter } from "expo-router"
 import { IdStorage } from "../../../hooks/useId"
 import { getEquipeId } from "../../equipes/(tabs)"
+import { saveColor } from "../../../utils/constants"
 
 export function CardFormulario({ search }: { search: string }) {
   const [data, setData] = useState<FormData[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [visible, setVisible] = useState(false)
   const [isVisible, setIsVisible] = useState(false)
+  const [progress, setProgress] = useState(0)
 
   const options = [
     {
@@ -75,104 +77,149 @@ export function CardFormulario({ search }: { search: string }) {
     search ? form.nome.toLowerCase().includes(search.toLowerCase()) : true
   )
 
+  React.useEffect(() => {
+    let subs = true
+    if (progress < 1 && progress !== 0) {
+      setTimeout(() => {
+        if (subs) {
+          setProgress(progress + 0.1)
+        }
+      }, 100)
+    }
+    return () => {
+      subs = false
+    }
+  }, [progress])
+
   return (
     <>
-      {isLoading ? (
-        <Text>Buscando formulários da equipe...</Text>
-      ) : filteredForms.length === 0 ? (
-        <Text>Nenhum formulário foi encontrado...</Text>
-      ) : (
-        filteredForms &&
-        filteredForms.map((form: FormData) => (
-          <Pressable
-            delayLongPress={500}
-            key={form.id}
-            onLongPress={() => {
-              setIsVisible(!isVisible), console.log("oadimawoimdaoiwd")
-            }}
-            onPress={() => {
-              setVisible(!visible)
-            }}
-            style={styles.formularioContainer}
-          >
-            <View style={styles.container}>
-              <Text style={styles.title}>{form.nome}</Text>
-              <Text style={styles.subtitle}>Identificação: {form.id}</Text>
-            </View>
-            <Overlay
-              overlayStyle={styles.overlayStyle}
-              isVisible={visible}
-              onBackdropPress={toggleOverlay}
-            >
-              <View style={styles.overlayHeader}>
-                <Text style={styles.overlayTitle}>O que você deseja fazer?</Text>
-                <FontAwesome name="close" size={24} onPress={toggleOverlay} />
-              </View>
-              <View style={styles.actions}>
-                <CustomButton
-                  icon={
-                    <Icon
-                      name="check"
-                      type="font-awesome"
-                      color="white"
-                      size={25}
-                      iconStyle={{ marginRight: 10 }}
-                    />
-                  }
-                  title="Responder"
-                  color="black"
-                  buttonStyle={styles.button}
-                  onPress={async () => {
-                    const equipeid = await getEquipeId()
-                    IdStorage.setId(equipeid as any)
-                    router.push({
-                      pathname: "/(formulario)/responder",
-                      params: { equipeid: equipeid as any }
-                    })
-                  }}
-                />
-                <CustomButton
-                  icon={
-                    <Icon
-                      name="eye"
-                      type="font-awesome"
-                      color="white"
-                      size={25}
-                      iconStyle={{ marginRight: 10 }}
-                    />
-                  }
-                  title="Ver respostas"
-                  buttonStyle={styles.buttonRight}
-                  onPress={async () => {
-                    const equipeid = await getEquipeId()
-                    IdStorage.setId(equipeid as any)
-                    router.push({
-                      pathname: "/(formulario)/ver",
-                      params: { equipeid: equipeid as any }
-                    })
-                  }}
-                />
-              </View>
-            </Overlay>
-            <BottomSheet
-              isVisible={isVisible}
-              onBackdropPress={() => setIsVisible(!isVisible)}
-            >
-              {options.map((l, i) => (
-                <ListItem
-                  key={i}
-                  containerStyle={l.containerStyle}
-                  onPress={l.onPress}
+      {
+        isLoading ? (
+          <>
+            <Text style={{
+              fontSize: 16,
+              color: "#606060",
+              padding: 8
+            }}>
+              Buscando formulários da equipe...
+            </Text>
+            <LinearProgress
+              style={{ marginVertical: 8 }}
+              color={saveColor}
+            />
+          </>
+        ) :
+          filteredForms.length === 0 ? (
+            <Text style={{
+              fontSize: 16,
+              color: "#606060",
+              padding: 8
+            }}>
+              Nenhum formulário foi encontrado.
+            </Text>
+          ) : (
+            filteredForms &&
+            filteredForms.map((form: FormData) => (
+              <Pressable
+                delayLongPress={500}
+                key={form.id}
+                onLongPress={() => {
+                  setIsVisible(!isVisible),
+                    console.log("oadimawoimdaoiwd")
+                }}
+                onPress={() => {
+                  setVisible(!visible)
+                }}
+                style={styles.formularioContainer}
+              >
+                <View style={styles.container}>
+                  <Text style={styles.title}>
+                    {form.nome}
+                  </Text>
+                  <Text style={styles.subtitle}>
+                    Identificação: {form.id}
+                  </Text>
+                </View>
+                <Overlay
+                  overlayStyle={styles.overlayStyle}
+                  isVisible={visible}
+                  onBackdropPress={toggleOverlay}
                 >
-                  <ListItem.Content>
-                    <ListItem.Title style={l.titleStyle}>{l.title}</ListItem.Title>
-                  </ListItem.Content>
-                </ListItem>
-              ))}
-            </BottomSheet>
-          </Pressable>
-        ))
-      )}
+                  <View style={styles.overlayHeader}>
+                    <Text style={styles.overlayTitle}>
+                      O que você deseja fazer?
+                    </Text>
+                    <FontAwesome
+                      name="close"
+                      size={24}
+                      onPress={toggleOverlay}
+                    />
+                  </View>
+                  <View style={styles.actions}>
+                    <CustomButton
+                      icon={
+                        <Icon
+                          name="check"
+                          type="font-awesome"
+                          color="white"
+                          size={25}
+                          iconStyle={{ marginRight: 10 }}
+                        />
+                      }
+                      title="Responder"
+                      color="black"
+                      buttonStyle={styles.button}
+                      onPress={async () => {
+                        const equipeid = await getEquipeId()
+                        IdStorage.setId(equipeid as any)
+                        router.push({
+                          pathname: "/(formulario)/responder",
+                          params: { equipeid: equipeid as any }
+                        })
+                      }}
+                    />
+                    <CustomButton
+                      icon={
+                        <Icon
+                          name="eye"
+                          type="font-awesome"
+                          color="white"
+                          size={25}
+                          iconStyle={{ marginRight: 10 }}
+                        />
+                      }
+                      title="Ver respostas"
+                      buttonStyle={styles.buttonRight}
+                      onPress={async () => {
+                        const equipeid = await getEquipeId()
+                        IdStorage.setId(equipeid as any)
+                        router.push({
+                          pathname: "/(formulario)/ver",
+                          params: { equipeid: equipeid as any }
+                        })
+                      }}
+                    />
+                  </View>
+                </Overlay>
+                <BottomSheet
+                  isVisible={isVisible}
+                  onBackdropPress={() => setIsVisible(!isVisible)}
+                >
+                  {options.map((l, i) => (
+                    <ListItem
+                      key={i}
+                      containerStyle={l.containerStyle}
+                      onPress={l.onPress}
+                    >
+                      <ListItem.Content>
+                        <ListItem.Title style={l.titleStyle}>{l.title}</ListItem.Title>
+                      </ListItem.Content>
+                    </ListItem>
+                  ))}
+                </BottomSheet>
+              </Pressable>
+            ))
+          )}
     </>
   )
 }
