@@ -33,7 +33,7 @@ export default function Formularios() {
 
   return (
     <>
-      <SearchBar placeholder="Pesquisar formulários..." value={search} onChangeText={handleSearch} />
+      <SearchBar placeholder="Pesquisar formulários" value={search} onChangeText={handleSearch} />
       <ScrollView
         style={styles.container}
         refreshControl={
