@@ -28,7 +28,7 @@ export default function Equipes() {
 
   return (
     <>
-      <SearchBar placeholder="Pesquisar equipes..." value={search} onChangeText={handleSearch} />
+      <SearchBar showLoading={search ? true : false} placeholder="Pesquisar equipes..." value={search} onChangeText={handleSearch} />
       <ScrollView
         style={styles.container}
         refreshControl={
