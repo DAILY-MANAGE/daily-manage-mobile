@@ -8,6 +8,7 @@ export interface FormData {
 
 export interface QuestionData {
  id?: number,
+ resposta?: {resposta: any},
  descricao?: string, 
  tiporespostadefault?: string,
  tiporesposta?: ResponseType | string,
