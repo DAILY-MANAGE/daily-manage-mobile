@@ -1,3 +1,4 @@
+import { ResponseTypePreset, responseTypePreset } from '../app/criarFormulario/index'
 export interface FormData {
  id?: number,
  nome?: string,
@@ -8,10 +9,10 @@ export interface FormData {
 
 export interface QuestionData {
  id?: number,
- resposta?: {resposta: any},
- descricao?: string, 
+ resposta?: { resposta: any },
+ descricao?: string,
  tiporespostadefault?: string,
- tiporesposta?: ResponseType | string,
+ tiporesposta?: "STRING" | "BOOLEAN" | "INTEGER" | "DECIMAL" | "CELSIUS" | "KILOGRAM" | "PERCENT" | "LITER" | undefined
  opcional?: boolean
 }
 
@@ -19,9 +20,9 @@ export enum ResponseType {
  INTEGER,
  DECIMAL,
  STRING,
- BOOLEAN, 
+ BOOLEAN,
  CELSIUS,
  LITER,
- KILOGRAM, 
+ KILOGRAM,
  PERCENT
 }
