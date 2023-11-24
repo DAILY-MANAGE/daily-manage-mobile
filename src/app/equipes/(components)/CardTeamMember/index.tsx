@@ -6,6 +6,7 @@ import { getToken } from "../../../../hooks/token"
 import { IdStorage } from "../../../../hooks/useId"
 import { useRouter } from 'expo-router'
 import { axiosInstance } from "../../../../utils/useAxios"
+import { getEquipeId } from "../../(tabs)"
 
 export function CardTeamMember({ search }: { search: string }) {
    const [data, setData] = useState<DadosEquipe[]>([])
@@ -67,11 +68,12 @@ export function CardTeamMember({ search }: { search: string }) {
                      style={styles.equipeContainer}
                      onPress={() => {
                         IdStorage.setId(team.id as any)
+                        console.log(team.id)
                         router.push({
-                           pathname: `/equipe/(tabs)/${team.id as any}`,
-                           params: { id: `${team.id as any}` },
+                          pathname: `/equipe/(tabs)/${team.id as any}`,
+                          params: { equipeid: team.id as any}
                         })
-                     }}
+                      }}
                   >
                      <View key={team.id} style={styles.container}>
                         <Text style={styles.title}>{team.nome}</Text>
