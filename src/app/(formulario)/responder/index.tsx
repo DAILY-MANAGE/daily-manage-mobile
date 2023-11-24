@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react"
 import { View, Text, ToastAndroid, ScrollView, StyleSheet } from "react-native"
 import { getToken } from "../../../hooks/token"
-import { getEquipeId } from "../../equipes/(tabs)"
+import { getEquipeId } from "../../equipes/(components)/CardCreatedTeam"
 import { axiosInstance } from "../../../utils/useAxios"
 import { BASEURL, RESPONDER_FORMULARIO, VER_FORMULARIO_POR_ID } from "../../../utils/endpoints"
 import { IdStorage } from "../../../hooks/getIdForm"
@@ -23,7 +23,8 @@ export interface Question {
   descricao?: string,
   tiporespostadefault?: string,
   tipoResposta?: string,
-  opcional?: boolean
+  opcional?: boolean,
+  resposta?: any,
 }
 
 export const getFormId = async () => {
@@ -307,7 +308,7 @@ export default function ResponderFormulario() {
             buttonStyle={styles.footer__button}
             title="SALVAR"
             onPress={() => saveAnswers()}
-            color="black" />)
+            color={saveColor} />)
         }
       </View>
     </View>
