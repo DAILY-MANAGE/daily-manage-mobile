@@ -22,6 +22,11 @@ export default function Equipes() {
   const [isLoading, setIsLoading] = useState(false)
   const [refreshing, setRefreshing] = useState(false)
   const [search, setSearch] = useState('')
+  const [updateTeamsData, setUpdateTeamsData] = useState(false)
+
+  const handleUpdateTeamsData = () => {
+    setUpdateTeamsData(!updateTeamsData)
+  }
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true)
@@ -67,6 +72,7 @@ export default function Equipes() {
         ToastAndroid.show(`Equipe ${nomeEquipe} criada!`,
           ToastAndroid.SHORT)
         setNomeEquipe("")
+        handleUpdateTeamsData()
       } else {
         throw new Error(`${JSON.stringify(res.data)}`)
       }
@@ -82,13 +88,13 @@ export default function Equipes() {
       <SearchBar showLoading={search ? true : false} placeholder="Pesquisar equipes" value={search} onChangeText={handleSearch} />
       <ScrollView
         style={styles.container}
-        refreshControl={ 
-          <RefreshControl 
-            progressBackgroundColor={"#262626"} 
-            colors={[saveColor]} 
-            refreshing={refreshing} 
-            onRefresh={onRefresh} 
-          /> 
+        refreshControl={
+          <RefreshControl
+            progressBackgroundColor={"#262626"}
+            colors={[saveColor]}
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+          />
         }
       >
         <OverlayEquipe
@@ -97,7 +103,9 @@ export default function Equipes() {
           onPress={createTeam}
           editable={!isLoading}
         />
-        <CardCreatedTeam search={search}/>
+        <CardCreatedTeam
+          search={search}
+          updateTeamsData={handleUpdateTeamsData} />
       </ScrollView>
     </>
   )
