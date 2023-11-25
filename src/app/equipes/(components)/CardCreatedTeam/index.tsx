@@ -16,7 +16,13 @@ export const getEquipeId = async () => {
   return await IdStorage.getId()
 }
 
-export function CardCreatedTeam({ search }: { search: string }) {
+export function CardCreatedTeam({
+  search,
+  updateTeamsData
+}: {
+  search: string,
+  updateTeamsData: () => void
+}) {
   const [data, setData] = useState<DadosEquipe[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [progress, setProgress] = useState(0)
@@ -159,8 +165,8 @@ export function CardCreatedTeam({ search }: { search: string }) {
 
   useEffect(() => {
     setIsLoading(false)
-    getCreatedTeams()
-  }, []) // precisa arrumar isso
+    getCreatedTeams().finally(() => setIsLoading(false))
+  }, [updateTeamsData])
 
   React.useEffect(() => {
     let subs = true
