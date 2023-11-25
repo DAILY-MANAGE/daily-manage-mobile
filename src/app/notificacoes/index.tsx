@@ -137,7 +137,7 @@ export default function Notificacoes() {
         }
     }
 
-    React.useEffect(() => {
+    useEffect(() => {
         let subs = true
         if (progress < 1 && progress !== 0) {
             setTimeout(() => {
