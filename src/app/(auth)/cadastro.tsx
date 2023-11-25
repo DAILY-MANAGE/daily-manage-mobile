@@ -1,11 +1,9 @@
 import { useState } from "react"
 import {
-  View,
   StyleSheet,
   Pressable,
   ScrollView,
   ToastAndroid,
-  Text
 } from "react-native"
 import { useRouter } from "expo-router"
 import { BASEURL, REGISTRO } from '../../utils/endpoints'
@@ -14,6 +12,7 @@ import CustomInput from "../components/Input"
 import FontAwesome from '@expo/vector-icons/FontAwesome'
 import { axiosInstance } from "../../utils/useAxios"
 import { saveColor } from "../../utils/constants"
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Cadastro() {
   const [name, setName] = useState("")
@@ -115,6 +114,16 @@ export default function Cadastro() {
           `Usuário ${user} criado com sucesso!`,
           ToastAndroid.SHORT
         )
+
+        const userData = {
+          name: name,
+          user: user,
+          mail: mail,
+          password: password,
+        };
+  
+        await AsyncStorage.setItem('userData', JSON.stringify(userData));
+        
         router.push("(auth)")
       }
       else {
