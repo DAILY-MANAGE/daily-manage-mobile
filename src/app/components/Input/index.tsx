@@ -20,7 +20,8 @@ interface CustomInputProps {
   style?: any,
   rightIconStyle?: any,
   shake?: () => {},
-  renderError?: boolean
+  renderError?: boolean,
+  inputStyle?: any
 }
 
 export default function CustomInput({
@@ -37,7 +38,8 @@ export default function CustomInput({
   style,
   rightIconStyle,
   shake,
-  renderError
+  renderError,
+  inputStyle
 }: CustomInputProps) {
   const [isFocused, setIsFocused] = useState(false)
 
@@ -50,7 +52,7 @@ export default function CustomInput({
         errorMessage={renderError ? errorMessage : ''}
         placeholder={placeholder}
         textContentType={textContentType}
-        style={styles.inputStyle}
+        style={inputStyle ? inputStyle : styles.inputStyle}
         inputContainerStyle={styles.inputContainerStyle}
         containerStyle={[
           styles.containerStyle,
