@@ -38,7 +38,7 @@ export default function Perfil() {
     }, 500)
   }, [])
 
-  useEffect(() => {
+  /* useEffect(() => {
     const fetchUserData = async () => {
       try {
         const userDataString = await AsyncStorage.getItem('userData')
@@ -53,7 +53,7 @@ export default function Perfil() {
     }
 
     fetchUserData()
-  }, [])
+  }, []) */
 
   useEffect(() => {
     let subs = true
@@ -209,7 +209,7 @@ export default function Perfil() {
   }
 
   return (
-    <ScrollView
+    {/* <ScrollView
       contentContainerStyle={styles.container__content}
       style={styles.container}
       refreshControl={
@@ -327,7 +327,7 @@ export default function Perfil() {
       )
       }
 
-    </ScrollView >
+    </ScrollView > */}
   )
 }
 
