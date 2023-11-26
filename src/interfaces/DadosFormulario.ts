@@ -3,17 +3,53 @@ export interface FormData {
  id?: number,
  nome?: string,
  descricao?: string
- idusuariospermitidos?: number[],
+ usuariosPermitidos?: number[],
  perguntas?: QuestionData[],
 }
 
+export interface FormDataRead {
+ id?: number,
+ nome?: string,
+ descricao?: string
+ usuario?: {
+  usuario: string,
+  nome: string,
+  permissoes: string[]
+ },
+ perguntas?: QuestionDataRead[],
+}
+
+export interface PermittedUsers {
+ usuario: string,
+ nome: string,
+ permissoes: string[]
+}
 export interface QuestionData {
  id?: number,
- resposta?: { resposta: any },
+ resposta?: { idpergunta: number, resposta: any },
  descricao?: string,
  tiporespostadefault?: string,
- tiporesposta?: ResponseType
+ tipoResposta?: ResponseType
  opcional?: boolean
+ usuario?: {
+  usuario: string,
+  nome: string,
+  permissoes: string[]
+ }
+}
+
+export interface QuestionDataRead {
+ id?: number,
+ resposta?: { idpergunta: number, resposta: any },
+ descricao?: string,
+ tiporespostadefault?: string,
+ tipoResposta?: string
+ opcional?: boolean
+ usuario?: {
+  usuario: string,
+  nome: string,
+  permissoes: string[]
+ }
 }
 
 export enum ResponseType {
