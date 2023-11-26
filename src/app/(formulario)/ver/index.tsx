@@ -6,7 +6,7 @@ import { getEquipeId } from "../../equipes/(components)/CardCreatedTeam"
 import { useEffect, useState } from "react"
 import { BASEURL, VER_RESPOSTAS_DE_UM_FORMULARIO } from "../../../utils/endpoints"
 import { View, Text, StyleSheet, ScrollView } from "react-native"
-import { FormData, QuestionData, ResponseType } from "../../../interfaces/DadosFormulario"
+import { FormData, FormDataRead, PermittedUsers, QuestionData, QuestionDataRead, ResponseType } from '../../../interfaces/DadosFormulario'
 import CustomInput from "../../components/Input"
 import Checkbox from "../../components/Checkbox"
 import { LinearProgress } from "@rneui/themed"
@@ -15,7 +15,7 @@ import CustomButton from "../../components/Button"
 
 export default function VerRespostas() {
   const [isLoading, setIsLoading] = useState(false)
-  const [formData, setFormData] = useState<FormData[]>([])
+  const [formData, setFormData] = useState<FormDataRead[]>([])
 
   const i = axiosInstance
 
@@ -29,7 +29,7 @@ export default function VerRespostas() {
 
       const equipeid = await getEquipeId()
 
-      const res = await i.get(`${BASEURL}${VER_RESPOSTAS_DE_UM_FORMULARIO}/${formularioid as number}/respostas`, {
+      const res = await i.get(`${BASEURL}${VER_RESPOSTAS_DE_UM_FORMULARIO}/${formularioid as number}/respostas?page=${[page]}`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -42,7 +42,6 @@ export default function VerRespostas() {
         setFormData(res.data.content)
         console.log(res.data.content)
         setIsLoading(false)
-        console.log(formularioid)
       } else {
         throw new Error(`${JSON.stringify(res.data)}`)
       }
@@ -53,139 +52,160 @@ export default function VerRespostas() {
   }
 
   useEffect(() => {
-    getAnswers()
-  }, [])
+    getAnswers(currentPage)
+  }, [currentPage])
 
-  const responseType = ResponseType
+  const nextPage = () => {
+    
+  }
 
   return (
     <View style={styles.wrapper}>
       <ScrollView contentContainerStyle={styles.container}>
         <Text style={styles.title}>Respostas</Text>
         <>
-          {isLoading &&
+          {
             isLoading ? (
-            <View style={styles.loadingView}>
-              <Text style={{
-                fontSize: 16,
-                color: "#606060",
-                padding: 8
-              }}>
-                Buscando respostas do formulário...
-              </Text>
-              <LinearProgress
-                style={{ marginVertical: 8 }}
-                color={saveColor}
-              />
-            </View>
-          ) :
-            formData.length === 0 ? (
               <View style={styles.loadingView}>
                 <Text style={{
                   fontSize: 16,
                   color: "#606060",
                   padding: 8
                 }}>
-                  Nenhuma resposta foi encontrada.
+                  Buscando respostas do formulário...
                 </Text>
+                <LinearProgress
+                  style={{ marginVertical: 8 }}
+                  color={saveColor}
+                />
               </View>
             ) :
-              formData &&
-              formData.map((form: FormData) => {
-                <>
+              formData.length === 0 ? (
+                <View style={styles.loadingView}>
+                  <Text style={{
+                    fontSize: 16,
+                    color: "#606060",
+                    padding: 8
+                  }}>
+                    Nenhuma resposta foi encontrada.
+                  </Text>
+                </View>
+              ) :
+                formData &&
+                formData.map((form: FormDataRead) => (
                   <ScrollView
                     contentContainerStyle={styles.inputs}
                     key={form.id}>
-                    <>
+                    <View>
                       <Text>{form.id}</Text>
                       <Text>{form.descricao}</Text>
-                      {form.perguntas && form.perguntas.map((question: QuestionData) => (
-                        <ScrollView key={question.id}>
-                          {
+                    </View>
+                  </ScrollView>
+                ))
+          }
+
+          {
+            formData &&
+            formData.map((form: FormDataRead) => (
+              <>
+                {
+                  form.perguntas && form.perguntas.map((question: QuestionDataRead) => (
+                    <ScrollView key={question.id}>
+                      <Text>{question.tipoResposta}</Text>
+                      {
+                        question &&
+                          question.tipoResposta === 'TEXTO' ? (
+                          <CustomInput
+                            label={question.descricao}
+                            placeholder={question.resposta.resposta}
+                            editable={false}
+                          />
+                        ) :
+                          question &&
+                            question.tipoResposta === 'INTEIRO' ? (
+                            <CustomInput
+                              label={question.descricao}
+                              placeholder={question.resposta.resposta}
+                              editable={false}
+                            />
+                          ) :
                             question &&
-                              question.tiporesposta === responseType.TEXTO ? (
+                              question.tipoResposta === 'BOOLEANO' ? (
+                              <View style={styles.boolean__container}>
+                                <Text style={styles.boolean__label}>
+                                  {question.descricao}
+                                </Text>
+                                <View>
+                                  <Checkbox
+                                    label="Sim"
+                                    checkType="circle"
+                                    checked={question.resposta.resposta === true ? true : false}
+                                  />
+                                  <Checkbox
+                                    label="Não"
+                                    checkType="circle"
+                                    checked={question.resposta.resposta === false ? true : false}
+                                  />
+                                </View>
+                              </View>
+                            ) : question &&
+                              question.tipoResposta === 'DECIMAL' ? (
                               <CustomInput
-                                key={question.id}
                                 label={question.descricao}
                                 placeholder={question.resposta.resposta}
+                                editable={false}
                               />
                             ) :
                               question &&
-                                question.tiporesposta === responseType.INTEIRO ? (
+                                question.tipoResposta === 'MULTIPLA_ESCOLHA' ? ( // tirar 
                                 <CustomInput
                                   label={question.descricao}
                                   placeholder={question.resposta.resposta}
+                                  editable={false}
                                 />
                               ) :
                                 question &&
-                                  question.tiporesposta === responseType.TEXTO ? (
-                                  <View style={styles.boolean__container}>
-                                    <Text style={styles.boolean__label}>
-                                      {question.descricao}
-                                    </Text>
-                                    <View>
-                                      <Checkbox
-                                        label="Sim"
-                                        checkType="circle"
-                                        checked={question.resposta.resposta === true ? true : false}
-                                      />
-                                      <Checkbox
-                                        label="Não"
-                                        checkType="circle"
-                                        checked={question.resposta.resposta === false ? true : false}
-                                      />
-                                    </View>
-                                  </View>
-                                ) : question &&
-                                  question.tiporesposta === responseType.DECIMAL ? (
+                                  question.tipoResposta === 'CELSIUS' ? (
                                   <CustomInput
                                     label={question.descricao}
                                     placeholder={question.resposta.resposta}
+                                    editable={false}
                                   />
                                 ) :
                                   question &&
-                                    question.tiporesposta === responseType.MULTIPLA_ESCOLHA ? (
+                                    question.tipoResposta === 'QUILOGRAMA' ? (
                                     <CustomInput
                                       label={question.descricao}
                                       placeholder={question.resposta.resposta}
+                                      editable={false}
                                     />
                                   ) :
                                     question &&
-                                      question.tiporesposta === responseType.CELSIUS ? (
+                                      question.tipoResposta === 'PORCENTAGEM' ? (
                                       <CustomInput
                                         label={question.descricao}
                                         placeholder={question.resposta.resposta}
+                                        editable={false}
                                       />
                                     ) :
                                       question &&
-                                        question.tiporesposta === responseType.QUILOGRAMA ? (
+                                        question.tipoResposta === 'LITRO' ? (
                                         <CustomInput
                                           label={question.descricao}
                                           placeholder={question.resposta.resposta}
+                                          editable={false}
                                         />
-                                      ) :
-                                        question &&
-                                          question.tiporesposta === responseType.PORCENTAGEM ? (
-                                          <CustomInput
-                                            label={question.descricao}
-                                            placeholder={question.resposta.resposta}
-                                          />
-                                        ) :
-                                          question &&
-                                            question.tiporesposta === responseType.LITRO ? (
-                                            <CustomInput
-                                              label={question.descricao}
-                                              placeholder={question.resposta.resposta}
-                                            />
-                                          ) : ('')
-                          }
-                        </ScrollView>
-                      ))}
-                    </>
-                  </ScrollView>
-                </>
-              })
-          }
+                                      ) : ('')
+                      }
+                    </ScrollView>
+                  ))
+                }
+              </>
+            ))}
+          <CustomButton
+            title="Próxima Página"
+            onPress={nextPage}
+          />
         </>
       </ScrollView>
     </View>
