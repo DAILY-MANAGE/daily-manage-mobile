@@ -1,0 +1,24 @@
+
+
+<>
+      {formData.map((data: FormDataRead) => (
+        <View key={data.id}>
+          <Text>DESCRIÇÃO: {data.descricao}</Text>
+          <Text>ID: {data.id}</Text>
+          <Text>NOME: {data.nome}</Text>    
+          <Text>{data.usuario.nome}</Text>      
+          {data.perguntas.map((question: QuestionDataRead) => (
+            <View key={question.id}>
+              {question.tipoResposta === 'TEXTO' ? (<Text>OwndoiAWDAWDAWDawodi</Text>) : ('')}
+              <Text>DESCRICAO PERGUNTA: {question.descricao}</Text>
+              <Text>ID PERGUNTA: {question.resposta.idpergunta}</Text>
+              <Text>OPCIONAL: {question.opcional}</Text>
+              <Text>RESPOSTA: {question.resposta.resposta}</Text>
+              <Text>TIPO RESPOSTA: {question.tipoResposta}</Text>
+              <Text>TIPO RESPOSTA DEFAULT: {question.tiporespostadefault}</Text>
+            </View>
+          ))}
+        </View>
+      ))
+      }
+    </>
