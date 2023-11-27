@@ -70,6 +70,11 @@ const permPreset: PermPreset[] = [
     name: "Ver respostas",
     value: "VER_FORMULARIO_RESPONDIDO",
   },
+  {
+    id: 7,
+    name: "Administrador",
+    value: "ADMINISTRADOR",
+  },
 ]
 
 export default function Users() {
