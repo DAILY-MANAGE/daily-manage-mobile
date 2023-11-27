@@ -1,6 +1,6 @@
-import { ScrollView, Text, ToastAndroid, StyleSheet, Pressable, RefreshControl } from 'react-native'
+import { ScrollView, Text, ToastAndroid, StyleSheet, Pressable, RefreshControl, View } from 'react-native'
 import CustomInput from '../components/Input'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { axiosInstance } from '../../utils/useAxios'
 import { getToken } from '../../hooks/token'
 import { BASEURL } from '../../utils/endpoints'
@@ -30,7 +30,7 @@ export default function Perfil() {
 
   const router = useRouter()
 
-  const onRefresh = React.useCallback(() => {
+  const onRefresh = useCallback(() => {
     setRefreshing(true)
     setTimeout(() => {
       setRefreshing(false)
@@ -38,7 +38,7 @@ export default function Perfil() {
     }, 500)
   }, [])
 
-  /* useEffect(() => {
+  useEffect(() => {
     const fetchUserData = async () => {
       try {
         const userDataString = await AsyncStorage.getItem('userData')
@@ -53,7 +53,7 @@ export default function Perfil() {
     }
 
     fetchUserData()
-  }, []) */
+  }, [])
 
   useEffect(() => {
     let subs = true
@@ -72,7 +72,7 @@ export default function Perfil() {
   const validateFields = () => {
     const errors = { newName, newUsername, newMail, newPassword, confirmPassword }
 
-    if (newName === userData.name) {
+    if (userData && userData.name && newName === userData.name) {
       errors.newUsername = "O nome não pode ser igual ao antigo"
     } else {
       errors.newUsername = ''
@@ -80,7 +80,7 @@ export default function Perfil() {
 
     if (newUsername && newUsername.length < 5) {
       errors.newUsername = "O campo usuário deve ter mais que 5 caracteres."
-    } else if (newUsername === userData.user) {
+    } else if (userData && userData.user && newUsername === userData.user) {
       errors.newUsername = "O nome de usuário não pode ser igual ao antigo"
     } else {
       errors.newUsername = ''
@@ -91,7 +91,7 @@ export default function Perfil() {
 
     if (newMail && !regex.test(newMail)) {
       errors.newMail = "E-mail inválido"
-    } else if (newMail === userData.mail) {
+    } else if (userData && userData.mail && newMail === userData.mail) {
       errors.newMail = "O e-mail não pode ser igual ao antigo"
     } else {
       errors.newMail = ""
@@ -102,7 +102,7 @@ export default function Perfil() {
 
     if (newPassword && !regexPassword.test(newPassword)) {
       errors.newPassword = "A senha precisa ter ao menos um número um símbolo"
-    } else if (newPassword === userData.password) {
+    } else if (userData && userData.password && newPassword === userData.password) {
       errors.newPassword = "A senha não pode ser igual à antiga"
     } else {
       errors.newPassword = ''
@@ -110,13 +110,21 @@ export default function Perfil() {
 
     if (!confirmPassword) {
       errors.confirmPassword = "É necessário confirmar a senha."
-    } else if (confirmPassword !== userData.password) {
+    } else if (userData && userData.password && confirmPassword !== userData.password) {
       errors.confirmPassword = "A senha informada não coincide com a original."
     } else {
       errors.confirmPassword = ""
     }
 
     return errors
+  }
+
+  const toggleSecurePassword = () => {
+    setSecurePassword(!securePassword)
+  }
+
+  const toggleSecureConfirmPassword = () => {
+    setSecureConfirmPassword(!secureConfirmPassword)
   }
 
   const errors = validateFields()
@@ -132,24 +140,43 @@ export default function Perfil() {
     const token = await getToken()
 
     try {
-      const res = await i.patch(`${BASEURL}/usuario/alterarDados`, {
+      const body = {
         nome: newName,
         usuario: newUsername,
         email: newMail,
         senhaAntiga: userData.password,
         novaSenha: newPassword
-      }, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        data: {},
-      })
+      }
+
+      if (userData) {
+        if (userData.name === newName) {
+          delete body.nome
+        }
+        if (userData.user === newUsername) {
+          delete body.usuario
+        }
+        if (userData.mail === newMail) {
+          delete body.email
+        }
+        if (userData.password === newPassword) {
+          delete body.senhaAntiga
+          delete body.novaSenha
+        }
+      }
+
+      const res = await i.patch(`${BASEURL}/usuario/alterarDados`,
+        body,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          data: {},
+        })
 
       if (res.status === 200) {
         setNewData(res.data.content)
         setIsEditEnabled(false)
-        onRefresh()
         ToastAndroid.show(
           `Dados alterados com sucesso!`,
           ToastAndroid.SHORT)
@@ -209,7 +236,7 @@ export default function Perfil() {
   }
 
   return (
-    {/* <ScrollView
+    <ScrollView
       contentContainerStyle={styles.container__content}
       style={styles.container}
       refreshControl={
@@ -221,117 +248,150 @@ export default function Perfil() {
         />
       }
     >
-      <Text style={styles.title}>Dados do usuário</Text>
-      {!isEditEnabled ? (
-        <>
-          <CustomInput
-            label='Nome completo'
-            inputStyle={styles.inputStyle}
-            placeholder={userData.name}
-            editable={false}
+      <View style={styles.title__inputs}>
+        <Text style={styles.title}>Dados do usuário</Text>
+        {isEditEnabled && (
+          <View style={styles.inputs__container}>
+            <View style={styles.inputs}>
+              <CustomInput
+                errorMessage={errors.newName}
+                label='Novo nome'
+                placeholder={userData && userData.name}
+                value={newName}
+                setValue={setNewName}
+                textContentType="name"
+                inputStyle={styles.inputStyle}
+                renderError={render}
+              />
+              <CustomInput
+                errorMessage={errors.newUsername}
+                label='Novo nome de usuário'
+                placeholder={userData && userData.user}
+                value={newUsername}
+                setValue={setNewUsername}
+                textContentType="username"
+                inputStyle={styles.inputStyle}
+                renderError={render}
+              />
+              <CustomInput
+                errorMessage={errors.newMail}
+                label='Novo e-mail'
+                placeholder={userData && userData.mail}
+                value={newMail}
+                inputStyle={styles.inputStyle}
+                setValue={setNewMail}
+                renderError={render}
+              />
+              <CustomInput
+                errorMessage={errors.newPassword}
+                label='Nova senha'
+                placeholder='Digite a nova senha'
+                value={newPassword}
+                setValue={setNewPassword}
+                secureTextEntry={securePassword}
+                textContentType="password"
+                inputStyle={styles.inputStyle}
+                rightIcon={<Eye onPress={toggleSecurePassword} />}
+                renderError={render}
+              />
+              <CustomInput
+                errorMessage={errors.confirmPassword}
+                label='Confirmar senha antiga'
+                placeholder='Confirme a senha'
+                value={confirmPassword}
+                setValue={setConfirmPassword}
+                inputStyle={styles.inputStyle}
+                secureTextEntry={secureConfirmPassword}
+                textContentType="password"
+                rightIcon={<EyeConfirm onPress={toggleSecureConfirmPassword} />}
+                renderError={render}
+              />
+            </View>
+          </View>
+        )
+        }
+        {
+          !isEditEnabled && (
+            <View style={styles.inputs__container}>
+              <View style={styles.inputs}>
+                <CustomInput
+                  label='Nome completo'
+                  inputStyle={styles.inputStyle}
+                  placeholder={userData && userData.name}
+                  editable={false}
+                />
+                <CustomInput
+                  label='Nome de usuário'
+                  inputStyle={styles.inputStyle}
+                  placeholder={userData && userData.user}
+                  editable={false}
+                />
+                <CustomInput
+                  label='E-mail'
+                  inputStyle={styles.inputStyle}
+                  placeholder={userData && userData.mail}
+                  editable={false}
+                />
+                <CustomInput
+                  label='Senha'
+                  inputStyle={styles.inputStyle}
+                  placeholder='*****************'
+                  editable={false}
+                  secureTextEntry={true}
+                />
+
+              </View>
+
+            </View>
+          )
+        }
+      </View>
+      <View style={styles.footer}>
+        {isEditEnabled ? (
+          <CustomButton
+            title='SALVAR'
+            color={saveColor}
+            onPress={changeUserData}
+            buttonStyle={styles.button}
           />
-          <CustomInput
-            label='Nome de usuário'
-            placeholder={userData.user}
-            editable={false}
-          />
-          <CustomInput
-            label='E-mail'
-            placeholder={userData.mail}
-            editable={false}
-          />
-          <CustomInput
-            label='Senha'
-            placeholder={userData.password}
-            editable={false}
-            secureTextEntry={true}
-          />
+        ) : (
           <CustomButton
             title='EDITAR'
             color="orange"
             onPress={() => setIsEditEnabled(true)}
+            buttonStyle={styles.button}
           />
-        </>
-      ) : (
-        <>
-          <CustomInput
-            errorMessage={errors.newName}
-            label='Novo nome'
-            placeholder={userData.name}
-            value={newName}
-            setValue={(text: string) => { setNewName(text), setAux(aux + 1) }}
-            textContentType="name"
-            renderError={render}
-          />
-          <CustomInput
-            errorMessage={errors.newUsername}
-            label='Novo nome de usuário'
-            placeholder={userData.user}
-            value={newUsername}
-            setValue={(text: string) => { setNewUsername(text), setAux(aux + 1) }}
-            textContentType="username"
-            renderError={render}
-          />
-          <CustomInput
-            errorMessage={errors.newMail}
-            label='Novo e-mail'
-            placeholder={userData.mail}
-            value={newMail}
-            setValue={(text: string) => { setNewMail(text), setAux(aux + 1) }}
-            textContentType="mail"
-            renderError={render}
-          />
-          <CustomInput
-            errorMessage={errors.newPassword}
-            label='Nova senha'
-            placeholder={userData.password}
-            value={newPassword}
-            setValue={(text: string) => { setNewPassword(text), setAux(aux + 1) }}
-            secureTextEntry={true}
-            textContentType="password"
-            rightIcon={<EyeConfirm onPress={setSecureConfirmPassword(!secureConfirmPassword)} />}
-            renderError={render}
-          />
-          <CustomInput
-            errorMessage={errors.confirmPassword}
-            label='Confirmar senha antiga'
-            placeholder='Confirme a senha'
-            value={confirmPassword}
-            setValue={(text: string) => { setConfirmPassword(text) }}
-            secureTextEntry={true}
-            textContentType="password"
-            rightIcon={<EyeConfirm onPress={setSecurePassword(!securePassword)} />}
-            renderError={render}
-          />
-
-          {
-            aux &&
-              aux >= 1 &&
-              !errors.confirmPassword ? (
-              <CustomButton
-                title='SALVAR'
-                color={saveColor}
-                onPress={changeUserData}
-              />
-            ) : (
-              <CustomButton
-                title='Salvar'
-                color="gray"
-                onPress={() => { }}
-                disabled={true}
-              />
-            )
-          }
-
-        </>
-      )
-      }
-
-    </ScrollView > */}
+        )}
+      </View>
+    </ScrollView >
   )
 }
 
 const styles = StyleSheet.create({
+  title__inputs: {
+    flexDirection: "column",
+    gap: 8
+  },
+  footer: {
+    height: "auto",
+    width: "100%",
+    paddingBottom: 16,
+    bottom: 0
+  },
+  button: {
+    height: "auto",
+    width: "100%"
+  },
+  inputs__container: {
+    height: "auto",
+    width: "100%",
+  },
+  inputs: {
+    width: "100%",
+    height: "auto",
+    flexDirection: "column",
+    gap: 16,
+  },
   inputStyle: {
     top: 12,
     fontSize: 16,
@@ -343,13 +403,16 @@ const styles = StyleSheet.create({
   container__content: {
     flex: 1,
     flexDirection: 'column',
-    gap: 16
+    gap: 16,
+    width: "100%",
+    justifyContent: "space-between"
   },
   container: {
     width: "100%",
     height: "100%",
     backgroundColor: "#FFFFFF",
-    padding: 16,
+    paddingTop: 8,
+    paddingHorizontal: 16
   },
   title: {
     paddingVertical: 16,

@@ -12,7 +12,7 @@ import {
   FILTRAR_USUARIOS,
   FILTRAR_USUARIOS_DA_EQUIPE,
 } from "../../../utils/endpoints"
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { getEquipeId } from "../../equipes/(components)/CardCreatedTeam"
 import { getToken } from "../../../hooks/token"
 import FontAwesome from "@expo/vector-icons/FontAwesome"
@@ -89,11 +89,11 @@ export default function Users() {
 
   const router = useRouter()
 
-  const onRefresh = React.useCallback(() => {
+  const onRefresh = useCallback(() => {
     setRefreshing(true)
     setTimeout(() => {
       setRefreshing(false)
-      router.replace("equipe")
+      router.replace("equipe/(tabs)/usuario")
     }, 500)
   }, [])
 
@@ -202,6 +202,7 @@ export default function Users() {
           ToastAndroid.SHORT
         )
         resetState()
+        toggleOverlay()
         setIsLoading(!isLoading)
       } else {
         throw new Error(`${JSON.stringify(res.data)}`)
@@ -266,7 +267,7 @@ export default function Users() {
                 <LinearProgress style={{ marginVertical: 8 }} color={saveColor} />
               </>
             ) :
-              teamUsers &&
+            teamUsers &&
               teamUsers.length === 0 ? (
               <Text style={{
                 fontSize: 16,
@@ -340,6 +341,7 @@ export default function Users() {
             ))
           }
         </ScrollView>
+        <Text style={{ color: "#363636", paddingLeft: 8, paddingBottom: 8, fontSize: 18 }}>Permissões do usuário na equipe:</Text>
         {permPreset &&
           permPreset.map((perm: PermPreset) => (
             <View
@@ -368,7 +370,13 @@ export default function Users() {
               <Text style={{ fontSize: 16, fontWeight: "800" }}>{perm.name}</Text>
             </View>
           ))}
-        <CustomButton onPress={addUser} titleStyle={{ fontWeight: 900 }} title="CONVIDAR" />
+        {
+          selectedUser ? (
+            <CustomButton onPress={addUser} titleStyle={{ fontWeight: 900 }} color={saveColor} title="CONVIDAR" />
+          ) : (
+            <CustomButton onPress={() => {}} titleStyle={{ fontWeight: 600 }} color="#ccc" title="Convidar" />
+          )
+          }
       </Overlay>
     </>
   )

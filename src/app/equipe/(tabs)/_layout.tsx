@@ -39,16 +39,16 @@ export default function EquipeLayout() {
         }}
       />
       <Tabs.Screen
-        name="configuracoes"
+        name="registros"
         options={{
-          headerTitle: "Configurações",
+          headerTitle: "Registros da equipe",
           headerTitleStyle: styles.headerTitleStyle,
           headerStyle: styles.headerStyle,
           tabBarActiveTintColor: "#FFFFFF",
           tabBarInactiveTintColor: "gray",
           tabBarStyle: styles.tabBarStyle,
           tabBarShowLabel: false,
-          tabBarIcon: ({ color }) => <TabBarIcon name="cog" color={color} />,
+          tabBarIcon: ({ color }) => <TabBarIcon name="inbox" color={color} />,
           headerLeft: () => (<BackButton />),
           headerRight: () => (<HeaderRightIcons />),
         }}

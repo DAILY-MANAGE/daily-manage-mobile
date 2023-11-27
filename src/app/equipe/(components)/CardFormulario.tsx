@@ -94,7 +94,7 @@ export function CardFormulario({ search }: { search: string }) {
     search ? form.nome.toLowerCase().includes(search.toLowerCase()) : true
   )
 
-  React.useEffect(() => {
+  useEffect(() => {
     let subs = true
     if (progress < 1 && progress !== 0) {
       setTimeout(() => {
@@ -172,6 +172,7 @@ export function CardFormulario({ search }: { search: string }) {
           ToastAndroid.SHORT)
         setConfirmFormName('')
         toggleDeleteOverlay()
+        router.replace('equipe')
         setIsLoading(false)
       } else {
         throw new Error(`${JSON.stringify(res.data)}`)

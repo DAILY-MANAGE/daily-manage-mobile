@@ -35,12 +35,12 @@ export function CardCreatedTeam({
 
   const toggleEditOverlay = () => {
     setVisible(!visible)
-    setIsVisible(!isVisible)
+    setIsVisible(false)
   }
 
   const toggleDeleteOverlay = () => {
     setIsDeleteOverlayVisible(!isDeleteOverlayVisible)
-    setIsVisible(!isVisible)
+    setIsVisible(false)
   }
 
   const options = [
@@ -87,6 +87,8 @@ export function CardCreatedTeam({
         ToastAndroid.show(`Nome da equipe atualizado!`,
           ToastAndroid.SHORT)
         setIsLoading(false)
+        router.replace('equipes')
+        setIsVisible(false)
       } else {
         throw new Error(`${JSON.stringify(res.data)}`)
       }
@@ -123,6 +125,7 @@ export function CardCreatedTeam({
           ToastAndroid.SHORT)
         setConfirmTeamName('')
         toggleDeleteOverlay()
+        router.replace('equipes')
         setIsLoading(false)
       } else {
         throw new Error(`${JSON.stringify(res.data)}`)

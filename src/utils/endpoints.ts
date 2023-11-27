@@ -1,4 +1,4 @@
-export const BASEURL = 'http://192.168.15.11:8080'
+export const BASEURL = 'http://127.0.0.1:8080'
 
 export const REGISTRO = "/auth/registro"
 

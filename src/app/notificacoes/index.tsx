@@ -1,11 +1,10 @@
 import { RefreshControl, ScrollView, Text, ToastAndroid, View } from "react-native"
-import { ListItem, Icon, LinearProgress } from "@rneui/themed"
-import { useEffect, useState } from "react"
+import { ListItem, LinearProgress } from "@rneui/themed"
+import { useCallback, useEffect, useState } from "react"
 import { axiosInstance } from '../../utils/useAxios'
 import { BASEURL, VER_NOTIFICACOES, ACEITAR_CONVITE, REJEITAR_CONVITE } from "../../utils/endpoints"
 import { getToken } from "../../hooks/token"
 import CustomButton from "../components/Button"
-import { getEquipeId } from "../equipes/(components)/CardCreatedTeam"
 import { saveColor } from "../../utils/constants"
 import FontAwesome from '@expo/vector-icons/FontAwesome'
 import React from "react"
@@ -29,7 +28,7 @@ export default function Notificacoes() {
 
     const router = useRouter()
 
-    const onRefresh = React.useCallback(() => {
+    const onRefresh = useCallback(() => {
         setRefreshing(true)
         setTimeout(() => {
             setRefreshing(false)
@@ -71,10 +70,6 @@ export default function Notificacoes() {
         getNotifications()
     }, [])
 
-    /* const removeNotification = (notificationId: number) => {
-        setNotifications(prevData => prevData.filter(notification => notification.id !== notificationId))
-    } */
-
     const handleAccept = async () => {
         setIsLoading(true)
 
@@ -92,11 +87,11 @@ export default function Notificacoes() {
                 })
             if (res.status === 200) {
                 setIsLoading(false)
-                // removeNotification(idconvite)
                 ToastAndroid.show(
                     `Você ingressou na equipe!`,
                     ToastAndroid.SHORT
                 )
+                router.replace('equipes')
             } else {
                 throw new Error(`${JSON.stringify(res.data)}`)
             }
@@ -128,6 +123,7 @@ export default function Notificacoes() {
                     `Convite recusado.`,
                     ToastAndroid.SHORT
                 )
+                router.replace('equipes')
             } else {
                 throw new Error(`${JSON.stringify(res.data)}`)
             }
@@ -152,7 +148,19 @@ export default function Notificacoes() {
     }, [progress])
 
     return (
-        <>
+        <ScrollView
+            style={{
+                height: "100%",
+                backgroundColor: "#FFFFFF"
+            }}
+            contentContainerStyle={{
+                height: "auto",
+                width: "100%",
+                backgroundColor: "#FFFFFF",
+                padding: 16,
+                flexDirection: "column",
+                gap: 16
+            }}>
             {
                 isLoading ? (
                     <ScrollView
@@ -216,11 +224,17 @@ export default function Notificacoes() {
                                     onRefresh={onRefresh}
                                 />
                             }
-                            contentContainerStyle={{
-                                padding: 16,
+                            style={{
                                 height: "100%",
                                 width: "100%",
-                                backgroundColor: "#FFFFFF"
+                                backgroundColor: "#FFFFFF",
+                            }}
+                            contentContainerStyle={{
+                                height: "auto",
+                                width: "100%",
+                                backgroundColor: "#FFFFFF",
+                                flexDirection: "column",
+                                gap: 16
                             }}
                         >
                             <ListItem containerStyle={{ borderWidth: 1, borderRadius: 8, borderColor: "#c1c1c1", shadowColor: "#ccc", elevation: 4 }}>
@@ -267,12 +281,13 @@ export default function Notificacoes() {
                                                     title="Aceitar"
                                                 />
                                             </View>
-                                        ) : ('')}
+                                        ) : (''
+                                        )}
                                 </ListItem.Content>
                             </ListItem>
                         </ScrollView>
                     ))
             }
-        </>
+        </ScrollView>
     )
 }

@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useCallback, useState } from "react"
 import {
   Pressable,
   RefreshControl,
@@ -10,16 +10,17 @@ import { CardFormulario } from "../(components)/CardFormulario"
 import { IdStorage } from "../../../hooks/useId"
 import CustomButton from "../../components/Button"
 import SearchBar from "../../components/SearchBar"
+import { saveColor } from "../../../utils/constants"
 
 export const equipeid = IdStorage.getId()
 
 export default function Formularios() {
-  const [refreshing, setRefreshing] = React.useState(false)
+  const [refreshing, setRefreshing] = useState(false)
   const [search, setSearch] = useState("")
 
   const router = useRouter()
 
-  const onRefresh = React.useCallback(() => {
+  const onRefresh = useCallback(() => {
     setRefreshing(true)
     setTimeout(() => {
       setRefreshing(false)
@@ -37,7 +38,8 @@ export default function Formularios() {
       <ScrollView
         style={styles.container}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} progressBackgroundColor={"#262626"}
+            colors={[saveColor]} />
         }
       >
         <CustomButton

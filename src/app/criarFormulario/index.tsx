@@ -23,7 +23,7 @@ import Checkbox from "../components/Checkbox"
 export interface ResponseTypePreset {
   id: number
   name: string
-  value: "TEXTO" | "BOOLEANO" | "INTEIRO" | "DECIMAL" | "MULTIPLA_ESCOLHA" | "CELSIUS" | "QUILOGRAMA" | "PORCENTAGEM" | "LITRO" | undefined
+  value: "TEXTO" | "BOOLEANO" | "INTEIRO" | "DECIMAL" | "CELSIUS" | "QUILOGRAMA" | "PORCENTAGEM" | "LITRO" | undefined
 }
 
 export const responseTypePreset: ResponseTypePreset[] = [
@@ -46,11 +46,6 @@ export const responseTypePreset: ResponseTypePreset[] = [
     id: 4,
     name: "Número Decimal",
     value: "DECIMAL",
-  },
-  {
-    id: 5,
-    name: "Múltipla Escolha",
-    value: "MULTIPLA_ESCOLHA",
   },
   {
     id: 6,
@@ -271,10 +266,10 @@ export default function CriarFormulario() {
                     <Checkbox
                       label={user.usuario}
                       checkType="square"
-                      styleCondition={selectedUsers.includes(user.id)}
-                      checked={selectedUsers.includes(user.id)}
+                      styleCondition={usuariosPermitidos.includes(user.id)}
+                      checked={usuariosPermitidos.includes(user.id)}
                       onPress={() => {
-                        setSelectedUsers(prevSelected => {
+                        setUsuariosPermitidos(prevSelected => {
                           if (prevSelected.includes(user.id)) {
                             return prevSelected.filter(id => id !== user.id)
                           }
@@ -294,7 +289,7 @@ export default function CriarFormulario() {
                   <CustomInput
                     style={styles.customInput}
                     label={`Pergunta ${index + 1}`}
-                    placeholder="Comprou leite?"
+                    placeholder="Ex: Há vazamento na turbina?"
                     value={question.descricao}
                     setValue={(value: any) => {
                       const newQuestion = [...questions]

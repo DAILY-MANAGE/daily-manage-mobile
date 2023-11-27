@@ -29,7 +29,7 @@ export interface QuestionData {
  resposta?: { idpergunta: number, resposta: any },
  descricao?: string,
  tiporespostadefault?: string,
- tipoResposta?: ResponseType
+ tipoResposta?: string
  opcional?: boolean
  usuario?: {
   usuario: string,

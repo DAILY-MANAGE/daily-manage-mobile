@@ -2,29 +2,30 @@ import {
   StyleSheet,
   ScrollView,
   RefreshControl,
-} from "react-native";
-import React, { useState } from "react";
-import { useRouter } from "expo-router";
-import { CardTeamMember } from "../(components)/CardTeamMember";
-import SearchBar from "../../components/SearchBar";
+} from "react-native"
+import React, { useCallback, useState } from "react"
+import { useRouter } from "expo-router"
+import { CardTeamMember } from "../(components)/CardTeamMember"
+import SearchBar from "../../components/SearchBar"
+import { saveColor } from "../../../utils/constants"
 
 export default function Equipes() {
-  const [refreshing, setRefreshing] = useState(false);
-  const [search, setSearch] = useState('');
+  const [refreshing, setRefreshing] = useState(false)
+  const [search, setSearch] = useState('')
 
-  const onRefresh = React.useCallback(() => {
-    setRefreshing(true);
+  const onRefresh = useCallback(() => {
+    setRefreshing(true)
     setTimeout(() => {
-      setRefreshing(false);
-      router.replace("equipes");
-    }, 500);
-  }, []);
+      setRefreshing(false)
+      router.replace("equipes/(tabs)/member")
+    }, 500)
+  }, [])
 
-  const router = useRouter();
+  const router = useRouter()
 
   const handleSearch = (text: string) => {
-    setSearch(text);
-  };
+    setSearch(text)
+  }
 
   return (
     <>
@@ -32,13 +33,14 @@ export default function Equipes() {
       <ScrollView
         style={styles.container}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} progressBackgroundColor={"#262626"}
+            colors={[saveColor]} />
         }
       >
-        <CardTeamMember search={search}/>
+        <CardTeamMember search={search} />
       </ScrollView>
     </>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -62,4 +64,4 @@ const styles = StyleSheet.create({
     width: "100%",
     gap: 8,
   },
-});
+})

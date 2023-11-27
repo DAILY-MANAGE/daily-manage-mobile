@@ -6,7 +6,7 @@ import { axiosInstance } from "../../../utils/useAxios"
 import { BASEURL, RESPONDER_FORMULARIO, VER_FORMULARIO_POR_ID } from "../../../utils/endpoints"
 import { IdStorage } from "../../../hooks/getIdForm"
 import { useRouter } from "expo-router"
-import { QuestionData } from '../../../interfaces/DadosFormulario'
+import { QuestionData, ResponseType } from '../../../interfaces/DadosFormulario'
 import CustomInput from "../../components/Input"
 import { CheckBox, LinearProgress } from "@rneui/themed"
 import CustomButton from "../../components/Button"
@@ -38,6 +38,7 @@ export default function ResponderFormulario() {
   const [isChecked, setIsChecked] = useState(false)
   const [booleanAnswers, setBooleanAnswers] = useState<{ [key: number]: boolean }>({})
   const [progress, setProgress] = useState(0)
+  const [newData, setNewData] = useState('')
 
   const i = axiosInstance
 
@@ -102,9 +103,11 @@ export default function ResponderFormulario() {
           data: {},
         })
       if (res.status === 201) {
+        setNewData(res.data)
         ToastAndroid.show(`Formulário ${formularioid} respondido!`,
           ToastAndroid.SHORT)
-        router.replace('/equipe/(tabs)/[id]')
+        router.replace('equipe')
+        console.log(newData)
       } else {
         throw new Error(`${JSON.stringify(res.data)}`)
       }
@@ -130,14 +133,19 @@ export default function ResponderFormulario() {
   }
 
   const handleBooleanAnswerChange = (questionId: number, value: boolean) => {
-    setBooleanAnswers(prevBooleanAnswers => ({
-      ...prevBooleanAnswers,
-      [questionId]: value,
-    }))
-    handleAnswerChange(questionId, value)
+    const stringValue = value ? "Sim" : "Não"
+
+    setBooleanAnswers((prevBooleanAnswers) => {
+      return {
+        ...(prevBooleanAnswers as { [key: number]: boolean }),
+        [questionId]: value,
+      }
+    })
+
+    handleAnswerChange(questionId, stringValue)
   }
 
-  React.useEffect(() => {
+  useEffect(() => {
     let subs = true
     if (progress < 1 && progress !== 0) {
       setTimeout(() => {
@@ -150,6 +158,8 @@ export default function ResponderFormulario() {
       subs = false
     }
   }, [progress])
+
+  const responseType = ResponseType
 
   return (
     <View style={styles.wrapper}>
@@ -183,10 +193,10 @@ export default function ResponderFormulario() {
               </View>
             ) :
               questions &&
-              questions.map((question: Question) => (
+              questions.map((question: QuestionData, index: number) => (
                 <ScrollView
                   contentContainerStyle={styles.inputs}
-                  key={question.id}>
+                  key={question.id ?? index}>
                   {
                     question &&
                       question.tipoResposta === 'TEXTO' ? (
@@ -241,16 +251,16 @@ export default function ResponderFormulario() {
                           />
                         ) :
                           question &&
-                            question.tipoResposta === 'MULTIPLA_ESCOLHA' ? (
+                            question.tipoResposta === 'CELSIUS' ? (
                             <CustomInput
                               key={question.id}
                               label={question.descricao}
-                              placeholder="Digite a resposta <- FALTA VALIDAR"
+                              placeholder="Digite a resposta"
                               setValue={(value: any) => handleAnswerChange(question.id, value)}
                             />
                           ) :
                             question &&
-                              question.tipoResposta === 'CELSIUS' ? (
+                              question.tipoResposta === 'QUILOGRAMA' ? (
                               <CustomInput
                                 key={question.id}
                                 label={question.descricao}
@@ -259,7 +269,7 @@ export default function ResponderFormulario() {
                               />
                             ) :
                               question &&
-                                question.tipoResposta === 'QUILOGRAMA' ? (
+                                question.tipoResposta === 'PORCENTAGEM' ? (
                                 <CustomInput
                                   key={question.id}
                                   label={question.descricao}
@@ -268,23 +278,14 @@ export default function ResponderFormulario() {
                                 />
                               ) :
                                 question &&
-                                  question.tipoResposta === 'PORCENTAGEM' ? (
+                                  question.tipoResposta === 'LITRO' ? (
                                   <CustomInput
                                     key={question.id}
                                     label={question.descricao}
                                     placeholder="Digite a resposta"
                                     setValue={(value: any) => handleAnswerChange(question.id, value)}
                                   />
-                                ) :
-                                  question &&
-                                    question.tipoResposta === 'LITRO' ? (
-                                    <CustomInput
-                                      key={question.id}
-                                      label={question.descricao}
-                                      placeholder="Digite a resposta"
-                                      setValue={(value: any) => handleAnswerChange(question.id, value)}
-                                    />
-                                  ) : ('')}
+                                ) : ('')}
                 </ScrollView>
               ))}
       </ScrollView>
@@ -295,7 +296,7 @@ export default function ResponderFormulario() {
               loading
               buttonStyle={styles.footer__button}
               title="SALVAR"
-              onPress={() => saveAnswers()}
+              onPress={saveAnswers}
               color="black" />
           ) : questions.length === 0 ? (
             <CustomButton
